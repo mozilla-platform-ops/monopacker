@@ -1,0 +1,37 @@
+---
+variables:
+  base_image_name: taskcluster-worker
+  aws_region: us-west-2
+  gcp_project_id: miles-packer-test
+  gcp_zone: us-west1-a
+  placeholder_secret: ''
+sensitive-variables:
+- placeholder_secret
+builders:
+- type: amazon-ebs
+  ami_name: '{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}'
+  instance_type: c5.2xlarge
+  source_ami_filter:
+    filters:
+      virtualization-type: hvm
+      name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*
+      root-device-type: ebs
+    # canonical owner account
+    owners:
+    - 099720109477
+    most_recent: true
+  ssh_username: ubuntu
+  region: '{{user `aws_region`}}'
+- type: googlecompute
+  image_name: '{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}'
+  source_image_family: ubuntu-1804-bionic
+  ssh_username: ubuntu
+  project_id: '{{user `gcp_project_id`}}'
+  zone: '{{user `gcp_zone`}}'
+provisioners:
+  - type: shell
+    inline:
+    - /usr/bin/cloud-init status --wait
+post-processors:
+  - name: vagrant
+    type: vagrant
