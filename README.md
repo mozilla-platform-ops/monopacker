@@ -14,6 +14,9 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - `yq` (`brew install python-yq`)
 - `make`
 - `packer`
+- `vagrant`
+    - google plugin (`vagrant plugin install vagrant-google`)
+    - aws plugin (`vagrant plugin install vagrant-aws`)
 
 ### Pre-requisites
 
