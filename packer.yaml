@@ -11,6 +11,12 @@ builders:
 - type: amazon-ebs
   ami_name: '{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}'
   instance_type: c5.2xlarge
+  # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
+  launch_block_device_mappings:
+  - device_name: /dev/sda1
+    volume_size: 40
+    volume_type: gp2
+    delete_on_termination: true
   source_ami_filter:
     filters:
       virtualization-type: hvm
@@ -24,7 +30,7 @@ builders:
   region: '{{user `aws_region`}}'
 - type: googlecompute
   image_name: '{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}'
-  source_image_family: ubuntu-1804-bionic
+  source_image_family: ubuntu-1804-lts
   ssh_username: ubuntu
   project_id: '{{user `gcp_project_id`}}'
   zone: '{{user `gcp_zone`}}'
