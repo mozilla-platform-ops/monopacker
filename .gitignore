@@ -8,6 +8,11 @@ packer_cache/
 # For built boxes
 *.box
 
+# Artifacts and outputs
+packer-artifacts.json
+*.tar
+output-*/
+
 ### Vagrant ###
 # General
 .vagrant/

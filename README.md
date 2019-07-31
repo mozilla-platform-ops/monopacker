@@ -35,3 +35,11 @@ make build
 # packer build -debug
 make debug
 ```
+### FAQ
+
+#### How do I build using only a single builder?
+
+```
+# example using only vagrant builder
+cat packer.yaml| yq . | packer build -only vagrant -
+```

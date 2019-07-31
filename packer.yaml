@@ -5,8 +5,10 @@ variables:
   gcp_project_id: miles-packer-test
   gcp_zone: us-west1-a
   placeholder_secret: ''
+
 sensitive-variables:
 - placeholder_secret
+
 builders:
 - type: amazon-ebs
   ami_name: '{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}'
@@ -34,10 +36,31 @@ builders:
   ssh_username: ubuntu
   project_id: '{{user `gcp_project_id`}}'
   zone: '{{user `gcp_zone`}}'
+- type: vagrant
+  add_force: true
+  communicator: ssh
+  source_path: ubuntu/bionic64
+  provider: virtualbox
+
 provisioners:
+  # preserves symlinks, merges dirs
+  - type: shell-local
+    command: tar cf files.tar ./files
+  - type: file
+    source: ./files.tar
+    destination: /tmp/
+  # untar at /
+  - type: shell
+    inline:
+    - tar xvf /tmp/files.tar --strip-components=1 -C /
   - type: shell
     inline:
     - /usr/bin/cloud-init status --wait
+
 post-processors:
-  - name: vagrant
-    type: vagrant
+  - type: vagrant
+    except:
+    - vagrant
+  - type: manifest
+    output: packer-artifacts.json
+    strip_path: true
