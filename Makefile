@@ -4,6 +4,8 @@ TRANSFORMER=yq .
 INPUT_FILE=./packer.yaml
 PACKER=packer
 
+ARTIFACTS=packer-artifacts.json output-vagrant files.tar *.box
+
 validate:
 	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) validate -
 
@@ -12,3 +14,6 @@ build:
 
 debug:
 	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build -debug -
+
+clean:
+	rm -rf $(ARTIFACTS)
