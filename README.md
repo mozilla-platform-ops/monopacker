@@ -15,7 +15,7 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - `make`
 - `packer` (`go get github.com/hashicorp/packer`)
   - Note: I had issues using the `vagrant` builder out of the box in recent versions
-  - I was able to get things working using a build of packer off of https://github.com/hashicorp/packer/pull/7957 
+  - I was able to get things working using a build of packer off of https://github.com/hashicorp/packer/pull/7957
 - `vagrant`
 
 ### Pre-requisites
@@ -43,4 +43,7 @@ make build PACKER_ARGS="-only vagrant"
 ```
 # example using only vagrant builder
 cat packer.yaml| yq . | packer build -only vagrant -
+
+# or, using make
+PACKER_LOG=1 make build PACKER_ARGS='-only vagrant'
 ```
