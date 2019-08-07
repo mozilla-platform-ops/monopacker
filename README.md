@@ -14,7 +14,8 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - `yq` (`brew install python-yq`)
 - `make`
 - `packer` (`go get github.com/hashicorp/packer`)
-  - Note: I had issues using the `packer` builder out of box prior to 1.4.3
+  - Note: I had issues using the `vagrant` builder out of the box in recent versions
+  - I was able to get things working using a build of packer off of https://github.com/hashicorp/packer/pull/7957 
 - `vagrant`
 
 ### Pre-requisites
