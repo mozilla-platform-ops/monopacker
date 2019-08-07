@@ -1,0 +1,4 @@
+- [ ] No separation of trusted/untrusted builders
+- [ ] docker-worker/generic-worker scripts are run on all builders
+- [ ] No process to install docker-worker yet
+- [ ] Version of docker et al are not specified
