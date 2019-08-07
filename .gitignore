@@ -1,5 +1,5 @@
-# Created by https://www.gitignore.io/api/packer,vagrant
-# Edit at https://www.gitignore.io/?templates=packer,vagrant
+# Created by https://www.gitignore.io/api/packer
+# Edit at https://www.gitignore.io/?templates=packer
 
 ### Packer ###
 # Cache objects
@@ -11,18 +11,3 @@ packer_cache/
 # Artifacts and outputs
 packer-artifacts.json
 *.tar
-output-*/
-
-### Vagrant ###
-# General
-.vagrant/
-
-# For built boxes
-*.box
-
-# Log files (if you are creating logs in debug mode, uncomment this)
-# *.log
-
-### Vagrant Patch ###
-
-# End of https://www.gitignore.io/api/packer,vagrant
