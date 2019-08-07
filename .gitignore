@@ -11,3 +11,7 @@ packer_cache/
 # Artifacts and outputs
 packer-artifacts.json
 *.tar
+
+### Vagrant ###
+
+output-vagrant/

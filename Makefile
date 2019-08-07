@@ -9,19 +9,22 @@ PACKER_VARS=-var default_scripts="$(shell ls -m scripts/default/* | tr -d '[:spa
 PACKER_VARS+=-var docker_worker_scripts="$(shell ls -m scripts/docker-worker/* | tr -d '[:space:]')"
 PACKER_VARS+=-var generic_worker_scripts="$(shell ls -m scripts/generic-worker/* | tr -d '[:space:]')"
 
-ARTIFACTS=packer-artifacts.json files.tar
+ARTIFACTS=packer-artifacts.json files.tar output-vagrant *.log *.pem
 
 build: clean tar validate
-	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) -
+	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -
+
+vagrant: PACKER_ARGS=-only vagrant
+vagrant: build
 
 tar:
 	tar cf files.tar ./files
 
 validate: clean tar
-	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) validate $(PACKER_VARS) -
+	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
 
 debug:
-	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) -debug -
+	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -debug -
 
 clean:
 	rm -rf $(ARTIFACTS)

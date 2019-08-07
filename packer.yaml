@@ -41,6 +41,12 @@ builders:
     ssh_username: ubuntu
     project_id: "{{user `gcp_project_id`}}"
     zone: "{{user `gcp_zone`}}"
+  - type: vagrant
+    box_name: "{{user `base_image_name`}}-{{build_type}}"
+    add_force: true
+    communicator: ssh
+    source_path: ubuntu/bionic64
+    provider: virtualbox
 
 provisioners:
   # files.tar is created by make step
