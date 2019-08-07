@@ -5,8 +5,8 @@
 # Cache objects
 packer_cache/
 
-# For built boxes
-*.box
+# Keys
+*.pem
 
 # Artifacts and outputs
 packer-artifacts.json
@@ -16,6 +16,9 @@ output-*/
 ### Vagrant ###
 # General
 .vagrant/
+
+# For built boxes
+*.box
 
 # Log files (if you are creating logs in debug mode, uncomment this)
 # *.log
