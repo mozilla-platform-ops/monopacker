@@ -15,7 +15,8 @@ sensitive-variables:
   - placeholder_secret
 
 builders:
-  - type: amazon-ebs
+  - name: aws
+    type: amazon-ebs
     ami_name: "{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}"
     instance_type: c5.2xlarge
     # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
@@ -35,7 +36,9 @@ builders:
       most_recent: true
     ssh_username: ubuntu
     region: "{{user `aws_region`}}"
-  - type: googlecompute
+    ami_regions: "us-east-1,us-west-1"
+  - name: gcp
+    type: googlecompute
     image_name: "{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}"
     source_image_family: ubuntu-1804-lts
     ssh_username: ubuntu
