@@ -20,6 +20,10 @@ EOF
 file /usr/local/bin/start-docker-worker
 chmod +x /usr/local/bin/start-docker-worker
 
+# install deps
+cd /home/ubuntu/docker-worker
+yarn install --frozen-lockfile
+
 # worker runner config
 mkdir -p /etc/worker-runner
 cat << EOF > /etc/worker-runner/start-worker.yml
