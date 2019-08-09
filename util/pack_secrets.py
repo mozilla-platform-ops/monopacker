@@ -7,7 +7,7 @@ outfile = "secrets.tar"
 
 if len(sys.argv) < 2:
     print(f'''Usage: {sys.argv[0]} <yaml input filename> [output tar filename]
-{sys.argv[0]} expects a file of the form:
+{sys.argv[0]} expects a path to a file of the form:
 - name: foo
   path: /path/to/foo
   value: what
