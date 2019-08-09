@@ -30,6 +30,17 @@ with open(sys.argv[1], 'r') as f:
     with tarfile.open(outfile, 'w') as tar:
         with tempfile.TemporaryDirectory() as d:
             for secret in secrets:
+                # name is optional
+                if 'name' not in secret:
+                    name = 'unnamed'
+                if 'path' not in secret:
+                    print(
+                        f'Encountered secret {name} without `path` key, exiting.'
+                    )
+                if 'value' not in secret:
+                    print(
+                        f'Encountered secret {name} without `value` key, exiting.'
+                    )
                 path = Path(d + secret['path'])
                 os.makedirs(path.parent, exist_ok=True)
                 with open(path, 'w') as secret_file:

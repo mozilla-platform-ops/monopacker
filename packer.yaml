@@ -68,8 +68,8 @@ provisioners:
   - type: shell
     inline:
       - sudo tar xvf /tmp/secrets.tar -C /
-      - chown root:root -R /etc/taskcluster
-      - chmod 0600 -R /etc/taskcluster
+      - sudo chown root:root -R /etc/taskcluster
+      - sudo chmod 0400 -R /etc/taskcluster/secrets
       # FIXME
       # actually delete, just for testing
       # - rm /tmp/secrets.tar

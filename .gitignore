@@ -15,3 +15,6 @@ packer-artifacts.json
 ### Vagrant ###
 
 output-vagrant/
+
+### Secrets ###
+real_secrets.yaml

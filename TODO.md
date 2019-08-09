@@ -1,4 +1,5 @@
 - [ ] No separation of trusted/untrusted builders
-- [ ] docker-worker/generic-worker scripts are run on all builders
-- [ ] No process to install docker-worker yet
+- [x] docker-worker/generic-worker specific scripts should not be run on all builders
+- [x] No process to install docker-worker yet
 - [ ] Version of docker et al are not specified
+- [ ] Figure out where the line is between scripts that provision files and files that get untarred onto the file system
