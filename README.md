@@ -47,3 +47,27 @@ cat packer.yaml| yq . | packer build -only vagrant -
 # or, using make
 PACKER_LOG=1 make build PACKER_ARGS='-only vagrant'
 ```
+
+#### How are secrets handled?
+
+```
+# create a yaml file of the form:
+
+cat << EOF > fake_secrets.yaml
+- name: foo
+  path: /path/to/foo
+  value: what
+- name: bar
+  path: /path/to/bar
+  value: yeah
+EOF
+
+# creates secrets.tar by default
+./pack_secrets.py fake_secrets.yaml
+
+# note that make handles this for you
+# for a custom secrets file, pass SECRETS_FILE to make:
+make build SECRETS_FILE="/path/to/secrets.yaml"
+
+# by default ./fake_secrets.yaml is used
+```

@@ -11,11 +11,8 @@ variables:
   docker_worker_scripts: ""
   generic_worker_scripts: ""
 
-sensitive-variables:
-  - placeholder_secret
-
 builders:
-  - name: aws
+  - name: docker_worker_aws
     type: amazon-ebs
     ami_name: "{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}"
     instance_type: c5.2xlarge
@@ -36,8 +33,9 @@ builders:
       most_recent: true
     ssh_username: ubuntu
     region: "{{user `aws_region`}}"
-    ami_regions: "us-east-1,us-west-1"
-  - name: gcp
+    # FIXME uncomment when done iterating
+    # ami_regions: "us-east-1,us-west-1"
+  - name: docker_worker_gcp
     type: googlecompute
     image_name: "{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}"
     source_image_family: ubuntu-1804-lts
@@ -57,11 +55,17 @@ provisioners:
   - type: file
     source: ./files.tar
     destination: /tmp/
+  - type: file
+    source: ./secrets.tar
+    destination: /tmp/
   # untar at /
   - type: shell
     # /tmp/files.tar is two levels deep
     inline:
       - sudo tar xvf /tmp/files.tar -C / --strip-components=2
+      - sudo tar xvf /tmp/secrets.tar -C / --strip-components=2
+      - rm /tmp/files.tar
+      - rm /tmp/secrets.tar
   - type: shell
     inline:
       - /usr/bin/cloud-init status --wait
@@ -73,9 +77,15 @@ provisioners:
   - type: shell
     scripts: "{{ user `docker_worker_scripts` }}"
     execute_command: sudo -S sh -c '{{ .Vars }} {{ .Path }}'
+    only:
+      - docker_worker_aws
+      - docker_worker_gcp
+  # FIXME
+  # no builds for this yet
   - type: shell
     scripts: "{{ user `generic_worker_scripts` }}"
     execute_command: sudo -S sh -c '{{ .Vars }} {{ .Path }}'
+    only: []
 
 post-processors:
   - type: manifest

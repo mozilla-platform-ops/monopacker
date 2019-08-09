@@ -1,0 +1,37 @@
+#!/usr/local/bin/python3
+
+import os, sys, tarfile, tempfile, yaml
+from pathlib import Path
+
+outfile = "secrets.tar"
+
+if len(sys.argv) < 2:
+    print(f'''Usage: {sys.argv[0]} <yaml input filename> [output tar filename]
+{sys.argv[0]} expects a file of the form:
+- name: foo
+  path: /path/to/foo
+  value: what
+- name: bar
+  path: /path/to/bar
+  value: yeah
+{sys.argv[0]} outputs a tar archive, the name of which can be optionally supplied.
+''')
+
+# third optional argument
+# is output filename
+if 2 < len(sys.argv):
+    outfile = sys.argv[2]
+
+with open(sys.argv[1], 'r') as f:
+    secrets = yaml.safe_load(f)
+
+    # create a directory structure as defined
+    # by the secrets yaml file
+    with tarfile.open(outfile, 'w') as tar:
+        with tempfile.TemporaryDirectory() as d:
+            for secret in secrets:
+                path = Path(d + secret['path'])
+                os.makedirs(path.parent, exist_ok=True)
+                with open(path, 'w') as secret_file:
+                    secret_file.write(secret['value'])
+                tar.add(path, arcname=secret['path'])
