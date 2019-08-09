@@ -50,22 +50,29 @@ builders:
     provider: virtualbox
 
 provisioners:
-  # files.tar is created by make step
-  # preserves symlinks, merges dirs
+  # created by make tar
   - type: file
     source: ./files.tar
     destination: /tmp/
+  # untar at /
+  - type: shell
+    # files.tar is two levels deep (/tmp/files)
+    inline:
+      - sudo tar xvf /tmp/files.tar -C / --strip-components=2
+      - rm /tmp/files.tar
+  # created by pack_secrets.py, make tar
   - type: file
     source: ./secrets.tar
     destination: /tmp/
   # untar at /
   - type: shell
-    # /tmp/files.tar is two levels deep
     inline:
-      - sudo tar xvf /tmp/files.tar -C / --strip-components=2
-      - sudo tar xvf /tmp/secrets.tar -C / --strip-components=2
-      - rm /tmp/files.tar
-      - rm /tmp/secrets.tar
+      - sudo tar xvf /tmp/secrets.tar -C /
+      - chown root:root -R /etc/taskcluster
+      - chmod 0600 -R /etc/taskcluster
+      # FIXME
+      # actually delete, just for testing
+      # - rm /tmp/secrets.tar
   - type: shell
     inline:
       - /usr/bin/cloud-init status --wait

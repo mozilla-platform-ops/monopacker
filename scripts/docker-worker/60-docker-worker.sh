@@ -46,5 +46,5 @@ ExecStart=/usr/local/bin/start-docker-worker /etc/worker-runner/start-worker.yml
 User=root
 
 [Install]
-RequiredBy=multiuser.target
+RequiredBy=multi-user.target
 EOF
