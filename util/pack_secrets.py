@@ -16,6 +16,7 @@ if len(sys.argv) < 2:
   value: yeah
 {sys.argv[0]} outputs a tar archive, the name of which can be optionally supplied.
 ''')
+    sys.exit(1)
 
 # third optional argument
 # is output filename
