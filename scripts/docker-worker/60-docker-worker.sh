@@ -16,6 +16,9 @@ taskcluster_secrets_dir="/etc/taskcluster/secrets"
 docker_worker_config="/etc/taskcluster/docker-worker/config.yml"
 worker_runner_config="/etc/taskcluster/worker-runner/start-worker.yml"
 
+# worker-runner start-worker binary
+worker_runner="/usr/local/bin/start-worker"
+
 # download docker-worker to this dir
 docker_worker_code="/home/ubuntu/docker-worker"
 
@@ -30,7 +33,7 @@ tar xvf /tmp/docker-worker.tgz -C "${docker_worker_code}" --strip-components 1
 cat << EOF > "${docker_worker_start_script}"
 #!/bin/bash
 set -exv
-/usr/local/bin/start-worker "${worker_runner_config}" 2>&1 | logger --tag docker-worker
+${worker_runner} ${worker_runner_config} 2>&1 | logger --tag docker-worker
 EOF
 file "${docker_worker_start_script}"
 chmod +x "${docker_worker_start_script}"
@@ -46,8 +49,8 @@ dockerWorkerPrivateKey: "${taskcluster_secrets_dir}/worker_private_key"
 ed25519SigningKeyLocation: "${taskcluster_secrets_dir}/worker_cot_key"
 # FIXME what is this?
 ssl:
-    certificate: "${taskcluster_secrets_dir}/worker_public_key"
-    key: "${taskcluster_secrets_dir}/worker_private_key"
+    certificate: "${taskcluster_secrets_dir}/worker_livelog_tls_cert"
+    key: "${taskcluster_secrets_dir}/worker_livelog_tls_key"
 EOF
 
 mkdir -p "$(dirname ${worker_runner_config})"
@@ -57,7 +60,7 @@ provider:
 worker:
     implementation: docker-worker
     path: "${docker_worker_code}"
-    configPath: /etc/taskcluster/docker-worker/worker.cfg
+    configPath: "${docker_worker_config}"
 EOF
 
 cat << EOF > /etc/systemd/system/docker-worker.service
@@ -67,9 +70,11 @@ After=docker.service
 
 [Service]
 Type=simple
-ExecStart=${docker_worker_start_script} ${worker_runner_config} 2>&1 | logger --tag docker-worker
+ExecStart=${docker_worker_start_script}
 User=root
 
 [Install]
 RequiredBy=multi-user.target
 EOF
+
+systemctl enable docker-worker

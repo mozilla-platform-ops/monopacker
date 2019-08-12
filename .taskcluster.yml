@@ -1,0 +1,33 @@
+# The version is always required
+version: 0
+allowPullRequests: public
+# Top level metadata is always required
+metadata:
+  name: "monopacker CI"
+  description: "Runs CI tasks for monopacker"
+  owner: "{{ event.head.user.email }}" # the user who sent the pr/push e-mail will be inserted here
+  source: "{{ event.head.repo.url }}" # the repo where the pr came from will be inserted here
+tasks:
+  - provisionerId: "{{ taskcluster.docker.provisionerId }}"
+    workerType: "{{ taskcluster.docker.workerType }}"
+    metadata:
+      name: "Build Vagrant Box"
+      description: "Builds a vagrant box using packer"
+      owner: "{{ event.head.user.email }}"
+      source: "{{ event.head.repo.url }}"
+    extra:
+      github:
+        # Events that will trigger this task
+        events:
+          - pull_request.opened
+          - pull_request.synchronize
+          - push
+    payload:
+      maxRunTime: 3600
+      image: ubuntu
+      command:
+        - /bin/bash
+        - "--login"
+        - "-cx"
+        - >-
+          true # TODO FIXME

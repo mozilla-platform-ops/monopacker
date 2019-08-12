@@ -11,7 +11,8 @@ The intention here is to create a single Packer + cloud-init configuration set t
 ### Dependencies
 
 - `jq` (`brew install jq`)
-- `yq` (`brew install python-yq`)
+- [`yq`](https://github.com/kislyuk/yq) (`brew install python-yq` or `pip install yq`)
+  - Note: there are two `yq`'s in the wild. This is confusing.
 - `make`
 - `packer` (`go get github.com/hashicorp/packer`)
   - Note: I had issues using the `vagrant` builder out of the box in recent versions
@@ -34,6 +35,8 @@ make build
 PACKER_LOG=1 make build
 # pass additional args to packer
 make build PACKER_ARGS="-only vagrant"
+# same as above
+make vagrant
 ```
 
 ### FAQ

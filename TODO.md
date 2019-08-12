@@ -3,3 +3,4 @@
 - [x] No process to install docker-worker yet
 - [ ] Version of docker et al are not specified
 - [ ] Figure out where the line is between scripts that provision files and files that get untarred onto the file system
+- [ ] Consolidate variables to a globals / variables file where it makes sense
