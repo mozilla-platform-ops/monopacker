@@ -6,33 +6,58 @@ set -exv
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
 . ${helpers_dir}/*.sh
 
-# download docker-worker to /home/ubuntu/docker-worker
-docker_worker_version="v201908071906"
-retry curl -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/docker-worker/archive/${docker_worker_version}.tar.gz"
-mkdir -p /home/ubuntu/docker-worker
-tar xvf /tmp/docker-worker.tgz -C /home/ubuntu/docker-worker --strip-components 1
+## vars
+# TODO consolidate these into a globals files
+# secrets
+taskcluster_secrets_dir="/etc/taskcluster/secrets"
 
-cat << EOF > /usr/local/bin/start-docker-worker
+# docker-worker and
+# worker-runner config
+docker_worker_config="/etc/taskcluster/docker-worker/config.yml"
+worker_runner_config="/etc/taskcluster/worker-runner/start-worker.yml"
+
+# download docker-worker to this dir
+docker_worker_code="/home/ubuntu/docker-worker"
+
+# from worker-runner download location
+docker_worker_start_script="/usr/local/bin/start-docker-worker"
+docker_worker_version="v201908071906"
+
+retry curl -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/docker-worker/archive/${docker_worker_version}.tar.gz"
+mkdir -p "${docker_worker_code}"
+tar xvf /tmp/docker-worker.tgz -C "${docker_worker_code}" --strip-components 1
+
+cat << EOF > "${docker_worker_start_script}"
 #!/bin/bash
 set -exv
-/usr/local/bin/start-worker /etc/worker-runner/start-worker.yml 2>&1 | logger --tag docker-worker
+/usr/local/bin/start-worker "${worker_runner_config}" 2>&1 | logger --tag docker-worker
 EOF
-file /usr/local/bin/start-docker-worker
-chmod +x /usr/local/bin/start-docker-worker
+file "${docker_worker_start_script}"
+chmod +x "${docker_worker_start_script}"
 
 # install deps
-cd /home/ubuntu/docker-worker
+cd "${docker_worker_code}"
 yarn install --frozen-lockfile
 
-# worker runner config
-mkdir -p /etc/worker-runner
-cat << EOF > /etc/worker-runner/start-worker.yml
+# FIXME TODO
+mkdir -p "$(dirname ${docker_worker_config})"
+cat << EOF > "${docker_worker_config}"
+dockerWorkerPrivateKey: "${taskcluster_secrets_dir}/worker_private_key"
+ed25519SigningKeyLocation: "${taskcluster_secrets_dir}/worker_cot_key"
+# FIXME what is this?
+ssl:
+    certificate: "${taskcluster_secrets_dir}/worker_public_key"
+    key: "${taskcluster_secrets_dir}/worker_private_key"
+EOF
+
+mkdir -p "$(dirname ${worker_runner_config})"
+cat << EOF > "${worker_runner_config}"
 provider:
     providerType: aws-provisioner
 worker:
     implementation: docker-worker
-    path: /home/ubuntu/docker-worker
-    configPath: /home/ubuntu/worker.cfg
+    path: "${docker_worker_code}"
+    configPath: /etc/taskcluster/docker-worker/worker.cfg
 EOF
 
 cat << EOF > /etc/systemd/system/docker-worker.service
@@ -42,7 +67,7 @@ After=docker.service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/start-docker-worker /etc/worker-runner/start-worker.yml 2>&1 | logger --tag docker-worker
+ExecStart=${docker_worker_start_script} ${worker_runner_config} 2>&1 | logger --tag docker-worker
 User=root
 
 [Install]
