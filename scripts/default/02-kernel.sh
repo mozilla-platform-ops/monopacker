@@ -6,4 +6,7 @@ set -exv
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
 . ${helpers_dir}/*.sh
 
-pip install python-statsd
+echo "new kernel: $(uname -r)"
+
+# verify kernel crash dump is ready to go
+kdump-config show

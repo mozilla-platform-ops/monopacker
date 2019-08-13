@@ -6,7 +6,7 @@ ENV GOPATH=/go
 RUN mkdir ${GOPATH}
 ENV PATH=${PATH}:${GOPATH}/bin:/usr/local/bin
 
-# prevents interactive vagrant installation
+# prevents interactive installation
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # needed for add-apt-repository
