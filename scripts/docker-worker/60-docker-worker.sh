@@ -45,8 +45,8 @@ yarn install --frozen-lockfile
 # FIXME TODO
 mkdir -p "$(dirname ${docker_worker_config})"
 cat << EOF > "${docker_worker_config}"
-dockerWorkerPrivateKey: "${taskcluster_secrets_dir}/worker_private_key"
-ed25519SigningKeyLocation: "${taskcluster_secrets_dir}/worker_cot_key"
+dockerWorkerPrivateKey: "${taskcluster_secrets_dir}/worker_cot_key"
+ed25519SigningKeyLocation: "${taskcluster_secrets_dir}/worker_ed25519_cot_key"
 # FIXME what is this?
 ssl:
     certificate: "${taskcluster_secrets_dir}/worker_livelog_tls_cert"
