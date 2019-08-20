@@ -14,10 +14,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Update kernel
 # We install the generic kernel because it has the V4L2 driver
-# KERNEL_VERSION=4.15.0-58-generic
+KERNEL_VERSION=4.15.0-58-generic
 
 # testing updating AWS kernel and adding extras package
-KERNEL_VERSION=4.15.0-1045-aws
+# KERNEL_VERSION=4.15.0-1045-aws
 
 retry apt update
 
