@@ -74,3 +74,7 @@ make build SECRETS_FILE="/path/to/secrets.yaml"
 
 # by default ./fake_secrets.yaml is used
 ```
+
+### I'm getting "Failed to parse template: Error parsing JSON: invalid character 'E' looking for beginning of value"
+
+You have the wrong version of `yq` installed. The correct one can be found [here](https://github.com/kislyuk/yq). See the note under Dependencies.
