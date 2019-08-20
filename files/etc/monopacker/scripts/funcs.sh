@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -exv
+set -ev
+set +x
 
 log_dir=${MONOPACKER_LOGS_DIR:-"/var/log/monopacker/scripts"}
 
@@ -30,3 +31,5 @@ function log_execution() {
     mkdir -p ${log_dir} || true
     exec &> ${log_dir}/$(basename -a "${1}").log
 }
+
+set -x

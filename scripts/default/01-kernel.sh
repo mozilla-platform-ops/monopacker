@@ -14,7 +14,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Update kernel
 # We install the generic kernel because it has the V4L2 driver
-KERNEL_VERSION=4.15.0-58-generic
+# KERNEL_VERSION=4.15.0-58-generic
+
+# testing updating AWS kernel and adding extras package
+KERNEL_VERSION=4.15.0-1045-aws
 
 retry apt update
 
@@ -39,7 +42,6 @@ retry apt install -y \
 # kernel debug
 grep 'USE_KDUMP' /etc/default/kdump-tools
 echo 'USE_KDUMP=1' >> /etc/default/kdump-tools
-kdump-config show
 
 # FIXME does not exist?
 # shown here https://launchpad.net/ubuntu/+source/linux-signed/4.15.0-58.64
