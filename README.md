@@ -78,3 +78,9 @@ make build SECRETS_FILE="/path/to/secrets.yaml"
 ### I'm getting "Failed to parse template: Error parsing JSON: invalid character 'E' looking for beginning of value"
 
 You have the wrong version of `yq` installed. The correct one can be found [here](https://github.com/kislyuk/yq). See the note under Dependencies.
+
+### Why are Packer communicator (SSH) timeouts so long?
+
+AWS Metal instances take a _long_ time to boot. See [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/general-purpose-instances.html).
+
+> Launching a bare metal instance boots the underlying server, which includes verifying all hardware and firmware components. This means that it can take 20 minutes from the time the instance enters the running state until it becomes available over the network.

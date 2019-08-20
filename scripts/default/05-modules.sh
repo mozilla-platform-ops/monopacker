@@ -20,6 +20,4 @@ echo "options v4l2loopback devices=100" > /etc/modprobe.d/v4l2loopback.conf
 echo "videodev" | tee --append /etc/modules
 echo "v4l2loopback" | tee --append /etc/modules
 
-# Configure AWS / Nitro modules
-echo "ena" | tee --append /etc/modules
 

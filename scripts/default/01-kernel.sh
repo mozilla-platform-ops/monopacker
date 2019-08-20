@@ -37,11 +37,16 @@ retry apt install -y \
     linux-modules-$KERNEL_VERSION \
     linux-modules-extra-$KERNEL_VERSION \
     linux-headers-$KERNEL_VERSION \
-    linux-crashdump
+    linux-crashdump \
+    kmod
 
 # kernel debug
 grep 'USE_KDUMP' /etc/default/kdump-tools
 echo 'USE_KDUMP=1' >> /etc/default/kdump-tools
+
+# Configure AWS / Nitro modules
+echo "ena" | tee --append /etc/modules
+echo "nvme" | tee --append /etc/modules
 
 # FIXME does not exist?
 # shown here https://launchpad.net/ubuntu/+source/linux-signed/4.15.0-58.64
