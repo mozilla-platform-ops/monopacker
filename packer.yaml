@@ -15,9 +15,12 @@ builders:
   - name: docker_worker_aws
     type: amazon-ebs
     communicator: ssh
-    # ssh_timeout: 15m
+    # for initial connect
+    ssh_timeout: 20m
+    # for reboots
+    ssh_read_write_timeout: 20m
     ami_name: "{{user `base_image_name`}}-{{build_type}}-{{isotime | clean_resource_name}}"
-    instance_type: c5.2xlarge
+    instance_type: i3.metal
     # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
     launch_block_device_mappings:
       - device_name: /dev/sda1
@@ -85,6 +88,8 @@ provisioners:
     execute_command: sudo -S sh -c '{{ .Vars }} {{ .Path }}'
     # we reboot the host to update the kernel
     expect_disconnect: true
+    # metal is slow to reboot
+    start_retry_timeout: 20m
   - type: shell
     scripts: "{{ user `docker_worker_scripts` }}"
     execute_command: sudo -S sh -c '{{ .Vars }} {{ .Path }}'
