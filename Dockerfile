@@ -1,6 +1,6 @@
 FROM ubuntu
 
-LABEL maintainer="miles@milescrabilll.com"
+LABEL maintainer="miles@milescrabill.com"
 
 ENV GOPATH=/go
 RUN mkdir ${GOPATH}
@@ -25,13 +25,10 @@ RUN apt update && \
 
 RUN pip3 install pyyaml yq
 
-# we need a fixed version of packer
+# we need an up to date version of packer
 # RUN go get -u github.com/hashicorp/packer
 RUN go get -u github.com/hashicorp/packer && \
     cd ${GOPATH}/src/github.com/hashicorp/packer && \
-    git remote add milescrabill https://github.com/milescrabill/packer.git && \
-    git fetch milescrabill && \
-    git checkout fix-vagrant-builder-basebox-sourcebox && \
     go install .
 
 WORKDIR /monopacker

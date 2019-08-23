@@ -8,7 +8,7 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - Clarity: it should be clear which steps run on base images and which steps run on derived images
 - Portability: the configuration should be generic enough to be run beyond Firefox CI's worker deployment
 
-### Dependencies
+### Dependencies (alternatively, use docker)
 
 - `jq` (`brew install jq`)
 - [`yq`](https://github.com/kislyuk/yq) (`brew install python-yq` or `pip install yq`)
@@ -26,7 +26,7 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - If building Google Cloud Images you should have:
   > A JSON file (Service Account) whose path is specified by the GOOGLE_APPLICATION_CREDENTIALS environment variable. [(see here)](https://www.packer.io/docs/builders/googlecompute.html#precedence-of-authentication-methods)
 
-### Usage
+### Usage (non-docker)
 
 ```
 # packer build
@@ -37,6 +37,19 @@ PACKER_LOG=1 make build
 make build PACKER_ARGS="-only vagrant"
 # same as above
 make vagrant
+```
+
+### Usage (docker)
+
+#### Note: vagrant builds are unsupported in Docker, see FAQ
+
+```
+# builds and tags a docker container to run monopacker in
+# monopacker:build by default, can override DOCKER_IMAGE make var
+make dockervalidate
+
+# look ma, no dependencies!
+make dockerbuild PACKER_ARGS='-only docker_worker_aws' SECRETS_FILE=./real_secrets.yaml
 ```
 
 ### FAQ
@@ -84,3 +97,9 @@ You have the wrong version of `yq` installed. The correct one can be found [here
 AWS Metal instances take a _long_ time to boot. See [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/general-purpose-instances.html).
 
 > Launching a bare metal instance boots the underlying server, which includes verifying all hardware and firmware components. This means that it can take 20 minutes from the time the instance enters the running state until it becomes available over the network.
+
+### Why can't I build Vagrant VMs in Docker?
+
+You can technically do this, but only on an OS that runs Docker natively.
+macOS runs Docker in a Linux VM under the hood, which means you can't do this easily.
+Mostly, I just haven't tried to make this work.
