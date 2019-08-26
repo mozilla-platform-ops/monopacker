@@ -56,7 +56,7 @@ make dockerbuild PACKER_ARGS='-only docker_worker_aws' SECRETS_FILE=./real_secre
 
 ```
 # example using only vagrant builder
-cat packer.yaml| yq . | packer build -only vagrant -
+cat ./packer.yaml | ./util/yaml_to_json.py | packer build -only vagrant -
 
 # or, using make
 PACKER_LOG=1 make build PACKER_ARGS='-only vagrant'
