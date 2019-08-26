@@ -1,0 +1,55 @@
+---
+
+builders:
+{% for builder in builders %}
+  {%- set name = builder.name %}
+  {%- filter indent(width=2, first=True) %}
+    {%- include (builder.template + ".jinja2") %}
+  {%- endfilter %}
+{%- endfor %}
+
+provisioners:
+  # created by make tar
+  - type: file
+    source: ./files.tar
+    destination: /tmp/
+  # untar at /
+  - type: shell
+    # files.tar is two levels deep (/tmp/files)
+    inline:
+      - sudo tar xvf /tmp/files.tar -C / --strip-components=2
+      - rm /tmp/files.tar
+  # created by pack_secrets.py, make tar
+  - type: file
+    source: ./secrets.tar
+    destination: /tmp/
+  # untar at /
+  - type: shell
+    inline:
+      - sudo tar xvf /tmp/secrets.tar -C /
+      - sudo chown root:root -R /etc/taskcluster
+      - sudo chmod 0400 -R /etc/taskcluster/secrets
+      # FIXME
+      # actually delete, just for testing
+      # - rm /tmp/secrets.tar
+  - type: shell
+    inline:
+      - /usr/bin/cloud-init status --wait
+  # post cloud-init
+  # run all scripts as root
+  {% for builder in builders %}
+  - type: shell
+    scripts: {{builder.scripts}}
+    execute_command: {{execute_command}}
+    # we reboot the host to update the kernel
+    expect_disconnect: true
+    # metal is slow to reboot
+    start_retry_timeout: {{ssh_timeout}}
+    only: {{builder.name}}
+  {% endfor %}
+
+
+post-processors:
+  - type: manifest
+    output: packer-artifacts.json
+    strip_path: true

@@ -1,0 +1,12 @@
+template: amazon_ebs
+
+var_files:
+  - base
+  - amazon_ebs
+
+override_vars:
+  foo: bar
+
+script_directories:
+  - default
+  - docker-worker

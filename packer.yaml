@@ -6,7 +6,7 @@ variables:
   gcp_zone: us-west1-a
   placeholder_secret: ""
   # set by make
-  # comma separated strings become lists
+  # packer turns comma separated strings into lists
   default_scripts: ""
   docker_worker_scripts: ""
   generic_worker_scripts: ""
