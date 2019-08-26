@@ -69,3 +69,7 @@ debug:
 
 clean:
 	rm -rf $(ARTIFACTS)
+
+templatepacker: WORKER_TYPES+=gecko-1-miles-test
+templatepacker:
+	./util/template_packer.py packer.yaml.jinja2 $(WORKER_TYPES) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -

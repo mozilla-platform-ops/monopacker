@@ -34,7 +34,7 @@ def get_files_from_subdirs(*args, root_dir=".", glob="*"):
         if subdir.exists():
             # all .sh files in subdir in sorted order
             # essentially what `ls` does
-            files.extend(sorted(list([q.name for q in subdir.glob(glob)])))
+            files.extend(sorted(list([q.as_posix() for q in subdir.glob(glob)])))
         else:
             print(f"subdirectory {subdir.name} does not exist")
             sys.exit(1)
@@ -107,6 +107,10 @@ for worker_type in worker_types:
     if "script_directories" in worker_type_config:
         script_directories = worker_type_config["script_directories"]
         exit_if_type_mismatch(script_directories, list)
+    else:
+        print(
+            f"<warning> Missing `script_directories` key for worker_type {worker_type}"
+        )
 
     # var_files should be a list of yaml files in ./template/vars
     if "var_files" in worker_type_config:
@@ -114,6 +118,8 @@ for worker_type in worker_types:
         exit_if_type_mismatch(var_files, list)
         var_files = [Path(var_files_dir) / (file + ".yaml") for file in var_files]
         variables = get_vars_from_files(var_files)
+    else:
+        print(f"<warning> Missing `var_files` key for worker_type {worker_type}")
 
     # overwrites previously defined keys from var_files
     if "override_vars" in worker_type_config:
@@ -125,11 +131,14 @@ for worker_type in worker_types:
     if "template" in worker_type_config:
         builder_template = worker_type_config["template"]
         exit_if_type_mismatch(builder_template, str)
+    else:
+        print(f"Missing `template` key for worker_type {worker_type}")
+        sys.exit(1)
 
     builders.append(
         {
             "name": worker_type,
-            "template": builder_template if builder_template else worker_type,
+            "template": builder_template,
             "scripts": get_files_from_subdirs(
                 *script_directories, root_dir="./scripts", glob="*.sh"
             ),

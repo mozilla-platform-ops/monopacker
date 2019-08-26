@@ -45,7 +45,7 @@ provisioners:
     expect_disconnect: true
     # metal is slow to reboot
     start_retry_timeout: {{ssh_timeout}}
-    only: {{builder.name}}
+    only: ["{{builder.name}}"]
   {%- endfor %}
 
 post-processors:
