@@ -6,6 +6,12 @@ INPUT_FILE=./packer.yaml
 PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
+# for jinja2 templating
+TEMPLATER=./util/template_packer.py
+TEMPLATE=./packer.yaml.jinja2
+# default
+WORKER_TYPES=gecko-1-miles-test
+
 FILES_TAR=files.tar
 SECRETS_FILE=fake_secrets.yaml
 SECRETS_TAR=secrets.tar
@@ -70,6 +76,5 @@ debug:
 clean:
 	rm -rf $(ARTIFACTS)
 
-templatepacker: WORKER_TYPES+=gecko-1-miles-test
 templatepacker:
-	./util/template_packer.py packer.yaml.jinja2 $(WORKER_TYPES) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
+	$(TEMPLATER) $(TEMPLATE) $(WORKER_TYPES) > packer.yaml
