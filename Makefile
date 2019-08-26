@@ -9,8 +9,9 @@ PACK_SECRETS=./util/pack_secrets.py
 # for jinja2 templating
 TEMPLATER=./util/template_packer.py
 TEMPLATE=./packer.yaml.jinja2
+
 # default
-BUILDERS=gecko-1-miles-test
+BUILDERS=docker_worker_aws docker_worker_gcp
 
 FILES_TAR=files.tar
 SECRETS_FILE=fake_secrets.yaml

@@ -92,7 +92,7 @@ builders_dir = "./builders"
 var_files_dir = "./template/vars"
 builder_template_dir = "./template/builders"
 variables: Dict[str, Any] = {}
-builders: Sequence[Dict[str, str]] = []
+templated_builders: Sequence[Dict[str, str]] = []
 
 for builder in builders:
     script_directories: Sequence[str] = []
@@ -131,7 +131,7 @@ for builder in builders:
         print(f"Missing `template` key for builder {builder}")
         sys.exit(1)
 
-    builders.append(
+    templated_builders.append(
         {
             "name": builder,
             "template": builder_template,
@@ -142,7 +142,7 @@ for builder in builders:
     )
 
 # cannot be overriden
-variables["builders"] = builders
+variables["builders"] = templated_builders
 
 with open(packer_template, "r") as f:
     packer_template_str = f.read()

@@ -1,0 +1,7 @@
+- name: docker_worker_gcp
+  type: googlecompute
+  image_name: {{base_image_name}}-{{image_suffix}}
+  source_image_family: {{source_image_family}}
+  ssh_username: ubuntu
+  project_id: {{project_id}}
+  zone: {{zone}}
