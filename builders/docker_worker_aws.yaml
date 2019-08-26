@@ -4,8 +4,8 @@ var_files:
   - base
   - amazon_ebs
 
-override_vars:
-  instance_type: m5.metal
+# override_vars:
+#   instance_type: m5.metal
 
 script_directories:
   - default

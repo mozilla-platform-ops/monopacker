@@ -77,67 +77,63 @@ def exit_if_type_mismatch(variable, expected_type):
         sys.exit(1)
 
 
-description = """Expects a jinja2 templated packer.yaml and the name of one or more worker_types.
-Each worker_type must have a corresponding yaml file in `./worker_types`.
-ex: worker_type gecko-1-miles-test has is configured at `./worker_types/gecko-1-miles-test.yaml`
+description = """Expects a jinja2 templated packer.yaml and the name of one or more builders.
+Each builder must have a corresponding yaml file in `./builders`.
+ex: builder gecko-1-miles-test has is configured at `./builders/gecko-1-miles-test.yaml`
 Outputs a packer JSON template to stdout."""
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument("packer_template", type=str, help="packer manifest to template")
-parser.add_argument(
-    "worker_types", type=str, nargs="+", help="list of worker_types to build"
-)
+parser.add_argument("builders", type=str, nargs="+", help="list of builders to build")
 args = parser.parse_args()
 
 packer_template = args.packer_template
-worker_types = args.worker_types
-worker_types_dir = "./worker_types"
+builders = args.builders
+builders_dir = "./builders"
 var_files_dir = "./template/vars"
 builder_template_dir = "./template/builders"
 variables: Dict[str, Any] = {}
 builders: Sequence[Dict[str, str]] = []
 
-for worker_type in worker_types:
+for builder in builders:
     script_directories: Sequence[str] = []
     builder_template = ""
 
-    worker_type_config_file = worker_types_dir + "/" + worker_type + ".yaml"
-    worker_type_config = load_yaml_from_file(worker_type_config_file)
+    builder_config_file = builders_dir + "/" + builder + ".yaml"
+    builder_config = load_yaml_from_file(builder_config_file)
 
     # script_directories should be a list of yaml files in ./template/vars
-    if "script_directories" in worker_type_config:
-        script_directories = worker_type_config["script_directories"]
+    if "script_directories" in builder_config:
+        script_directories = builder_config["script_directories"]
         exit_if_type_mismatch(script_directories, list)
     else:
-        print(
-            f"<warning> Missing `script_directories` key for worker_type {worker_type}"
-        )
+        print(f"<warning> Missing `script_directories` key for builder {builder}")
 
     # var_files should be a list of yaml files in ./template/vars
-    if "var_files" in worker_type_config:
-        var_files = worker_type_config["var_files"]
+    if "var_files" in builder_config:
+        var_files = builder_config["var_files"]
         exit_if_type_mismatch(var_files, list)
         var_files = [Path(var_files_dir) / (file + ".yaml") for file in var_files]
         variables = get_vars_from_files(var_files)
     else:
-        print(f"<warning> Missing `var_files` key for worker_type {worker_type}")
+        print(f"<warning> Missing `var_files` key for builder {builder}")
 
     # overwrites previously defined keys from var_files
-    if "override_vars" in worker_type_config:
-        override_vars = worker_type_config["override_vars"]
+    if "override_vars" in builder_config:
+        override_vars = builder_config["override_vars"]
         exit_if_type_mismatch(override_vars, dict)
         for k, v in override_vars.items():
             variables[k] = v
 
-    if "template" in worker_type_config:
-        builder_template = worker_type_config["template"]
+    if "template" in builder_config:
+        builder_template = builder_config["template"]
         exit_if_type_mismatch(builder_template, str)
     else:
-        print(f"Missing `template` key for worker_type {worker_type}")
+        print(f"Missing `template` key for builder {builder}")
         sys.exit(1)
 
     builders.append(
         {
-            "name": worker_type,
+            "name": builder,
             "template": builder_template,
             "scripts": get_files_from_subdirs(
                 *script_directories, root_dir="./scripts", glob="*.sh"

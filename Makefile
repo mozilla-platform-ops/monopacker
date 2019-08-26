@@ -10,7 +10,7 @@ PACK_SECRETS=./util/pack_secrets.py
 TEMPLATER=./util/template_packer.py
 TEMPLATE=./packer.yaml.jinja2
 # default
-WORKER_TYPES=gecko-1-miles-test
+BUILDERS=gecko-1-miles-test
 
 FILES_TAR=files.tar
 SECRETS_FILE=fake_secrets.yaml
@@ -77,4 +77,4 @@ clean:
 	rm -rf $(ARTIFACTS)
 
 templatepacker:
-	$(TEMPLATER) $(TEMPLATE) $(WORKER_TYPES) > packer.yaml
+	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
