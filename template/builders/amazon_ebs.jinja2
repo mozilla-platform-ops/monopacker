@@ -5,7 +5,7 @@
   ssh_timeout: {{ssh_timeout}}
   # for reboots
   ssh_read_write_timeout: {{ssh_timeout}}
-  ami_name: "{{base_image_name}}-{{image_suffix}}
+  ami_name: {{base_image_name}}-{{image_suffix}}
   instance_type: {{instance_type}}
   # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
   launch_block_device_mappings:
@@ -13,10 +13,10 @@
       volume_size: {{volume_size}}
       volume_type: gp2
       delete_on_termination: true
-  source_ami_filter: {{source_ami_filter}}
+  source_ami_filter:
     filters:
       virtualization-type: hvm
-      name:
+      name: {{source_ami_filter}}
       root-device-type: ebs
     owners: {{source_ami_owners}}
     most_recent: true

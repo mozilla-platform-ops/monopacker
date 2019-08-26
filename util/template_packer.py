@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, argparse, yaml
+import sys, argparse, json
+from pathlib import Path
+from typing import Any, Dict, Sequence
+
 from jinja2 import (
     Environment,
     FileSystemLoader,
@@ -8,8 +11,10 @@ from jinja2 import (
     TemplateError,
     TemplateSyntaxError,
 )
-from pathlib import Path
-from typing import Any, Dict, Sequence
+
+from ruamel.yaml import YAML
+
+yaml = YAML(typ="safe")
 
 
 def get_files_from_subdirs(*args, root_dir=".", glob="*"):
@@ -40,7 +45,7 @@ def load_yaml_from_file(filename: str):
     p = Path(filename)
     if p.exists():
         with open(filename, "r") as f:
-            return yaml.safe_load(f)
+            return yaml.load(f)
     else:
         print(f"file not found: {p.name}")
         sys.exit(1)
@@ -72,21 +77,15 @@ def exit_if_type_mismatch(variable, expected_type):
         sys.exit(1)
 
 
-if len(sys.argv) < 3:
-    print(
-        f"""Usage: {sys.argv[0]} <jinja2 template> <worker_type> [worker_type...]
-{sys.argv[0]} expects a jinja2 templated packer.yaml and the name of one or more worker_types
-              each worker_type must have a corresponding yaml file in `./worker_types`
-              ex: worker_type gecko-1-miles-test has is configured at `./worker_types/gecko-1-miles-test.yaml`
-{sys.argv[0]} outputs a packer JSON template to stdout
-"""
-    )
-    sys.exit(1)
-
-description = "templates packer"
-parser = argparse.ArgumentParser(description)
-parser.add_argument("packer_template", type=str, help="source packer template")
-parser.add_argument("worker_types", type=str, nargs="+", help="worker_type to build")
+description = """Expects a jinja2 templated packer.yaml and the name of one or more worker_types.
+Each worker_type must have a corresponding yaml file in `./worker_types`.
+ex: worker_type gecko-1-miles-test has is configured at `./worker_types/gecko-1-miles-test.yaml`
+Outputs a packer JSON template to stdout."""
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument("packer_template", type=str, help="packer manifest to template")
+parser.add_argument(
+    "worker_types", type=str, nargs="+", help="list of worker_types to build"
+)
 args = parser.parse_args()
 
 packer_template = args.packer_template
@@ -142,11 +141,10 @@ variables["builders"] = builders
 
 with open(packer_template, "r") as f:
     packer_template_str = f.read()
-
 try:
     e = Environment(loader=FileSystemLoader([builder_template_dir]))
     t = e.from_string(packer_template_str)
-    print(t.render(variables))
+    output = t.render(variables)
 except TemplateNotFound as err:
     print(f"Template not found: {err.message}")
     sys.exit(1)
@@ -159,3 +157,7 @@ except TemplateError as err:
     print(f"Error for template {packer_template}, {err.message}")
     sys.exit(1)
 
+# output needs to be valid yaml
+data = yaml.load(output)
+# convert to json for packer
+print(json.dumps(data))

@@ -7,11 +7,10 @@ verify_ssl = true
 black = "*"
 
 [packages]
-pyyaml = "*"
 jinja2 = "*"
-
-[requires]
-python_version = "3.7"
+ruamel-yaml = "*"
+ruamel-yaml-cmd = "*"
+awscli = "*"
 
 [pipenv]
 allow_prereleases = true

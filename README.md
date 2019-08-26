@@ -10,13 +10,11 @@ The intention here is to create a single Packer + cloud-init configuration set t
 
 ### Dependencies (alternatively, use docker)
 
-- `jq` (`brew install jq`)
-- [`yq`](https://github.com/kislyuk/yq) (`brew install python-yq` or `pip install yq`)
-  - Note: there are two `yq`'s in the wild. This is confusing.
+- pipenv
+  - Note: you can install all python dependencies using pipenv (`pipenv install`)
+  - If you do that, you probably want to be in a `pipenv shell`
 - `make`
 - `packer` (`go get github.com/hashicorp/packer`)
-  - Note: I had issues using the `vagrant` builder out of the box in recent versions
-  - I was able to get things working using a build of packer off of https://github.com/hashicorp/packer/pull/7957
 - `vagrant`
 
 ### Pre-requisites
@@ -87,10 +85,6 @@ make build SECRETS_FILE="/path/to/secrets.yaml"
 
 # by default ./fake_secrets.yaml is used
 ```
-
-### I'm getting "Failed to parse template: Error parsing JSON: invalid character 'E' looking for beginning of value"
-
-You have the wrong version of `yq` installed. The correct one can be found [here](https://github.com/kislyuk/yq). See the note under Dependencies.
 
 ### Why are Packer communicator (SSH) timeouts so long?
 

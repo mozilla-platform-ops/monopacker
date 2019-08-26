@@ -1,6 +1,7 @@
 # adapted from https://www.andrewpage.me/infrastructure/2018/05/11/simplify-packer-configuration-with-yaml.html
 
-TRANSFORMER=yq .
+# YAML => JSON
+TRANSFORMER=./util/yaml_to_json.py
 INPUT_FILE=./packer.yaml
 PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py

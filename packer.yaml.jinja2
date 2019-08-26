@@ -3,7 +3,7 @@
 builders:
 {% for builder in builders %}
   {%- set name = builder.name %}
-  {%- filter indent(width=2, first=True) %}
+  {% filter indent(width=2, first=False) %}
     {%- include (builder.template + ".jinja2") %}
   {%- endfilter %}
 {%- endfor %}
@@ -37,7 +37,7 @@ provisioners:
       - /usr/bin/cloud-init status --wait
   # post cloud-init
   # run all scripts as root
-  {% for builder in builders %}
+  {%- for builder in builders %}
   - type: shell
     scripts: {{builder.scripts}}
     execute_command: {{execute_command}}
@@ -46,8 +46,7 @@ provisioners:
     # metal is slow to reboot
     start_retry_timeout: {{ssh_timeout}}
     only: {{builder.name}}
-  {% endfor %}
-
+  {%- endfor %}
 
 post-processors:
   - type: manifest
