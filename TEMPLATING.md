@@ -1,6 +1,6 @@
-#### General guidance
+## General guidance
 
-#### How does templating work?
+### How does templating work?
 
 Monopacker does things in the order you specify.
 When you specify `script_directories`, all scripts in all of those directories are
@@ -31,7 +31,7 @@ will be overwritten by each subsequent file as it is loaded.
 
 `override_vars`, as the name implies, override any variables specified in `var_files`.
 
-#### Adding a new builder
+### Adding a new builder
 
 A builder is defined by a YAML file in the `./builders` directory.
 The builder's YAML file must specify a `template`, which corresponds
@@ -81,9 +81,9 @@ In summary: adding a builder is as simple as adding a YAML file, specifying a te
 and making sure that the template's variables are all accounted for by a combination of
 `var_files` and `override_vars`.
 
-### FAQ
+## FAQ
 
-#### I'm getting `did not find expected key` in my template
+### I'm getting `did not find expected key` in my template
 
 You might be using `{{foo}}` syntax to reference a variable that does not exist (in this case, foo).
 If you're trying to specify variable that Packer will supply, make sure your value is wrapped in quotes.
