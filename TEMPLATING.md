@@ -31,7 +31,7 @@ will be overwritten by each subsequent file as it is loaded.
 
 `override_vars`, as the name implies, override any variables specified in `var_files`.
 
-#### Adding a new templated builder
+#### Adding a new builder
 
 A builder is defined by a YAML file in the `./builders` directory.
 The builder's YAML file must specify a `template`, which corresponds
@@ -95,3 +95,11 @@ A number of things could be going wrong here.
 Ensure that the builder template properly
 references all variables as being namespaced under `builder.vars` and that your `var_files`
 and `override_vars` do _not_ have any namespacing. See above for a more thorough description.
+
+#### Adding a new builder template
+
+In the unlikely scenario that you want to add an entirely new builder template
+simply create a `.jinja2` file with the name of your choice under `./template/builders`.
+
+Ensure that your builder template has a `name` key, as this is how `monopacker` templating
+maps `builders` to `provisioners` in `packer.yaml`.

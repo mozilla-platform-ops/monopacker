@@ -137,7 +137,6 @@ for builder in builders:
     # for variables, scripts, template, etc.
     templated_builders.append(
         {
-            "name": builder,
             "template": builder_template,
             "vars": {"name": builder, **builder_vars},
             "scripts": get_files_from_subdirs(
