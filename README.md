@@ -73,7 +73,7 @@ make dockerbuild INPUT_FILE=packer.yaml
 
 ### Templating packer.yaml and templated builders
 
-See [TEMPLATING.md](./templating.md) for information, another FAQ, and more.
+See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
 
 ### FAQ
 
