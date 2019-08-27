@@ -1,0 +1,5 @@
+---
+source_path: ubuntu/bionic64
+provider: virtualbox
+# packer builder does not have clean_resource_name function
+image_suffix: "{{build_type}}-{{isotime}}"

@@ -5,6 +5,9 @@
 # Cache objects
 packer_cache/
 
+# We generate packer.yaml
+packer.yaml
+
 # Keys
 *.pem
 

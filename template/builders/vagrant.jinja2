@@ -1,0 +1,7 @@
+  - name: {{builder.vars.name}}
+    type: vagrant
+    box_name: {{builder.vars.base_image_name}}-{{builder.vars.image_suffix}}
+    add_force: true
+    communicator: ssh
+    source_path: {{builder.vars.source_path}}
+    provider: {{builder.vars.provider}}

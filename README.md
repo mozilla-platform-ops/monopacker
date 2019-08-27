@@ -50,21 +50,65 @@ make dockervalidate
 make dockerbuild PACKER_ARGS='-only docker_worker_aws' SECRETS_FILE=./real_secrets.yaml
 ```
 
+### Templating packer.yaml for your builders
+
+```
+# generate packer.yaml from packer.yaml.jinja2
+make templatepacker
+
+# this runs ./util/template_packer.py
+# by default, the BUILDERS arg to the Makefile
+# templates certain builders
+
+# you can control which builders are templated:
+make templatepacker BUILDERS=docker_worker_aws
+
+# if your builders are configured properly
+# a packer.yaml will be generated for your builders
+# then you can run normal monopacker Makefile directives:
+
+# note that for now, packer.yaml.old is default
+make dockerbuild INPUT_FILE=packer.yaml
+```
+
+### Templating packer.yaml and templated builders
+
+See [TEMPLATING.md](./templating.md) for information, another FAQ, and more.
+
 ### FAQ
 
 #### How do I build using only a single builder?
 
 ```
-# example using only vagrant builder
+
+# example using packer cli
+
 cat ./packer.yaml | ./util/yaml_to_json.py | packer build -only vagrant -
 
 # or, using make
+
 PACKER_LOG=1 make build PACKER_ARGS='-only vagrant'
+
+```
+
+```
+
+# with a templated packer.yaml, this is simple
+
+# your packer.yaml has only the builders you specify:
+
+make templatepacker BUILDERS=vagrant_virtualbox
+
+# note that for now, packer.yaml.old is default
+
+make build INPUT_FILE=packer.yaml
+
 ```
 
 #### How are secrets handled?
 
 ```
+
 # create a yaml file of the form:
 
 cat << EOF > fake_secrets.yaml
@@ -74,16 +118,21 @@ cat << EOF > fake_secrets.yaml
 - name: bar
   path: /path/to/bar
   value: yeah
+
 EOF
 
 # creates secrets.tar by default
+
 ./util/pack_secrets.py fake_secrets.yaml
 
 # note that make handles this for you
+
 # for a custom secrets file, pass SECRETS_FILE to make:
+
 make build SECRETS_FILE="/path/to/secrets.yaml"
 
 # by default ./fake_secrets.yaml is used
+
 ```
 
 ### Why are Packer communicator (SSH) timeouts so long?

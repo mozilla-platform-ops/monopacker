@@ -3,9 +3,11 @@
 # YAML => JSON
 TRANSFORMER=./util/yaml_to_json.py
 
+# TODO: deprecated
 # this will soon be replaced by a purely
 # templated solution
 INPUT_FILE=./packer.yaml.old
+
 PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
@@ -20,6 +22,7 @@ FILES_TAR=files.tar
 SECRETS_FILE=fake_secrets.yaml
 SECRETS_TAR=secrets.tar
 
+# TODO deprecated, not used by templating
 # default_scripts: all scripts in scripts/default, comma separated
 PACKER_VARS=-var default_scripts="$(shell ls -m scripts/default/* | tr -d '[:space:]')"
 PACKER_VARS+=-var docker_worker_scripts="$(shell ls -m scripts/docker-worker/* | tr -d '[:space:]')"

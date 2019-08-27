@@ -1,8 +1,5 @@
 ---
 base_image_name: taskcluster-worker
-ssh_timeout: 30m
-# {{ '{{' }} and {{ '}}' }}
-# are used for escaping packer variables
 image_suffix: "{{build_type}}-{{isotime | clean_resource_name}}"
-build_type: "{{build_type}}"
 execute_command: "sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
+ssh_timeout: 30m

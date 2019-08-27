@@ -1,0 +1,9 @@
+template: vagrant
+
+var_files:
+  - base
+  - vagrant_virtualbox
+
+script_directories:
+  - default
+  - docker-worker
