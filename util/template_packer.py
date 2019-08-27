@@ -91,12 +91,14 @@ builders = args.builders
 builders_dir = "./builders"
 var_files_dir = "./template/vars"
 builder_template_dir = "./template/builders"
-variables: Dict[str, Any] = {}
 templated_builders: Sequence[Dict[str, str]] = []
+# variables namespaced per builder
+variables: Dict[str, Dict[str, Any]] = {}
 
 for builder in builders:
     script_directories: Sequence[str] = []
     builder_template = ""
+    builder_vars: Dict[str, Any] = {}
 
     builder_config_file = builders_dir + "/" + builder + ".yaml"
     builder_config = load_yaml_from_file(builder_config_file)
@@ -113,7 +115,7 @@ for builder in builders:
         var_files = builder_config["var_files"]
         exit_if_type_mismatch(var_files, list)
         var_files = [Path(var_files_dir) / (file + ".yaml") for file in var_files]
-        variables = get_vars_from_files(var_files)
+        builder_vars = get_vars_from_files(var_files)
     else:
         print(f"<warning> Missing `var_files` key for builder {builder}")
 
@@ -122,7 +124,7 @@ for builder in builders:
         override_vars = builder_config["override_vars"]
         exit_if_type_mismatch(override_vars, dict)
         for k, v in override_vars.items():
-            variables[k] = v
+            builder_vars[k] = v
 
     if "template" in builder_config:
         builder_template = builder_config["template"]
@@ -131,17 +133,19 @@ for builder in builders:
         print(f"Missing `template` key for builder {builder}")
         sys.exit(1)
 
+    # each builder has its own pseudo namespace
+    # for variables, scripts, template, etc.
     templated_builders.append(
         {
             "name": builder,
             "template": builder_template,
+            "vars": {"name": builder, **builder_vars},
             "scripts": get_files_from_subdirs(
                 *script_directories, root_dir="./scripts", glob="*.sh"
             ),
         }
     )
 
-# cannot be overriden
 variables["builders"] = templated_builders
 
 with open(packer_template, "r") as f:
@@ -163,6 +167,12 @@ except TemplateError as err:
     sys.exit(1)
 
 # output needs to be valid yaml
-data = yaml.load(output)
+try:
+    data = yaml.load(output)
+except Exception as e:
+    print(f"Generated invalid YAML:\n{output}\n")
+    print(f"Packer template variables:\n{variables}\n")
+    print(f"Got exception: {e}")
+    sys.exit(1)
 # convert to json for packer
 print(json.dumps(data))

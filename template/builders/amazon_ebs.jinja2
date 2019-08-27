@@ -1,26 +1,26 @@
-- name: {{name}}
+- name: {{builder.vars.name}}
   type: amazon-ebs
   communicator: ssh
   # for initial connect
-  ssh_timeout: {{ssh_timeout}}
+  ssh_timeout: {{builder.vars.ssh_timeout}}
   # for reboots
-  ssh_read_write_timeout: {{ssh_timeout}}
-  ami_name: {{base_image_name}}-{{image_suffix}}
-  instance_type: {{instance_type}}
+  ssh_read_write_timeout: {{builder.vars.ssh_timeout}}
+  ami_name: {{builder.vars.base_image_name}}-{{builder.vars.image_suffix}}
+  instance_type: {{builder.vars.instance_type}}
   # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
   launch_block_device_mappings:
     - device_name: /dev/sda1
-      volume_size: {{volume_size}}
+      volume_size: {{builder.vars.volume_size}}
       volume_type: gp2
       delete_on_termination: true
   source_ami_filter:
     filters:
       virtualization-type: hvm
-      name: {{source_ami_filter}}
+      name: {{builder.vars.source_ami_filter}}
       root-device-type: ebs
-    owners: {{source_ami_owners}}
+    owners: {{builder.vars.source_ami_owners}}
     most_recent: true
-  ssh_username: {{ssh_username}}
-  region: {{region}}
+  ssh_username: {{builder.vars.ssh_username}}
+  region: {{builder.vars.region}}
   # FIXME uncomment when done iterating
-  # ami_regions: {{ami_regions}}
+  # ami_regions: {{builder.vars.ami_regions}}

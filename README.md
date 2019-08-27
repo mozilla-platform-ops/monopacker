@@ -10,8 +10,8 @@ The intention here is to create a single Packer + cloud-init configuration set t
 
 ### Dependencies (alternatively, use docker)
 
-- pipenv
-  - Note: you can install all python dependencies using pipenv (`pipenv install`)
+- `pipenv`
+  - Note: you can install all python dependencies using `pipenv` (`pipenv install`)
   - If you do that, you probably want to be in a `pipenv shell`
 - `make`
 - `packer` (`go get github.com/hashicorp/packer`)
@@ -77,7 +77,7 @@ cat << EOF > fake_secrets.yaml
 EOF
 
 # creates secrets.tar by default
-./pack_secrets.py fake_secrets.yaml
+./util/pack_secrets.py fake_secrets.yaml
 
 # note that make handles this for you
 # for a custom secrets file, pass SECRETS_FILE to make:

@@ -2,7 +2,6 @@
 
 builders:
 {% for builder in builders %}
-  {%- set name = builder.name %}
   {% filter indent(width=2, first=False) %}
     {%- include (builder.template + ".jinja2") %}
   {%- endfilter %}
@@ -40,11 +39,11 @@ provisioners:
   {%- for builder in builders %}
   - type: shell
     scripts: {{builder.scripts}}
-    execute_command: {{execute_command}}
+    execute_command: {{builder.vars.execute_command}}
     # we reboot the host to update the kernel
     expect_disconnect: true
     # metal is slow to reboot
-    start_retry_timeout: {{ssh_timeout}}
+    start_retry_timeout: {{builder.vars.ssh_timeout}}
     only: ["{{builder.name}}"]
   {%- endfor %}
 

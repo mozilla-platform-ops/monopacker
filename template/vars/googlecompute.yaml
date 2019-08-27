@@ -1,3 +1,5 @@
 ---
 project_id: miles-packer-test
 zone: us-west1-a
+ssh_username: ubuntu
+source_image_family: ubuntu-1804-lts

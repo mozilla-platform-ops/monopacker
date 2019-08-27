@@ -2,7 +2,10 @@
 
 # YAML => JSON
 TRANSFORMER=./util/yaml_to_json.py
-INPUT_FILE=./packer.yaml
+
+# this will soon be replaced by a purely
+# templated solution
+INPUT_FILE=./packer.yaml.old
 PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
@@ -58,6 +61,9 @@ dockerbuild: dockervalidate
 		$(DOCKER_IMAGE) \
 		/bin/bash -c "time cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
 
+templatepacker:
+	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
+
 build: clean tar validate
 	time cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -
 
@@ -71,11 +77,5 @@ tar:
 validate: clean tar
 	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
 
-debug:
-	time cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -debug -
-
 clean:
 	rm -rf $(ARTIFACTS)
-
-templatepacker:
-	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
