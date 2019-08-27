@@ -88,7 +88,7 @@ and making sure that the template's variables are all accounted for by a combina
 You might be using `{{foo}}` syntax to reference a variable that does not exist (in this case, foo).
 If you're trying to specify variable that Packer will supply, make sure your value is wrapped in quotes.
 
-#### My variables aren't making it from by builder template to the generated packer.yaml
+### My variables aren't making it from by builder template to the generated packer.yaml
 
 A number of things could be going wrong here.
 
@@ -96,7 +96,7 @@ Ensure that the builder template properly
 references all variables as being namespaced under `builder.vars` and that your `var_files`
 and `override_vars` do _not_ have any namespacing. See above for a more thorough description.
 
-#### Adding a new builder template
+### Adding a new builder template
 
 In the unlikely scenario that you want to add an entirely new builder template
 simply create a `.jinja2` file with the name of your choice under `./template/builders`.
