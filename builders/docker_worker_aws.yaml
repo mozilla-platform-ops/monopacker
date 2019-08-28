@@ -8,5 +8,6 @@ var_files:
 #   instance_type: m5.metal
 
 script_directories:
-  - default
+  - base
+  - worker-runner
   - docker-worker

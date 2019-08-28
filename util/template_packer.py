@@ -103,7 +103,7 @@ for builder in builders:
     builder_config_file = builders_dir + "/" + builder + ".yaml"
     builder_config = load_yaml_from_file(builder_config_file)
 
-    # script_directories should be a list of yaml files in ./template/vars
+    # script_directories should be a list directories in ./scripts
     if "script_directories" in builder_config:
         script_directories = builder_config["script_directories"]
         exit_if_type_mismatch(script_directories, list)
@@ -138,7 +138,8 @@ for builder in builders:
     templated_builders.append(
         {
             "template": builder_template,
-            "vars": {"name": builder, **builder_vars},
+            # name is special
+            "vars": {**builder_vars, "name": builder},
             "scripts": get_files_from_subdirs(
                 *script_directories, root_dir="./scripts", glob="*.sh"
             ),

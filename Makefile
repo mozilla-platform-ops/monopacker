@@ -1,13 +1,5 @@
 # adapted from https://www.andrewpage.me/infrastructure/2018/05/11/simplify-packer-configuration-with-yaml.html
 
-# YAML => JSON
-TRANSFORMER=./util/yaml_to_json.py
-
-# TODO: deprecated
-# this will soon be replaced by a purely
-# templated solution
-INPUT_FILE=./packer.yaml.old
-
 PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
@@ -21,12 +13,6 @@ BUILDERS=docker_worker_aws docker_worker_gcp
 FILES_TAR=files.tar
 SECRETS_FILE=fake_secrets.yaml
 SECRETS_TAR=secrets.tar
-
-# TODO deprecated, not used by templating
-# default_scripts: all scripts in scripts/default, comma separated
-PACKER_VARS=-var default_scripts="$(shell ls -m scripts/default/* | tr -d '[:space:]')"
-PACKER_VARS+=-var docker_worker_scripts="$(shell ls -m scripts/docker-worker/* | tr -d '[:space:]')"
-PACKER_VARS+=-var generic_worker_scripts="$(shell ls -m scripts/generic-worker/* | tr -d '[:space:]')"
 
 ARTIFACTS=packer-artifacts.json $(FILES_TAR) $(SECRETS_TAR) output-vagrant *.log *.pem
 
@@ -62,15 +48,15 @@ dockerbuild: dockervalidate
 		-e AWS_SECURITY_TOKEN \
 		-e GOOGLE_APPLICATION_CREDENTIALS \
 		$(DOCKER_IMAGE) \
-		/bin/bash -c "time cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
+		/bin/bash -c "time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
 
 templatepacker:
 	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
 
 build: clean tar validate
-	time cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -
+	time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -
 
-vagrant: PACKER_ARGS=-only vagrant
+vagrant: BUILDERS=vagrant_virtualbox
 vagrant: build
 
 tar:
@@ -78,7 +64,7 @@ tar:
 	$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR)
 
 validate: clean tar
-	cat $(INPUT_FILE) | $(TRANSFORMER) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
+	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
 
 clean:
 	rm -rf $(ARTIFACTS)

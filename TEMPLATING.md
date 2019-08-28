@@ -3,7 +3,7 @@
 ### How does templating work?
 
 Monopacker does things in the order you specify.
-When you specify `script_directories`, all scripts in all of those directories are
+When you specify `script_directories`, all scripts in each of those directories are
 executed first by order of directories in the list, then by lexicographic order
 of script names in each directory.
 

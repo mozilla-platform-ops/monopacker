@@ -4,9 +4,7 @@ var_files:
   - base
   - googlecompute
 
-# override_vars:
-#   instance_type: m5.metal
-
 script_directories:
-  - default
+  - base
+  - worker-runner
   - docker-worker
