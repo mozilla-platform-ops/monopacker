@@ -18,13 +18,13 @@ ARTIFACTS=packer-artifacts.json $(FILES_TAR) $(SECRETS_TAR) output-vagrant *.log
 
 DOCKER_IMAGE=monopacker:build
 
-dockerimage: clean tar
+dockerimage: clean
 	docker build -t $(DOCKER_IMAGE) .
 
 # default if not set
 dockervalidate dockerbuild: export GOOGLE_APPLICATION_CREDENTIALS ?= /tmp/you_forgot_google_application_credentials
 dockervalidate dockerbuild: PACKER_ARGS=-except vagrant
-dockervalidate: clean tar dockerimage
+dockervalidate: clean dockerimage
 	touch $(GOOGLE_APPLICATION_CREDENTIALS)
 	docker run \
 		--mount type=bind,source="$(shell pwd)",target=/monopacker \
@@ -38,7 +38,7 @@ dockervalidate: clean tar dockerimage
 		-e VAGRANT_LOG \
 		$(DOCKER_IMAGE)
 
-dockerbuild: dockervalidate
+dockerbuild: dockervalidate tar
 	docker run \
 		--mount type=bind,source="$(shell pwd)",target=/monopacker \
 		--mount type=bind,source="$(GOOGLE_APPLICATION_CREDENTIALS)",target="$(GOOGLE_APPLICATION_CREDENTIALS)" \
@@ -48,12 +48,13 @@ dockerbuild: dockervalidate
 		-e AWS_SECURITY_TOKEN \
 		-e GOOGLE_APPLICATION_CREDENTIALS \
 		$(DOCKER_IMAGE) \
-		/bin/bash -c "time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
+		/bin/bash -c "$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR) && \
+					  time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
 
 templatepacker:
 	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
 
-build: clean tar validate
+build: clean tar packsecrets validate
 	time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -
 
 vagrant: BUILDERS=vagrant_virtualbox
@@ -61,9 +62,11 @@ vagrant: build
 
 tar:
 	tar cf $(FILES_TAR) ./files
+
+packsecrets:
 	$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR)
 
-validate: clean tar
+validate: clean tar packsecrets
 	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
 
 clean:
