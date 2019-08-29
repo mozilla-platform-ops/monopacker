@@ -77,6 +77,10 @@ See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
 
 ### FAQ
 
+#### I'm getting `ModuleNotFoundError: No module named 'ruamel'`
+
+Make sure you're in a `pipenv shell`.
+
 #### How do I build using only a single builder?
 
 ```
