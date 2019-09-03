@@ -41,7 +41,8 @@ make vagrant
 
 #### Note: vagrant builds are unsupported in Docker, see FAQ
 
-```
+```bash
+
 # builds and tags a docker container to run monopacker in
 # monopacker:build by default, can override DOCKER_IMAGE make var
 make dockervalidate
@@ -52,7 +53,8 @@ make dockerbuild PACKER_ARGS='-only docker_worker_aws' SECRETS_FILE=./real_secre
 
 ### Templating packer.yaml for your builders
 
-```
+```bash
+
 # generate packer.yaml from packer.yaml.jinja2
 make templatepacker
 
@@ -83,19 +85,12 @@ Make sure you're in a `pipenv shell`.
 
 #### How do I build using only a single builder?
 
+```bash
+
+PACKER_LOG=1 make build BUILDERS=vagrant_virtualbox
 ```
 
-# example using packer cli
-
-cat ./packer.yaml | ./util/yaml_to_json.py | packer build -only vagrant -
-
-# or, using make
-
-PACKER_LOG=1 make build PACKER_ARGS='-only vagrant'
-
-```
-
-```
+```bash
 
 # with a templated packer.yaml, this is simple
 
@@ -111,7 +106,7 @@ make build INPUT_FILE=packer.yaml
 
 #### How are secrets handled?
 
-```
+```bash
 
 # create a yaml file of the form:
 
@@ -134,6 +129,9 @@ EOF
 # for a custom secrets file, pass SECRETS_FILE to make:
 
 make build SECRETS_FILE="/path/to/secrets.yaml"
+
+# for example
+make dockerbuild SECRETS_FILE="./real_secrets.yaml"
 
 # by default ./fake_secrets.yaml is used
 
