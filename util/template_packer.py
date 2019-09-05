@@ -17,12 +17,12 @@ from ruamel.yaml import YAML
 yaml = YAML(typ="safe")
 
 
-def get_files_from_subdirs(*args, root_dir=".", glob="*"):
+def get_files_from_subdirs(*args, root_dir=".", globs=["*"]):
     """Get an sorted list of files from a list of subdirectories
 
     keyword arguments:
     root_dir -- root directory in which to look for subdirectories, defaults to '.'
-    glob -- glob expression for files in subdirectories, defaults to '*'
+    globs -- list of glob expressions for files in subdirectories, defaults to ['*']
 
     arguments: variadic, each must be a subdirectory of `root_dir`
     """
@@ -32,9 +32,10 @@ def get_files_from_subdirs(*args, root_dir=".", glob="*"):
     for arg in args:
         subdir = p / arg
         if subdir.exists():
-            # all .sh files in subdir in sorted order
+            # all files matching globs in subdir in sorted order
             # essentially what `ls` does
-            files.extend(sorted(list([q.as_posix() for q in subdir.glob(glob)])))
+            globbed_files = [item for glob in globs for item in subdir.glob(glob)]
+            files.extend(sorted(list([q.as_posix() for q in globbed_files])))
         else:
             print(f"subdirectory {subdir.name} does not exist")
             sys.exit(1)
@@ -54,9 +55,6 @@ def load_yaml_from_file(filename: str):
 def get_vars_from_files(files: Sequence[str]):
     """Takes a list of variable files
        in `root_dir` of increasing precedence, returns a merged dict
-
-       keyword_arguments:
-       root_dir -- directory from which to look for files
     """
     d = {}
     for file in files:
@@ -129,24 +127,43 @@ for builder in builders:
     if "template" in builder_config:
         builder_template = builder_config["template"]
         exit_if_type_mismatch(builder_template, str)
+
     else:
         print(f"Missing `template` key for builder {builder}")
         sys.exit(1)
 
+    if "platform" in builder_config:
+        builder_platform = builder_config["platform"]
+        exit_if_type_mismatch(builder_template, str)
+    else:
+        print(f"Missing `platform` key for builder {builder}")
+        sys.exit(1)
+
     # each builder has its own pseudo namespace
-    # for variables, scripts, template, etc.
+    # for variables, scripts, files, template, etc.
     templated_builders.append(
         {
             "template": builder_template,
             # name is special
             "vars": {**builder_vars, "name": builder},
             "scripts": get_files_from_subdirs(
-                *script_directories, root_dir="./scripts", glob="*.sh"
+                *script_directories, root_dir="./scripts", globs=["*.sh", "*.ps1"]
             ),
+            "platform": builder_platform,
         }
     )
 
 variables["builders"] = templated_builders
+variables["linux_builders"] = [
+    builder["vars"]["name"]
+    for builder in templated_builders
+    if builder["platform"] == "linux"
+]
+variables["windows_builders"] = [
+    builder["vars"]["name"]
+    for builder in templated_builders
+    if builder["platform"] == "windows"
+]
 
 with open(packer_template, "r") as f:
     packer_template_str = f.read()
