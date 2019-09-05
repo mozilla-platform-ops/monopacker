@@ -24,7 +24,7 @@ dockerimage: clean
 # default if not set
 dockervalidate dockerbuild: export GOOGLE_APPLICATION_CREDENTIALS ?= /tmp/you_forgot_google_application_credentials
 dockervalidate dockerbuild: PACKER_ARGS=-except vagrant
-dockervalidate: clean dockerimage
+dockervalidate: clean dockerimage tar
 	touch $(GOOGLE_APPLICATION_CREDENTIALS)
 	docker run \
 		--mount type=bind,source="$(shell pwd)",target=/monopacker \
@@ -36,9 +36,11 @@ dockervalidate: clean dockerimage
 		-e GOOGLE_APPLICATION_CREDENTIALS \
 		-e PACKER_LOG \
 		-e VAGRANT_LOG \
-		$(DOCKER_IMAGE)
+		$(DOCKER_IMAGE) \
+		/bin/bash -c "$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR) && \
+					  $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -"
 
-dockerbuild: dockervalidate tar
+dockerbuild: dockervalidate
 	docker run \
 		--mount type=bind,source="$(shell pwd)",target=/monopacker \
 		--mount type=bind,source="$(GOOGLE_APPLICATION_CREDENTIALS)",target="$(GOOGLE_APPLICATION_CREDENTIALS)" \
@@ -54,7 +56,7 @@ dockerbuild: dockervalidate tar
 templatepacker:
 	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
 
-build: clean tar packsecrets validate
+build: clean validate
 	time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -
 
 vagrant: BUILDERS=vagrant_virtualbox
