@@ -13,7 +13,7 @@ provisioners:
     source: ./files.tar
     destination: /tmp/
 
-  ### Linux only steps
+  ### Linux only pre-script steps
   {%- if linux_builders %}
   # untar at /
   - type: shell
@@ -40,9 +40,6 @@ provisioners:
       - /usr/bin/cloud-init status --wait
     only: {{linux_builders}}
   {%- endif %}
-
-  ### Windows only steps
-  # todo
 
   {%- for builder in builders %}
     {%- if linux_builders %}

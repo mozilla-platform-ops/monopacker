@@ -38,6 +38,11 @@ The builder's YAML file must specify a `template`, which corresponds
 to a `.jinja2` template file in `./template/builders`. Builders can specify
 any template, and multiple builders can specify the same template.
 
+Builders have a few required pieces of configuration:
+
+- template: which template in ./template/builders to use
+- platform: the os the builder uses, such as linux or windows
+
 Templates typically have variables that must be specified. For example,
 the `vagrant` builder references the following variables:
 
@@ -45,7 +50,6 @@ the `vagrant` builder references the following variables:
 builder.vars.base_image_name
 builder.vars.image_suffix
 builder.vars.source_path
-builder.vars.provider
 ```
 
 These come from `var_files` or from `override_vars` set in the builder.
@@ -70,7 +74,6 @@ A complete variable file for the `vagrant` builder might look like this:
 base_image_name: vagrant-builder-worker
 image_suffix: docs-edition
 source_path: ubuntu/bionic64
-provider: virtualbox
 ```
 
 Alternatively, those variables could have been specified in the builder's YAML file

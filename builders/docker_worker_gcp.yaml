@@ -1,4 +1,5 @@
 template: googlecompute
+platform: linux
 
 var_files:
   - default_linux
@@ -8,5 +9,3 @@ script_directories:
   - ubuntu-bionic
   - worker-runner-linux
   - docker-worker-linux
-
-platform: linux
