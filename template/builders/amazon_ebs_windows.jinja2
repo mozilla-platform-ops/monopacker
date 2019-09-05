@@ -1,0 +1,27 @@
+- name: {{builder.vars.name}}
+  type: amazon-ebs
+  communicator: winrm
+  winrm_username: Administrator
+  winrm_port: 5986
+  winrm_timeout: 15m
+  winrm_use_ssl: true
+  winrm_insecure: true
+  user_data_file: {{builder.vars.bootstrap_userdata_file}}
+  ami_name: {{builder.vars.base_image_name}}-{{builder.vars.image_suffix}}
+  instance_type: {{builder.vars.instance_type}}
+  # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
+  launch_block_device_mappings:
+    - device_name: /dev/sda1
+      volume_size: {{builder.vars.volume_size}}
+      volume_type: gp2
+      delete_on_termination: true
+  source_ami_filter:
+    filters:
+      virtualization-type: hvm
+      name: {{builder.vars.source_ami_filter}}
+      root-device-type: ebs
+    owners: {{builder.vars.source_ami_owners}}
+    most_recent: true
+  region: {{builder.vars.region}}
+  # FIXME uncomment when done iterating
+  # ami_regions: {{builder.vars.ami_regions}}

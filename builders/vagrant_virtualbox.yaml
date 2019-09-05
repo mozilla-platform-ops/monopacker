@@ -1,10 +1,12 @@
 template: vagrant
 
 var_files:
-  - base
-  - vagrant_virtualbox
+  - default_linux
+  - vagrant_virtualbox_bionic
 
 script_directories:
-  - base
-  - worker-runner
-  - docker-worker
+  - ubuntu-bionic
+  - worker-runner-linux
+  - docker-worker-linux
+
+platform: linux

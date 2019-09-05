@@ -1,0 +1,10 @@
+template: amazon_ebs_windows
+
+var_files:
+  - default_windows
+  - amazon_ebs_win2016
+
+script_directories:
+  - generic-worker-windows
+
+platform: windows

@@ -1,13 +1,15 @@
 template: amazon_ebs
 
 var_files:
-  - base
-  - amazon_ebs
+  - default_linux
+  - amazon_ebs_bionic
 
 # override_vars:
 #   instance_type: m5.metal
 
 script_directories:
-  - base
-  - worker-runner
-  - docker-worker
+  - ubuntu-bionic
+  - worker-runner-linux
+  - docker-worker-linux
+
+platform: linux

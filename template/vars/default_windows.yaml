@@ -1,0 +1,3 @@
+---
+base_image_name: taskcluster-worker
+image_suffix: "{{build_type}}-{{isotime | clean_resource_name}}"
