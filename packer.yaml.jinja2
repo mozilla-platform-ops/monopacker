@@ -12,6 +12,9 @@ provisioners:
   - type: file
     source: ./files.tar
     destination: /tmp/
+
+  ### Linux only steps
+  {%- if linux_builders %}
   # untar at /
   - type: shell
     # files.tar is two levels deep (/tmp/files)
@@ -31,12 +34,18 @@ provisioners:
       # FIXME
       # actually delete, just for testing
       # - rm /tmp/secrets.tar
+    only: {{linux_builders}}
   - type: shell
     inline:
       - /usr/bin/cloud-init status --wait
-  # post cloud-init
-  # run all scripts as root
+    only: {{linux_builders}}
+  {%- endif %}
+
+  ### Windows only steps
+  # todo
+
   {%- for builder in builders %}
+    {%- if linux_builders %}
   - type: shell
     scripts: {{builder.scripts}}
     execute_command: {{builder.vars.execute_command}}
@@ -44,7 +53,13 @@ provisioners:
     expect_disconnect: true
     # metal is slow to reboot
     start_retry_timeout: {{builder.vars.ssh_timeout}}
-    only: ["{{builder.vars.name}}"]
+    only: [{{builder.vars.name if builder.platform == 'linux'}}]
+    {%- endif %}
+    {%- if windows_builders %}
+  - type: powershell
+    scripts: {{builder.scripts}}
+    only: [{{builder.vars.name if builder.platform == 'windows'}}]
+    {%- endif %}
   {%- endfor %}
 
 post-processors:
