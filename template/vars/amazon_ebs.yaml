@@ -8,5 +8,5 @@ volume_size: 40
 # ubuntu bionic
 source_ami_filter: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*
 # canonical ami owner account
-source_ami_owners: ["09972010947"]
+source_ami_owners: ["099720109477"]
 ssh_username: ubuntu
