@@ -1,4 +1,4 @@
-template: vagrant
+template: vagrant_linux
 platform: linux
 
 var_files:

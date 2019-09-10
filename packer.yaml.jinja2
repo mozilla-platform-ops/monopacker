@@ -8,13 +8,15 @@ builders:
 {%- endfor %}
 
 provisioners:
+  ### Linux only pre-script steps
+  # certain monopacker scripts require contents of ./files
+  # to be on the filesystem before running
+  # wait for cloud-init before running scripts
+  {%- if linux_builders %}
   # created by make tar
   - type: file
     source: ./files.tar
     destination: /tmp/
-
-  ### Linux only pre-script steps
-  {%- if linux_builders %}
   # untar at /
   - type: shell
     # files.tar is two levels deep (/tmp/files)
@@ -31,14 +33,18 @@ provisioners:
       - sudo tar xvf /tmp/secrets.tar -C /
       - sudo chown root:root -R /etc/taskcluster
       - sudo chmod 0400 -R /etc/taskcluster/secrets
-      # FIXME
-      # actually delete, just for testing
-      # - rm /tmp/secrets.tar
+      - rm /tmp/secrets.tar
     only: {{linux_builders}}
   - type: shell
     inline:
       - /usr/bin/cloud-init status --wait
     only: {{linux_builders}}
+  {%- endif %}
+
+  ### Windows only pre-script steps
+  # TODO
+  # open question: where should we put them?
+  {%- if windows_builders %}
   {%- endif %}
 
   {%- for builder in builders %}
