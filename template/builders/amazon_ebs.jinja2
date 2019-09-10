@@ -5,7 +5,7 @@
   ssh_timeout: {{builder.vars.ssh_timeout}}
   # for reboots
   ssh_read_write_timeout: {{builder.vars.ssh_timeout}}
-  ami_name: {{builder.vars.base_image_name}}-{{builder.vars.image_suffix}}
+  ami_name: {{builder.vars.base_image_name}}-{{builder.vars.name}}-{{builder.vars.image_suffix}}
   instance_type: {{builder.vars.instance_type}}
   # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
   launch_block_device_mappings:
