@@ -52,6 +52,8 @@ provisioners:
   - type: shell
     scripts: {{builder.scripts}}
     execute_command: {{builder.vars.execute_command}}
+    environment_vars:
+      - 'PAPERTRAIL=logs6.papertrailapp.com:21045'
     # we reboot the host to update the kernel
     expect_disconnect: true
     # metal is slow to reboot

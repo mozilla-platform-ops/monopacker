@@ -1,5 +1,5 @@
 ---
-project_id: miles-packer-test
+project_id: bstack-dev-workers-2
 zone: us-west1-a
 ssh_username: ubuntu
 source_image_family: ubuntu-1804-lts
