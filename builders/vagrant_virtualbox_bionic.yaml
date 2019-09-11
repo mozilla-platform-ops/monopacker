@@ -1,12 +1,9 @@
-template: amazon_ebs
+template: vagrant_linux
 platform: linux
 
 var_files:
   - default_linux
-  - amazon_ebs_bionic
-
-# override_vars:
-#   instance_type: m5.metal
+  - vagrant_virtualbox_bionic
 
 script_directories:
   - ubuntu-bionic

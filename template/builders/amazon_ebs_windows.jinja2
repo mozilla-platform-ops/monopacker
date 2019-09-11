@@ -1,10 +1,12 @@
 - name: {{builder.vars.name}}
   type: amazon-ebs
-  communicator: ssh
-  # for initial connect
-  ssh_timeout: {{builder.vars.ssh_timeout}}
-  # for reboots
-  ssh_read_write_timeout: {{builder.vars.ssh_timeout}}
+  communicator: winrm
+  winrm_username: Administrator
+  winrm_port: 5986
+  winrm_timeout: 15m
+  winrm_use_ssl: true
+  winrm_insecure: true
+  user_data_file: {{builder.vars.bootstrap_userdata_file}}
   ami_name: {{builder.vars.name}}-{{builder.vars.image_suffix}}
   instance_type: {{builder.vars.instance_type}}
   # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
@@ -20,7 +22,6 @@
       root-device-type: ebs
     owners: {{builder.vars.source_ami_owners}}
     most_recent: true
-  ssh_username: {{builder.vars.ssh_username}}
   region: {{builder.vars.region}}
   # FIXME uncomment when done iterating
   # ami_regions: {{builder.vars.ami_regions}}

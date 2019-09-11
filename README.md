@@ -87,7 +87,8 @@ Make sure you're in a `pipenv shell`.
 
 ```bash
 
-PACKER_LOG=1 make build BUILDERS=vagrant_virtualbox
+# all the debug output
+PACKER_LOG=1 VAGRANT_LOG=debug make build BUILDERS=vagrant_virtualbox_bionic
 ```
 
 ```bash
@@ -96,7 +97,7 @@ PACKER_LOG=1 make build BUILDERS=vagrant_virtualbox
 
 # your packer.yaml has only the builders you specify:
 
-make templatepacker BUILDERS=vagrant_virtualbox
+make templatepacker BUILDERS=vagrant_virtualbox_bionic
 
 # note that for now, packer.yaml.old is default
 
