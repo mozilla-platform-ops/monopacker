@@ -1,6 +1,6 @@
 - name: {{builder.vars.name}}
   type: googlecompute
-  image_name: {{builder.vars.base_image_name}}-{{builder.vars.name}}-{{builder.vars.image_suffix}}
+  image_name: {{builder.vars.name}}-{{builder.vars.image_suffix}}
   source_image_family: {{builder.vars.source_image_family}}
   ssh_username: {{builder.vars.ssh_username}}
   project_id: {{builder.vars.project_id}}

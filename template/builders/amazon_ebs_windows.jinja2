@@ -7,7 +7,7 @@
   winrm_use_ssl: true
   winrm_insecure: true
   user_data_file: {{builder.vars.bootstrap_userdata_file}}
-  ami_name: {{builder.vars.base_image_name}}-{{builder.vars.image_suffix}}
+  ami_name: {{builder.vars.name}}-{{builder.vars.image_suffix}}
   instance_type: {{builder.vars.instance_type}}
   # explicitly delete because of https://www.packer.io/docs/builders/amazon-ebs.html#delete_on_termination
   launch_block_device_mappings:
