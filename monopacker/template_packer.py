@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, argparse, json
+import errno, os, sys, argparse, json
 from pathlib import Path
 from typing import Any, Dict, Sequence
 
@@ -38,7 +38,9 @@ def get_files_from_subdirs(*args, root_dir=".", globs=["*"]):
             files.extend(sorted(list([q.as_posix() for q in globbed_files])))
         else:
             print(f"subdirectory {subdir.name} does not exist")
-            sys.exit(1)
+            raise FileNotFoundError(
+                errno.ENOENT, os.strerror(errno.ENOENT), subdir.name
+            )
     return files
 
 
@@ -48,8 +50,7 @@ def load_yaml_from_file(filename: str):
         with open(filename, "r") as f:
             return yaml.load(f)
     else:
-        print(f"file not found: {p.name}")
-        sys.exit(1)
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
 
 def handle_vars(base_vars, override_vars):
@@ -73,12 +74,13 @@ def get_vars_from_files(files: Sequence[str]):
     """
     d = {}
     for file in files:
-        y = load_yaml_from_file(file)
-        if y:
-            d = handle_vars(d, y)
-        else:
+        try:
+            y = load_yaml_from_file(file)
+            if y:
+                d = handle_vars(d, y)
+        except Exception as e:
             print(f"Could not read yaml from {file}")
-            sys.exit(1)
+            raise e
     return d
 
 
@@ -89,33 +91,23 @@ def exit_if_type_mismatch(variable, expected_type):
         sys.exit(1)
 
 
-if __name__ == "__main__":
-    description = """Expects a jinja2 templated packer.yaml and the name of one or more builders.
-    Each builder must have a corresponding yaml file in `./builders`.
-    ex: builder gecko-1-miles-test has is configured at `./builders/gecko-1-miles-test.yaml`
-    Outputs a packer JSON template to stdout."""
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("packer_template", type=str, help="packer manifest to template")
-    parser.add_argument(
-        "builders", type=str, nargs="+", help="list of builders to build"
-    )
-    args = parser.parse_args()
+def get_builders_for_templating(
+    names: Sequence[str], builders_dir="./builders", var_files_dir="./template/vars"
+):
+    """Takes a list of builder names and builds dicts for templating
 
-    packer_template = args.packer_template
-    builders = args.builders
-    builders_dir = "./builders"
-    builder_var_files_dir = "./template/vars"
-    builder_template_dir = "./template/builders"
-    templated_builders: Sequence[Dict[str, str]] = []
-    # variables namespaced per builder
-    variables: Dict[str, Dict[str, Any]] = {}
-
-    for builder in builders:
+    keyword arguments:
+    builders_dir -- directory in which to look for builders
+    var_files_dir -- directory in which to look for builder variable files
+    builder_template_dir -- directory in which to look for builder templates
+    """
+    builders: Sequence[Dict[str, str]] = []
+    for builder in names:
         script_directories: Sequence[str] = []
         builder_template = ""
         builder_vars: Dict[str, Any] = {}
 
-        builder_config_file = builders_dir + "/" + builder + ".yaml"
+        builder_config_file = Path(builders_dir) / (builder + ".yaml")
         builder_config = load_yaml_from_file(builder_config_file)
 
         # script_directories should be a list directories in ./scripts
@@ -130,8 +122,7 @@ if __name__ == "__main__":
             builder_var_files = builder_config["builder_var_files"]
             exit_if_type_mismatch(builder_var_files, list)
             builder_var_files = [
-                Path(builder_var_files_dir) / (file + ".yaml")
-                for file in builder_var_files
+                Path(var_files_dir) / (file + ".yaml") for file in builder_var_files
             ]
             builder_vars = get_vars_from_files(builder_var_files)
         else:
@@ -166,7 +157,7 @@ if __name__ == "__main__":
 
         # each builder has its own pseudo namespace
         # for variables, scripts, files, template, etc.
-        templated_builders.append(
+        builders.append(
             {
                 "template": builder_template,
                 # name is special
@@ -177,6 +168,31 @@ if __name__ == "__main__":
                 "platform": builder_platform,
             }
         )
+    return builders
+
+
+if __name__ == "__main__":
+    description = """Expects a jinja2 templated packer.yaml and the name of one or more builders.
+    Each builder must have a corresponding yaml file in `./builders`.
+    ex: builder gecko-1-miles-test has is configured at `./builders/gecko-1-miles-test.yaml`
+    Outputs a packer JSON template to stdout."""
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("packer_template", type=str, help="packer manifest to template")
+    parser.add_argument(
+        "builders", type=str, nargs="+", help="list of builders to build"
+    )
+    args = parser.parse_args()
+
+    packer_template = args.packer_template
+    builders = args.builders
+    builders_dir = "./builders"
+    builder_var_files_dir = "./template/vars"
+    builder_template_dir = "./template/builders"
+
+    # variables namespaced per builder
+    variables: Dict[str, Dict[str, Any]] = {}
+
+    templated_builders = get_builders_for_templating(builders)
 
     variables["builders"] = templated_builders
     variables["linux_builders"] = [
