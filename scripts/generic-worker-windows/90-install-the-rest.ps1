@@ -22,12 +22,6 @@ function Expand-ZIPFile($file, $destination, $url)
 # allow powershell scripts to run
 Set-ExecutionPolicy Unrestricted -Force -Scope Process
 
-# install chocolatey package manager
-Invoke-Expression ($client.DownloadString('https://chocolatey.org/install.ps1'))
-
-# install Windows SDK 8.1
-choco install -y windows-sdk-8.1
-
 # install June 2010 DirectX SDK for compatibility with Win XP
 $client.DownloadFile("http://download.microsoft.com/download/A/E/7/AE743F1F-632B-4809-87A9-AA1BB3458E31/DXSDK_Jun10.exe", "C:\DXSDK_Jun10.exe")
 
@@ -36,90 +30,6 @@ Install-WindowsFeature NET-Framework-Core
 
 # now run DirectX SDK installer
 Start-Process C:\DXSDK_Jun10.exe -ArgumentList "/U" -wait -NoNewWindow -PassThru -RedirectStandardOutput C:\directx_sdk_install.log -RedirectStandardError C:\directx_sdk_install.err
-
-# install rustc dependencies (32 bit)
-$client.DownloadFile("http://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x86.exe", "C:\vcredist_x86-vs2013.exe")
-Start-Process "C:\vcredist_x86-vs2013.exe" -ArgumentList "/install /passive /norestart /log C:\vcredist_x86-vs2013-install.log" -Wait -PassThru
-
-# install rustc dependencies (64 bit)
-$client.DownloadFile("http://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe", "C:\vcredist_x64-vs2013.exe")
-Start-Process "C:\vcredist_x64-vs2013.exe" -ArgumentList "/install /passive /norestart /log C:\vcredist_x64-vs2013-install.log" -Wait -PassThru
-
-# install more rustc dependencies (32 bit)
-$client.DownloadFile("http://download.microsoft.com/download/f/3/9/f39b30ec-f8ef-4ba3-8cb4-e301fcf0e0aa/vc_redist.x86.exe", "C:\vcredist_x86-vs2015.exe")
-Start-Process "C:\vcredist_x86-vs2015.exe" -ArgumentList "/install /passive /norestart /log C:\vcredist_x86-vs2015-install.log" -Wait -PassThru
-
-# install more rustc dependencies (64 bit)
-$client.DownloadFile("http://download.microsoft.com/download/4/c/b/4cbd5757-0dd4-43a7-bac0-2a492cedbacb/vc_redist.x64.exe", "C:\vcredist_x64-vs2015.exe")
-Start-Process "C:\vcredist_x64-vs2015.exe" -ArgumentList "/install /passive /norestart /log C:\vcredist_x64-vs2015-install.log" -Wait -PassThru
-
-# install mozilla-build yasm dependencies (32 bit)
-$client.DownloadFile("http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe", "C:\vcredist_x86-vs2010.exe")
-Start-Process "C:\vcredist_x86-vs2010.exe" -ArgumentList "/install /passive /norestart /log C:\vcredist_x86-vs2010-install.log" -Wait -PassThru
-
-# install mozilla-build yasm dependencies (64 bit)
-$client.DownloadFile("http://download.microsoft.com/download/A/8/0/A80747C3-41BD-45DF-B505-E9710D2744E0/vcredist_x64.exe", "C:\vcredist_x64-vs2010.exe")
-Start-Process "C:\vcredist_x64-vs2010.exe" -ArgumentList "/install /passive /norestart /log C:\vcredist_x64-vs2010-install.log" -Wait -PassThru
-
-# download mozilla-build installer
-$client.DownloadFile("https://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/win32/MozillaBuildSetup-Latest.exe", "C:\MozillaBuildSetup.exe")
-
-# run mozilla-build installer in silent (/S) mode
-Start-Process "C:\MozillaBuildSetup.exe" -ArgumentList "/S" -Wait -NoNewWindow -PassThru -RedirectStandardOutput "C:\MozillaBuild_install.log" -RedirectStandardError "C:\MozillaBuild_install.err"
-
-# Create C:\builds and give full access to all users (for hg-shared, tooltool_cache, etc)
-md "C:\builds"
-$acl = Get-Acl -Path "C:\builds"
-$ace = New-Object System.Security.AccessControl.FileSystemAccessRule("Everyone","Full","ContainerInherit,ObjectInherit","None","Allow")
-$acl.AddAccessRule($ace)
-Set-Acl "C:\builds" $acl
-
-# download tooltool
-$client.DownloadFile("https://raw.githubusercontent.com/mozilla/release-services/master/src/tooltool/client/tooltool.py", "C:\builds\tooltool.py")
-
-# install nssm
-Expand-ZIPFile -File "C:\nssm-2.24.zip" -Destination "C:\" -Url "http://www.nssm.cc/release/nssm-2.24.zip"
-
-# Bizarrely, this sets env TEMP/TMP correctly in default user profile, however, if running a
-# task as Administrator, including any subprocesses that creates, even if processes under a
-# different user account, %USERNAME% will be sustituted by 'SYSTEM' rather than the real
-# %USERNAME% which is in the env. Therefore commenting out this section until this is resolved.
-#
-# # utility function to replace/create a registry key, depending on whether it exists already
-# function SetKey($registryPath, $name, $value)
-# {
-#     if (!(Test-Path $registryPath)) {
-#         New-Item -Path $registryPath -Force | Out-Null
-#     }
-#     New-ItemProperty -Path $registryPath -Name $name -Value $value `
-#     -PropertyType ExpandString -Force | Out-Null
-# }
-#
-# # mount default user profile registry hive
-# reg load "HKLM\DefaultUser" "C:\Documents and Settings\Default User\ntuser.dat"
-#
-# # set TMP env var in profile
-# SetKey -registryPath "HKLM:\DefaultUser\Environment" -name "TMP" -value "C:\Users\%USERNAME%\Task\Temp\Dir"
-#
-# # set TEMP env var in profile
-# SetKey -registryPath "HKLM:\DefaultUser\Environment" -name "TEMP" -value "C:\Users\%USERNAME%\Task\Temp\Dir"
-#
-# # clean up handles so we can unmount registry hive
-# [gc]::collect()
-#
-# # unmount registry hive
-# reg unload HKLM\DefaultUser
-
-# download generic-worker
-md C:\generic-worker
-$client.DownloadFile("https://github.com/taskcluster/generic-worker/releases/download/v15.1.5/generic-worker-multiuser-windows-amd64.exe", "C:\generic-worker\generic-worker.exe")
-
-# download livelog
-$client.DownloadFile("https://github.com/taskcluster/livelog/releases/download/v1.1.0/livelog-windows-amd64.exe", "C:\generic-worker\livelog.exe")
-
-# install generic-worker
-Start-Process C:\generic-worker\generic-worker.exe -ArgumentList "install service --configure-for-aws --nssm C:\nssm-2.24\win64\nssm.exe --config C:\generic-worker\generic-worker.config" -Wait -NoNewWindow -PassThru -RedirectStandardOutput C:\generic-worker\install.log -RedirectStandardError C:\generic-worker\install.err
-# Start-Process C:\generic-worker\generic-worker.exe -ArgumentList "install startup --config C:\generic-worker\generic-worker.config" -Wait -NoNewWindow -PassThru -RedirectStandardOutput C:\generic-worker\install.log -RedirectStandardError C:\generic-worker\install.err
 
 # initial clone of mozilla-central
 # Start-Process "C:\mozilla-build\python\python.exe" -ArgumentList "C:\mozilla-build\python\Scripts\hg clone -u null https://hg.mozilla.org/mozilla-central C:\gecko" -Wait -NoNewWindow -PassThru -RedirectStandardOutput "C:\hg_initial_clone.log" -RedirectStandardError "C:\hg_initial_clone.err"
