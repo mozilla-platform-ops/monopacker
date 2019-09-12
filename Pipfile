@@ -11,6 +11,7 @@ jinja2 = "*"
 ruamel-yaml = "*"
 ruamel-yaml-cmd = "*"
 awscli = "*"
+pytest = "*"
 
 [pipenv]
 allow_prereleases = true

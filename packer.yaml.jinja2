@@ -51,6 +51,7 @@ provisioners:
     {%- if linux_builders %}
   - type: shell
     scripts: {{builder.scripts}}
+    environment_vars: {{builder.vars.env_vars}}
     execute_command: {{builder.vars.execute_command}}
     # we reboot the host to update the kernel
     expect_disconnect: true

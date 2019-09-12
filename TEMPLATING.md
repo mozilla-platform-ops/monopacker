@@ -26,10 +26,10 @@ script_directories:
 - Scripts `my_scripts` will be executed in lexicographic order, so `01-foo.sh` will
   be executed before `02-bar.sh`.
 
-The same concept applies to `var_files`. Variables redefined in multiple `var_files`
+The same concept applies to `builder_var_files`. Variables redefined in multiple `builder_var_files`
 will be overwritten by each subsequent file as it is loaded.
 
-`override_vars`, as the name implies, override any variables specified in `var_files`.
+`builder_vars`, as the name implies, override any variables specified in `builder_var_files`.
 
 ### Adding a new builder
 
@@ -53,12 +53,12 @@ builder.vars.source_path
 builder.vars.provider
 ```
 
-These come from `var_files` or from `override_vars` set in the builder.
+These come from `builder_var_files` or from `builder_vars` set in the builder.
 
-The builder can specify `var_files`:
+The builder can specify `builder_var_files`:
 
 ```
-var_files:
+builder_var_files:
   - default_linux
   - vagrant_virtualbox
 ```
@@ -68,7 +68,7 @@ Which refer to YAML files in the `./template/vars` directory.
 Note that in the builder template variables are namespaced under `builder.vars` -
 this avoids conflicts in templating where multiple builders specify the same variables.
 
-In the `var_files` and `override_vars` these variables do not have a namespace prefix.
+In the `builder_var_files` and `builder_vars` these variables do not have a namespace prefix.
 A complete variable file for the `vagrant` builder might look like this:
 
 ```
@@ -79,12 +79,12 @@ provider: virtualbox
 ```
 
 Alternatively, those variables could have been specified in the builder's YAML file
-as a YAML map under the key `override_vars`, which also serves to override variables
-that have already been set by one of the `var_files` specified.
+as a YAML map under the key `builder_vars`, which also serves to override variables
+that have already been set by one of the `builder_var_files` specified.
 
 In summary: adding a builder is as simple as adding a YAML file, specifying a template,
 and making sure that the template's variables are all accounted for by a combination of
-`var_files` and `override_vars`.
+`builder_var_files` and `builder_vars`.
 
 ## FAQ
 
@@ -98,8 +98,8 @@ If you're trying to specify variable that Packer will supply, make sure your val
 A number of things could be going wrong here.
 
 Ensure that the builder template properly
-references all variables as being namespaced under `builder.vars` and that your `var_files`
-and `override_vars` do _not_ have any namespacing. See above for a more thorough description.
+references all variables as being namespaced under `builder.vars` and that your `builder_var_files`
+and `builder_vars` do _not_ have any namespacing. See above for a more thorough description.
 
 ### Adding a new builder template
 

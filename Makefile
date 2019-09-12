@@ -4,7 +4,7 @@ PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
 # for jinja2 templating
-TEMPLATER=./util/template_packer.py
+TEMPLATER=./monopacker/template_packer.py
 TEMPLATE=./packer.yaml.jinja2
 
 # default
@@ -53,6 +53,9 @@ dockerbuild: dockervalidate
 		/bin/bash -c "$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR) && \
 					  time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
 
+dockertest: dockerimage
+	docker run --mount type=bind,source="$(shell pwd)",target=/monopacker $(DOCKER_IMAGE) /bin/bash -c "python -m pytest tests/"
+
 templatepacker:
 	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
 
@@ -73,3 +76,6 @@ validate: clean tar packsecrets
 
 clean:
 	rm -rf $(ARTIFACTS)
+
+test:
+	python -m pytest tests/

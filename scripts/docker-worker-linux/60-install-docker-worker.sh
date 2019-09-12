@@ -47,7 +47,7 @@ mkdir -p "$(dirname ${docker_worker_config})"
 mkdir -p "$(dirname ${worker_runner_config})"
 cat << EOF > "${worker_runner_config}"
 provider:
-    providerType: aws-provisioner
+    providerType: ${WORKER_RUNNER_PROVIDER}
 worker:
     implementation: docker-worker
     path: "${docker_worker_code}"
