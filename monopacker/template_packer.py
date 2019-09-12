@@ -181,13 +181,31 @@ if __name__ == "__main__":
     parser.add_argument(
         "builders", type=str, nargs="+", help="list of builders to build"
     )
+    parser.add_argument(
+        "--builders_dir",
+        type=str,
+        help="directory for builder configuration",
+        default="./builders",
+    )
+    parser.add_argument(
+        "--var_files_dir",
+        type=str,
+        help="directory for builder var_files",
+        default="./template/vars",
+    )
+    parser.add_argument(
+        "--templates_dir",
+        type=str,
+        help="directory for builder templates",
+        default="./template/builders",
+    )
     args = parser.parse_args()
 
     packer_template = args.packer_template
     builders = args.builders
-    builders_dir = "./builders"
-    builder_var_files_dir = "./template/vars"
-    builder_template_dir = "./template/builders"
+    builders_dir = args.builders_dir
+    builder_var_files_dir = args.var_files_dir
+    builder_template_dir = args.templates_dir
 
     # variables namespaced per builder
     variables: Dict[str, Dict[str, Any]] = {}
