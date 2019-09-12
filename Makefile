@@ -4,7 +4,7 @@ PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
 # for jinja2 templating
-TEMPLATER=./util/template_packer.py
+TEMPLATER=./monopacker/template_packer.py
 TEMPLATE=./packer.yaml.jinja2
 
 # default
@@ -73,3 +73,6 @@ validate: clean tar packsecrets
 
 clean:
 	rm -rf $(ARTIFACTS)
+
+test:
+	python -m pytest tests/

@@ -1,12 +1,9 @@
 template: amazon_ebs
 platform: linux
 
-var_files:
+builder_var_files:
   - default_linux
   - amazon_ebs_bionic
-
-# override_vars:
-#   instance_type: m5.metal
 
 script_directories:
   - ubuntu-bionic

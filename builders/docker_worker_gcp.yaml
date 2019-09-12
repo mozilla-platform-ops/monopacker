@@ -1,7 +1,7 @@
 template: googlecompute
 platform: linux
 
-var_files:
+builder_var_files:
   - default_linux
   - googlecompute_bionic
 

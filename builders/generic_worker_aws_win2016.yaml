@@ -1,7 +1,7 @@
 template: amazon_ebs_windows
 platform: windows
 
-var_files:
+builder_var_files:
   - default_windows
   - amazon_ebs_win2016
 

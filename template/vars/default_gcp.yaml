@@ -1,0 +1,3 @@
+builder_vars:
+  env_vars:
+    WORKER_RUNNER_PROVIDER: google
