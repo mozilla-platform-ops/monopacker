@@ -92,10 +92,7 @@ def exit_if_type_mismatch(variable, expected_type):
 
 
 def get_builders_for_templating(
-    names: Sequence[str],
-    builders_dir="./builders",
-    var_files_dir="./template/vars",
-    scripts_dir="./scripts",
+    names: Sequence[str], builders_dir, var_files_dir, scripts_dir
 ):
     """Takes a list of builder names and builds dicts for templating
 
