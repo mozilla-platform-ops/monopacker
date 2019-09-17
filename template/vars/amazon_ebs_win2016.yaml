@@ -5,7 +5,6 @@ region: us-west-2
 ami_regions: us-east-1,us-west-1
 # gb
 volume_size: 40
-# ubuntu bionic
 source_ami_filter: Windows_Server-2016-English-Full-Base-*
 source_ami_owners: ["amazon"]
 
