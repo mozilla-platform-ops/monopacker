@@ -7,5 +7,5 @@ builder_var_files:
   - amazon_ebs_win2016
 
 script_directories:
-  - sysprep_aws
   - generic-worker-windows
+  - sysprep_aws

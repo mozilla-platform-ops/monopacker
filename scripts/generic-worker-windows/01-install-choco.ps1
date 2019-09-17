@@ -1,3 +1,5 @@
+set
+
 set-psdebug -trace 2;
 
 # allow powershell scripts to run
