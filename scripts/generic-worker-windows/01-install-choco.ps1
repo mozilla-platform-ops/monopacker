@@ -1,3 +1,5 @@
+set-psdebug -trace 2;
+
 # allow powershell scripts to run
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
