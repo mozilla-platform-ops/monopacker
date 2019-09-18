@@ -1,3 +1,6 @@
 ---
+project_id: taskcluster-imaging
+zone: us-west1-a
+
 env_vars:
   WORKER_RUNNER_PROVIDER: google

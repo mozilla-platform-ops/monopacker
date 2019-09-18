@@ -1,3 +1,10 @@
 ---
+instance_type: c5.2xlarge
+region: us-west-2
+# regions to copy to
+ami_regions: us-east-1,us-west-1
+# gb
+volume_size: 40
+
 env_vars:
   WORKER_RUNNER_PROVIDER: aws-provisioner
