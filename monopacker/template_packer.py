@@ -92,14 +92,14 @@ def exit_if_type_mismatch(variable, expected_type):
 
 
 def get_builders_for_templating(
-    names: Sequence[str], builders_dir="./builders", var_files_dir="./template/vars"
+    names: Sequence[str], builders_dir, var_files_dir, scripts_dir
 ):
     """Takes a list of builder names and builds dicts for templating
 
     keyword arguments:
     builders_dir -- directory in which to look for builders
     var_files_dir -- directory in which to look for builder variable files
-    builder_template_dir -- directory in which to look for builder templates
+    scripts_dir -- directory in which to look for script directories
     """
     builders: Sequence[Dict[str, str]] = []
     for builder in names:
@@ -163,7 +163,7 @@ def get_builders_for_templating(
                 # name is special
                 "vars": {**builder_vars, "name": builder},
                 "scripts": get_files_from_subdirs(
-                    *script_directories, root_dir="./scripts", globs=["*.sh", "*.ps1"]
+                    *script_directories, root_dir=scripts_dir, globs=["*.sh", "*.ps1"]
                 ),
                 "platform": builder_platform,
             }
@@ -174,7 +174,7 @@ def get_builders_for_templating(
 if __name__ == "__main__":
     description = """Expects a jinja2 templated packer.yaml and the name of one or more builders.
     Each builder must have a corresponding yaml file in `./builders`.
-    ex: builder gecko-1-miles-test has is configured at `./builders/gecko-1-miles-test.yaml`
+    ex: builder docker_worker_aws is configured at `./builders/docker_worker_aws.yaml`
     Outputs a packer JSON template to stdout."""
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument("packer_template", type=str, help="packer manifest to template")
@@ -185,19 +185,25 @@ if __name__ == "__main__":
         "--builders_dir",
         type=str,
         help="directory for builder configuration",
-        default="./builders",
+        default=os.environ.get("MONOPACKER_BUILDERS_DIR", "./builders"),
     )
     parser.add_argument(
         "--var_files_dir",
         type=str,
         help="directory for builder var_files",
-        default="./template/vars",
+        default=os.environ.get("MONOPACKER_VARS_DIR", "./template/vars"),
     )
     parser.add_argument(
         "--templates_dir",
         type=str,
         help="directory for builder templates",
-        default="./template/builders",
+        default=os.environ.get("MONOPACKER_TEMPLATES_DIR", "./template/builders"),
+    )
+    parser.add_argument(
+        "--scripts_dir",
+        type=str,
+        help="directory for builder templates",
+        default=os.environ.get("MONOPACKER_SCRIPTS_DIR", "./scripts"),
     )
     args = parser.parse_args()
 
@@ -205,12 +211,18 @@ if __name__ == "__main__":
     builders = args.builders
     builders_dir = args.builders_dir
     builder_var_files_dir = args.var_files_dir
-    builder_template_dir = args.templates_dir
+    builder_templates_dir = args.templates_dir
+    builder_scripts_dir = args.scripts_dir
 
     # variables namespaced per builder
     variables: Dict[str, Dict[str, Any]] = {}
 
-    templated_builders = get_builders_for_templating(builders)
+    templated_builders = get_builders_for_templating(
+        builders,
+        builders_dir=builders_dir,
+        var_files_dir=builder_var_files_dir,
+        scripts_dir=builder_scripts_dir,
+    )
 
     variables["builders"] = templated_builders
     variables["linux_builders"] = [
@@ -227,7 +239,7 @@ if __name__ == "__main__":
     with open(packer_template, "r") as f:
         packer_template_str = f.read()
     try:
-        e = Environment(loader=FileSystemLoader([builder_template_dir]))
+        e = Environment(loader=FileSystemLoader([builder_templates_dir]))
         t = e.from_string(packer_template_str)
         output = t.render(variables)
     except TemplateNotFound as err:
