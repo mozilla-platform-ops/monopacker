@@ -2,10 +2,10 @@ import pytest, sys
 
 # fixes imports for pytest
 from pathlib import Path
-REPO_ROOT = Path(__file__).parent.parent
-sys.path.insert(0, str(REPO_ROOT))
+MONOPACKER_PACKAGE = Path(__file__).parent.parent / "monopacker"
+sys.path.insert(0, str(MONOPACKER_PACKAGE))
 
-from monopacker.template_packer import (
+from template_packer import (
     handle_vars,
     get_files_from_subdirs,
     load_yaml_from_file,
