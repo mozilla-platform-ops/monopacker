@@ -16,8 +16,6 @@ from ruamel.yaml import YAML
 
 yaml = YAML(typ="safe")
 
-from monopacker.filters import clean_gcp_image_name
-
 
 def get_files_from_subdirs(*args, root_dir=".", globs=["*"]):
     """Get an sorted list of files from a list of subdirectories
@@ -242,7 +240,6 @@ if __name__ == "__main__":
         packer_template_str = f.read()
     try:
         e = Environment(loader=FileSystemLoader([builder_templates_dir]))
-        e.filters["clean_gcp_image_name"] = clean_gcp_image_name
         t = e.from_string(packer_template_str)
         output = t.render(variables)
     except TemplateNotFound as err:
