@@ -1,4 +1,9 @@
-import pytest
+import pytest, sys
+
+# fixes imports for pytest
+from pathlib import Path
+REPO_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(REPO_ROOT))
 
 from monopacker.template_packer import (
     handle_vars,
@@ -6,7 +11,6 @@ from monopacker.template_packer import (
     load_yaml_from_file,
     get_builders_for_templating,
 )
-
 
 def test_handle_vars():
     base = {"abc": 123, "foo": "bar", "blah": {"sub_foo": "sub_bar", "cow": "quack"}}
@@ -28,6 +32,7 @@ def test_load_yaml_from_file(tmpdir):
 def test_get_builders_for_templating(tmpdir):
     builders_dir = tmpdir.mkdir("builders")
     vars_dir = tmpdir.mkdir("vars")
+    scripts_dir = tmpdir.mkdir("scripts")
     builders_dir.join("foo.yaml").write(
         """
 template: foo.yaml
@@ -42,7 +47,7 @@ builder_vars:
 
     # tests the normal case, builder with var_files, vars
     builders = get_builders_for_templating(
-        ["foo"], builders_dir=builders_dir, var_files_dir=vars_dir
+        ["foo"], builders_dir=builders_dir, var_files_dir=vars_dir, scripts_dir=scripts_dir,
     )
 
     assert builders[0]["template"] == "foo.yaml"
@@ -68,7 +73,7 @@ builder_vars:
     # test that we get FileNotFoundError when passing a nonexistant subdir
     with pytest.raises(FileNotFoundError, match=r".*bar.yaml.*"):
         builders = get_builders_for_templating(
-            ["bar"], builders_dir=builders_dir, var_files_dir=vars_dir
+            ["bar"], builders_dir=builders_dir, var_files_dir=vars_dir, scripts_dir=scripts_dir,
         )
 
 
