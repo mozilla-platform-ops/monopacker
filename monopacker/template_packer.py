@@ -16,7 +16,7 @@ from ruamel.yaml import YAML
 
 yaml = YAML(typ="safe")
 
-from filters import clean_gcp_image_name
+from monopacker.filters import clean_gcp_image_name
 
 
 def get_files_from_subdirs(*args, root_dir=".", globs=["*"]):
