@@ -35,7 +35,9 @@ retry curl -L -o "${generic_worker_dir}/taskcluster-proxy" "https://github.com/t
 chmod a+x "${generic_worker_binary}" "${generic_worker_dir}/livelog" "${generic_worker_dir}/taskcluster-proxy"
 chown -R ubuntu:ubuntu "${generic_worker_dir}"
 "${generic_worker_binary}" --version
-"${generic_worker_binary}" new-ed25519-keypair --file "${generic_worker_dir}/ed25519.key"
+
+# we can generate a key here if we so desire
+# "${generic_worker_binary}" new-ed25519-keypair --file "${generic_worker_dir}/ed25519.key"
 
 generic_worker_start_script="/usr/local/bin/start-generic-worker"
 cat << EOF > "${generic_worker_start_script}"
@@ -57,6 +59,8 @@ worker:
     configPath: "${generic_worker_config}"
 # becomes part of generic-worker config
 workerConfig:
+    # TODO: should this be shared with docker-worker?
+    # it is right now
     ed25519SigningKeyLocation: "${taskcluster_secrets_dir}/worker_ed25519_cot_key"
 cacheOverRestarts: "${worker_runner_state}"
 EOF
