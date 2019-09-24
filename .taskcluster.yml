@@ -40,7 +40,7 @@ tasks:
         maxRunTime: 3600
         image: taskcluster/monopacker:build
         command:
-          - /bin/sh
+          - /bin/bash
           - --login
           - -cx
           - |
