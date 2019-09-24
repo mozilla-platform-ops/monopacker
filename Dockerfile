@@ -42,7 +42,18 @@ RUN go get -u github.com/hashicorp/packer && \
 
 WORKDIR /monopacker
 
-COPY ./Pipfile /monopacker/
+COPY ./monopacker /monopacker/monopacker
+COPY ./builders /monopacker/builders
+COPY ./scripts /monopacker/scripts
+COPY ./template /monopacker/template
+COPY ./files /monopacker/files
+COPY ./util /monopacker/util
+COPY ./tests /monopacker/tests
+
+COPY ./Makefile /monopacker
+COPY ./packer.yaml.jinja2 /monopacker
+COPY ./fake_secrets.yaml /monopacker
+COPY ./Pipfile /monopacker
 COPY ./Pipfile.lock /monopacker
 
 RUN pipenv install && pipenv run pip list
