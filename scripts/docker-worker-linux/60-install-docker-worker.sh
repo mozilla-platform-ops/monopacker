@@ -11,17 +11,17 @@ helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
 # secrets
 taskcluster_secrets_dir="/etc/taskcluster/secrets"
 
-# download docker-worker to this dir
-docker_worker_code="/home/ubuntu/docker-worker"
-
 # docker-worker and
 # worker-runner config
-docker_worker_config="${docker_worker_code}/config.yml"
+docker_worker_config="/etc/taskcluster/docker-worker/config.yml"
 worker_runner_config="/etc/taskcluster/worker-runner/start-worker.yml"
 worker_runner_state="/etc/taskcluster/worker-runner/state"
 
 # worker-runner start-worker binary
 worker_runner="/usr/local/bin/start-worker"
+
+# download docker-worker to this dir
+docker_worker_code="/home/ubuntu/docker-worker"
 
 # from worker-runner download location
 docker_worker_start_script="/usr/local/bin/start-docker-worker"
