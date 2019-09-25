@@ -60,7 +60,7 @@ templatepacker:
 	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
 
 build: clean validate
-	time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -
+	/bin/bash -c "time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
 
 vagrant: BUILDERS=vagrant_virtualbox_bionic
 vagrant: build
