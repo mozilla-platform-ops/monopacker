@@ -61,7 +61,7 @@ tasks:
       taskId: { $eval: as_slugid("bake") }
       created: { $fromNow: "" }
       deadline: { $fromNow: "2 hours" }
-      provisionerId: aws-provisioner-v1
+      provisionerId: taskcluster-imaging
       workerType: taskcluster-imaging-ci
       payload:
         maxRunTime: 3600
