@@ -56,3 +56,35 @@ tasks:
         description: runs tests, validates default packer builders
         owner: taskcluster-internal@mozilla.com
         source: ${event.repository.url}
+  - $if: '(true || tasks_for == "github-push" && event.ref == "refs/heads/master")'
+    then:
+      taskId: { $eval: as_slugid("bake") }
+      created: { $fromNow: "" }
+      deadline: { $fromNow: "2 hours" }
+      provisionerId: aws-provisioner-v1
+      workerType: taskcluster-imaging/taskcluster-imaging-ci
+      payload:
+        maxRunTime: 3600
+        image: taskcluster/monopacker:build
+        command:
+          - /bin/bash
+          - --login
+          - -cx
+          - |
+            CHECKOUT_DIR="/monopacker_checkout"
+            git clone "${event.repository.url}" "$CHECKOUT_DIR"
+            cd "$CHECKOUT_DIR"
+            git checkout "${event.after}"
+            curl $TASKCLUSTER_PROXY_URL/api/secrets/v1/secret/project/taskcluster/monopacker/image_baking
+            pipenv install
+            pipenv run make build BUILDERS="docker_worker_gcp"
+        artifacts:
+          "packer-artifacts.json":
+            type: file
+            path: /monopacker_checkout/packer-artifacts.json
+            expires: 3019-01-26T22:59:45.539Z
+      metadata:
+        name: bake images
+        description: bake docker_worker_gcp and docker_worker_gcp_l3 images
+        owner: taskcluster-internal@mozilla.com
+        source: ${event.repository.url}
