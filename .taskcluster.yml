@@ -1,6 +1,6 @@
 version: 1
 policy:
-  pullRequests: public
+  pullRequests: collaborators
 tasks:
   - $if: '(tasks_for == "github-pull-request"  && event["action"] in ["opened", "reopened", "synchronize"])'
     then:
