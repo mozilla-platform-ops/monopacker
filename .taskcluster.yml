@@ -83,7 +83,7 @@ tasks:
           "packer-artifacts.json":
             type: file
             path: /monopacker_checkout/packer-artifacts.json
-            expires: 3019-01-26T22:59:45.539Z
+            expires: "3019-01-26T22:59:45.539Z"
       metadata:
         name: bake images
         description: bake docker_worker_gcp and docker_worker_gcp_l3 images
