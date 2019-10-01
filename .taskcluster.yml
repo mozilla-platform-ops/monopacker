@@ -71,7 +71,6 @@ tasks:
           - --login
           - -cx
           - |
-            echo 'hmm'
             CHECKOUT_DIR="/monopacker_checkout"
             git clone "${event.repository.url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
