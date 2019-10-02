@@ -56,7 +56,7 @@ tasks:
         description: runs tests, validates default packer builders
         owner: taskcluster-internal@mozilla.com
         source: ${event.repository.url}
-  - $if: '(tasks_for == "github-push" && event.after == "refs/heads/master")'
+  - $if: '(tasks_for == "github-push" && event.ref == "refs/heads/master")'
     then:
       taskId: { $eval: as_slugid("bake") }
       created: { $fromNow: "" }
