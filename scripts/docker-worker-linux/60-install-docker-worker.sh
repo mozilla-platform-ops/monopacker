@@ -54,21 +54,11 @@ worker:
     configPath: "${docker_worker_config}"
 # becomes part of docker-worker config
 workerConfig:
-    # loopbacks should work
-    deviceManagement:
-        loopbackAudio:
-            enabled: true
-        loopbackVideo:
-            enabled: true
     dockerWorkerPrivateKey: "${taskcluster_secrets_dir}/worker_cot_key"
     ed25519SigningKeyLocation: "${taskcluster_secrets_dir}/worker_ed25519_cot_key"
     ssl:
         certificate: "${taskcluster_secrets_dir}/worker_livelog_tls_cert"
         key: "${taskcluster_secrets_dir}/worker_livelog_tls_key"
-    shutdown:
-        enabled: false
-        afterIdleSeconds: 0
-cacheOverRestarts: "${worker_runner_state}"
 EOF
 
 cat << EOF > /etc/systemd/system/docker-worker.service
