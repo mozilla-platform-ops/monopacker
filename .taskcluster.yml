@@ -2,7 +2,7 @@ version: 1
 policy:
   pullRequests: collaborators
 tasks:
-  - $if: '(tasks_for == "github-pull-request"  && event["action"] in ["opened", "reopened", "synchronize"])'
+  - $if: '(tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"])'
     then:
       taskId: { $eval: as_slugid("test") }
       created: { $fromNow: "" }
@@ -56,41 +56,46 @@ tasks:
         description: runs tests, validates default packer builders
         owner: taskcluster-internal@mozilla.com
         source: ${event.repository.url}
-  - $if: '(tasks_for == "github-push" && event.ref == "refs/heads/master")'
+  - $if: 'tasks_for == "github-push"'
     then:
-      taskId: { $eval: as_slugid("bake") }
-      created: { $fromNow: "" }
-      deadline: { $fromNow: "2 hours" }
-      provisionerId: taskcluster-imaging
-      workerType: taskcluster-imaging-ci
-      scopes:
-        - secrets:get:project/taskcluster/monopacker/gcloud_service_account
-      payload:
-        maxRunTime: 36000
-        features:
-          taskclusterProxy: true
-        image: taskcluster/monopacker:build
-        command:
-          - /bin/bash
-          - --login
-          - -cx
-          - |
-            mkdir /secrets
-            curl -s -L $TASKCLUSTER_PROXY_URL/api/secrets/v1/secret/project/taskcluster/monopacker/gcloud_service_account | jq '.secret' > /secrets/service_account.json
-            export GOOGLE_APPLICATION_CREDENTIALS=/secrets/service_account.json
-            CHECKOUT_DIR="/monopacker_checkout"
-            git clone "${event.repository.url}" "$CHECKOUT_DIR"
-            cd "$CHECKOUT_DIR"
-            git checkout "${event.after}"
-            pipenv install
-            pipenv run make build BUILDERS="docker_worker_gcp docker_worker_gcp_l3"
-        artifacts:
-          "packer-artifacts.json":
-            type: file
-            path: /monopacker_checkout/packer-artifacts.json
-            expires: { $fromNow: "1 year" }
-      metadata:
-        name: bake images
-        description: bake docker_worker_gcp and docker_worker_gcp_l3 images
-        owner: taskcluster-internal@mozilla.com
-        source: ${event.repository.url}
+      $if: 'event.ref == "refs/heads/master"'
+      then:
+        taskId: { $eval: as_slugid("bake") }
+        created: { $fromNow: "" }
+        deadline: { $fromNow: "2 hours" }
+        provisionerId: taskcluster-imaging
+        workerType: taskcluster-imaging-ci
+        scopes:
+          - secrets:get:project/taskcluster/monopacker/gcloud_service_account
+          - secrets:get:project/taskcluster/monopacker/production_secrets_yaml
+        payload:
+          maxRunTime: 36000
+          features:
+            taskclusterProxy: true
+          image: taskcluster/monopacker:build
+          command:
+            - /bin/bash
+            - --login
+            - -cx
+            - |
+              mkdir /secrets
+              curl -s -L $TASKCLUSTER_PROXY_URL/api/secrets/v1/secret/project/taskcluster/monopacker/gcloud_service_account  | jq '.secret' > /secrets/service_account.json
+              # secrets format is a list, .secret has to be an object so we wrap the secret in .contents[]
+              curl -s -L $TASKCLUSTER_PROXY_URL/api/secrets/v1/secret/project/taskcluster/monopacker/production_secrets_yaml | jq '.secret.contents' > /secrets/production_secrets.yaml
+              export GOOGLE_APPLICATION_CREDENTIALS=/secrets/service_account.json
+              CHECKOUT_DIR="/monopacker_checkout"
+              git clone "${event.repository.url}" "$CHECKOUT_DIR"
+              cd "$CHECKOUT_DIR"
+              git checkout "${event.after}"
+              pipenv install
+              pipenv run make build BUILDERS="docker_worker_gcp docker_worker_gcp_l3" SECRETS_FILE=/secrets/production_secrets.yaml
+          artifacts:
+            "packer-artifacts.json":
+              type: file
+              path: /monopacker_checkout/packer-artifacts.json
+              expires: { $fromNow: "1 year" }
+        metadata:
+          name: bake images
+          description: bake docker_worker_gcp and docker_worker_gcp_l3 images
+          owner: taskcluster-internal@mozilla.com
+          source: ${event.repository.url}
