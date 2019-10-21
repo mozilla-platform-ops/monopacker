@@ -49,6 +49,8 @@ dockerbuild: dockervalidate
 		-e AWS_SESSION_TOKEN \
 		-e AWS_SECURITY_TOKEN \
 		-e GOOGLE_APPLICATION_CREDENTIALS \
+		-e PACKER_LOG \
+		-e VAGRANT_LOG \
 		$(DOCKER_IMAGE) \
 		/bin/bash -c "$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR) && \
 					  time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
