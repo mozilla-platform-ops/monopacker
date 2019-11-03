@@ -18,11 +18,13 @@ retry apt install -y \
   gnupg-agent \
   software-properties-common
 
+MISC_PACKAGES=()
+MISC_PACKAGES+=(zstd python-pip jq)
+# docker-worker needs this for unpacking lz4 images
+MISC_PACKAGES+=(liblz4-tool)
+
 # misc
-retry apt install -y \
-  zstd \
-  python-pip \
-  jq
+retry apt install -y ${MISC_PACKAGES[@]}
 
 # Remove apport because it prevents obtaining crashes from containers
 # and because it may send data to Canonical.
