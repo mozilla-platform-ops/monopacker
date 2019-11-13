@@ -1,0 +1,10 @@
+- name: {{builder.vars.name}}
+  type: azure-arm
+  subscription_id: {{builder.vars.subscription_id}}
+  image_publisher: {{builder.vars.base_image_publisher}}
+  image_offer: {{builder.vars.base_image_offer}}
+  image_sku: {{builder.vars.base_image_sku}}
+  managed_image_name: {{builder.vars.name}}-{{builder.vars.image_suffix}}
+  managed_image_resource_group_name: {{builder.vars.managed_image_resource_group_name}}
+  location: {{builder.vars.location}}
+  os_type: {{builder.vars.os_type}}

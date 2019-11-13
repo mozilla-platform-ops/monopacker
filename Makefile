@@ -8,7 +8,7 @@ TEMPLATER=./monopacker/template_packer.py
 TEMPLATE=./packer.yaml.jinja2
 
 # default
-BUILDERS=docker_worker_aws docker_worker_gcp
+BUILDERS=docker_worker_aws docker_worker_gcp docker_worker_azure
 
 FILES_TAR=files.tar
 SECRETS_FILE=fake_secrets.yaml

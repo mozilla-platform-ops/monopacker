@@ -1,0 +1,12 @@
+template: azure
+platform: linux
+
+builder_var_files:
+  - default_linux
+  - default_azure
+  - azure_bionic
+
+script_directories:
+  - ubuntu-bionic
+  - worker-runner-linux
+  - docker-worker-linux

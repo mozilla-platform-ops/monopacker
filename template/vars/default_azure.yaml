@@ -1,0 +1,7 @@
+---
+subscription_id: fe7fd10a-bdc1-44b0-811e-94c4b4be754f
+managed_image_resource_group_name: taskcluster-images
+location: westus
+
+env_vars:
+  WORKER_RUNNER_PROVIDER: azure

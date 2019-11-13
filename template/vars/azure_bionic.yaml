@@ -1,0 +1,5 @@
+---
+base_image_publisher: Canonical
+base_image_offer: UbuntuServer
+base_image_sku: 18.04-LTS
+os_type: linux
