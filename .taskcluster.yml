@@ -7,8 +7,8 @@ tasks:
       taskId: { $eval: as_slugid("test") }
       created: { $fromNow: "" }
       deadline: { $fromNow: "2 hours" }
-      provisionerId: aws-provisioner-v1
-      workerType: github-worker
+      provisionerId: proj-taskcluster
+      workerType: ci
       payload:
         maxRunTime: 3600
         image: taskcluster/monopacker:build
@@ -34,8 +34,8 @@ tasks:
       taskId: { $eval: as_slugid("test") }
       created: { $fromNow: "" }
       deadline: { $fromNow: "2 hours" }
-      provisionerId: aws-provisioner-v1
-      workerType: github-worker
+      provisionerId: proj-taskcluster
+      workerType: ci
       payload:
         maxRunTime: 3600
         image: taskcluster/monopacker:build
@@ -63,11 +63,11 @@ tasks:
         taskId: { $eval: as_slugid("bake") }
         created: { $fromNow: "" }
         deadline: { $fromNow: "2 hours" }
-        provisionerId: taskcluster-imaging
-        workerType: taskcluster-imaging-ci
+        provisionerId: proj-taskcluster
+        workerType: ci
         scopes:
           - secrets:get:project/taskcluster/monopacker/gcloud_service_account
-          - secrets:get:project/taskcluster/monopacker/production_secrets_yaml
+          - secrets:get:project/taskcluster/monopacker/worker_secrets_yaml
         payload:
           maxRunTime: 36000
           features:
@@ -81,14 +81,14 @@ tasks:
               mkdir /secrets
               curl -s -L $TASKCLUSTER_PROXY_URL/api/secrets/v1/secret/project/taskcluster/monopacker/gcloud_service_account  | jq '.secret' > /secrets/service_account.json
               # secrets format is a list, .secret has to be an object so we wrap the secret in .contents[]
-              curl -s -L $TASKCLUSTER_PROXY_URL/api/secrets/v1/secret/project/taskcluster/monopacker/production_secrets_yaml | jq '.secret.contents' > /secrets/production_secrets.yaml
+              curl -s -L $TASKCLUSTER_PROXY_URL/api/secrets/v1/secret/project/taskcluster/monopacker/worker_secrets_yaml | jq '.secret.contents' > /secrets/worker_secrets.yaml
               export GOOGLE_APPLICATION_CREDENTIALS=/secrets/service_account.json
               CHECKOUT_DIR="/monopacker_checkout"
               git clone "${event.repository.url}" "$CHECKOUT_DIR"
               cd "$CHECKOUT_DIR"
               git checkout "${event.after}"
               pipenv install
-              pipenv run make build BUILDERS="docker_worker_gcp docker_worker_gcp_l3" SECRETS_FILE=/secrets/production_secrets.yaml
+              pipenv run make build BUILDERS="docker_worker_gcp" SECRETS_FILE=/secrets/worker_secrets.yaml
           artifacts:
             "packer-artifacts.json":
               type: file
@@ -96,6 +96,6 @@ tasks:
               expires: { $fromNow: "1 year" }
         metadata:
           name: bake images
-          description: bake docker_worker_gcp and docker_worker_gcp_l3 images
+          description: bake docker_worker_gcp
           owner: taskcluster-internal@mozilla.com
           source: ${event.repository.url}
