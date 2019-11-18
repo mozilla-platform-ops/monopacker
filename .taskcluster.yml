@@ -7,7 +7,7 @@ tasks:
       taskId: { $eval: as_slugid("test") }
       created: { $fromNow: "" }
       deadline: { $fromNow: "2 hours" }
-      provisionerId: taskcluster
+      provisionerId: proj-taskcluster
       workerType: ci
       payload:
         maxRunTime: 3600
@@ -34,7 +34,7 @@ tasks:
       taskId: { $eval: as_slugid("test") }
       created: { $fromNow: "" }
       deadline: { $fromNow: "2 hours" }
-      provisionerId: taskcluster
+      provisionerId: proj-taskcluster
       workerType: ci
       payload:
         maxRunTime: 3600
@@ -63,7 +63,7 @@ tasks:
         taskId: { $eval: as_slugid("bake") }
         created: { $fromNow: "" }
         deadline: { $fromNow: "2 hours" }
-        provisionerId: taskcluster
+        provisionerId: proj-taskcluster
         workerType: ci
         scopes:
           - secrets:get:project/taskcluster/monopacker/gcloud_service_account
