@@ -7,4 +7,4 @@ ami_regions: us-east-1,us-west-1
 volume_size: 40
 
 env_vars:
-  WORKER_RUNNER_PROVIDER: aws-provisioner
+  WORKER_RUNNER_PROVIDER: aws
