@@ -29,7 +29,7 @@ script_directories:
 The same concept applies to `builder_var_files`. Variables redefined in multiple `builder_var_files`
 will be overwritten by each subsequent file as it is loaded.
 
-`builder_vars`, as the name implies, override any variables specified in `builder_var_files`.
+`builder_vars` override any variables specified in `builder_var_files`.
 
 ### Adding a new builder
 
