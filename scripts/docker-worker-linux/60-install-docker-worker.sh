@@ -61,10 +61,15 @@ workerConfig:
         key: "${taskcluster_secrets_dir}/worker_livelog_tls_key"
 EOF
 
+if [ "$WORKER_RUNNER_PROVIDER" == "azure" ]; then
+  extra_required_units="walinuxagent.service"
+fi
+
 cat << EOF > /etc/systemd/system/docker-worker.service
 [Unit]
 Description=Taskcluster docker worker
-After=docker.service
+After=docker.service $extra_required_units
+Requires=docker.service $extra_required_units
 
 [Service]
 Type=simple
