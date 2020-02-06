@@ -1,4 +1,4 @@
-# copy of docker_worker_gcp
+# copy of docker_worker_gcp in l3 project
 template: googlecompute
 platform: linux
 
@@ -11,3 +11,8 @@ script_directories:
   - ubuntu-bionic
   - worker-runner-linux
   - docker-worker-linux
+
+# Note: this project disallows port 22, so baking images requires
+# temporarily allowing access
+builder_vars:
+  project_id: fxci-production-level3-workers
