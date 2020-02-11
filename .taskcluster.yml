@@ -28,7 +28,7 @@ tasks:
         name: monopacker tests
         description: runs tests, validates default packer builders
         owner: taskcluster-internal@mozilla.com
-        source: ${event.pull_request.head.repo.clone_url}
+        source: ${event.pull_request.head.repo.url}
   - $if: 'tasks_for == "github-push"'
     then:
       taskId: { $eval: as_slugid("test") }
