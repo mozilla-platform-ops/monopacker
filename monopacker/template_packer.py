@@ -3,6 +3,7 @@
 import errno, os, sys, argparse, json
 from pathlib import Path
 from typing import Any, Dict, Sequence
+import monorepo
 
 from jinja2 import (
     Environment,
@@ -129,6 +130,8 @@ def get_builders_for_templating(
             builder_vars = get_vars_from_files(builder_var_files)
         else:
             print(f"<warning> Missing `builder_var_files` key for builder {builder}")
+
+        builder_vars["TASKCLUSTER_VERSION"] = monorepo.version
 
         # overwrites previously defined keys from builder_var_files
         if "builder_vars" in builder_config:
