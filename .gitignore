@@ -21,3 +21,6 @@ output-vagrant*
 
 ### Secrets ###
 real_secrets.yaml
+
+# Python cache
+*.pyc

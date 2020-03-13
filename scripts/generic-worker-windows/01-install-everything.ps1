@@ -1,3 +1,5 @@
+# TODO: download generic-worker executable from the monorepo
+
 # use TLS 1.2 (see bug 1443595)
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 

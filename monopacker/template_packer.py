@@ -3,6 +3,7 @@
 import errno, os, sys, argparse, json
 from pathlib import Path
 from typing import Any, Dict, Sequence
+import monorepo
 
 from jinja2 import (
     Environment,
@@ -142,6 +143,7 @@ def get_builders_for_templating(
             exit_if_type_mismatch(env_vars, dict)
             env_vars = [f"{k}={v}" for k, v in env_vars.items()]
             builder_vars["env_vars"] = env_vars
+            builder_vars["env_vars"].append(f"TASKCLUSTER_VERSION={monorepo.version}")
 
         if "template" in builder_config:
             builder_template = builder_config["template"]
