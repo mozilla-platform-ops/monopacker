@@ -68,8 +68,8 @@ fi
 cat << EOF > /etc/systemd/system/docker-worker.service
 [Unit]
 Description=Taskcluster docker worker
-After=docker.service $extra_required_units
-Requires=docker.service $extra_required_units
+After=docker.service docker-worker-disk-setup.service $extra_required_units
+Requires=docker.service docker-worker-disk-setup.service $extra_required_units
 
 [Service]
 Type=simple
