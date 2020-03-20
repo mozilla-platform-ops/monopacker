@@ -27,10 +27,15 @@ if ! lvdisplay | grep instance_storage; then
     # Find instance storage devices
     # c5 and newer has nvme* devices. The nvmeN devices can't be used
     # with vgcreate. But nvmeNnN can.
+    root_device=\$(mount | grep " / " | awk '{print \$1}')
     if [ -e /dev/nvme0 ]; then
-        devices=\$(ls /dev/nvme*n* | grep -v '/dev/nvme0$')
+        # root device is /dev/nvme[0-9]
+        root_device=\${root_device:0:10}
+        devices=\$(ls -1 /dev/nvme*n* | grep -v "\${root_device}")
     else
-        devices=\$(ls /dev/xvd* | grep -v '/dev/xvda')
+        # root device is /dev/xvd[a-z]
+        root_device=\${root_device:0:9}
+        devices=\$(ls -1 /dev/xvd* | grep -v "\${root_device}")
     fi
 
     if [ -z "\${devices}" ]; then
