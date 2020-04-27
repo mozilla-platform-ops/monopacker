@@ -10,7 +10,6 @@ helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
 # with a modified grep for nvme0 to get devices. This should
 # work in both aws and google
 
-
 disk_setup_script="/usr/local/bin/configure-docker-worker-disks"
 
 cat << EOF > "${disk_setup_script}"
@@ -20,9 +19,21 @@ cat << EOF > "${disk_setup_script}"
 # We create an LVM logical volume from all available storage devices,
 # format it, mount it, and ensure basic structure is in place.
 
+# This is the URL for AWS. We don't support ram disk on other
+# clouds for now
+user_data_url=http://169.254.169.254/latest/user-data
+curl_opt='--silent --connect-timeout 5'
+
+# unless we are instructed to use tmpfs
+if curl \$curl_opt \$user_data_url > /dev/null 2>&1; then
+    tmpfs_size=\$(curl \$curl_opt \$user_data_url | jq .tmpfsSize | tr -d \")
+fi
+
 # Create logical volume
 # Do not attempt to create if volume already exists (upstart respawn).
-if ! lvdisplay | grep instance_storage; then
+if ! [ -z "\$tmpfs_size" -o "\$tmpfs_size" == "null" ]; then
+    mount -t tmpfs -o size=\$tmpfs_size tmpfs /mnt
+elif ! lvdisplay | grep instance_storage; then
     echo "Creating logical volume 'instance_storage'"
     # Find instance storage devices
     # c5 and newer has nvme* devices. The nvmeN devices can't be used
@@ -58,45 +69,47 @@ else
 fi
 
 # Check to see if instance_storage-all is mounted already
-if ! df -T /dev/mapper/instance_storage-all | grep 'ext4'; then
-    # Format logical volume with ext4
-    echo "Logical volume does not appear mounted."
-    echo "Formating 'instance_storage' as ext4"
+if [ -z "\$tmpfs_size" -o "\$tmpfs_size" == "null" ]; then
+    if ! df -T /dev/mapper/instance_storage-all | grep 'ext4'; then
+        # Format logical volume with ext4
+        echo "Logical volume does not appear mounted."
+        echo "Formating 'instance_storage' as ext4"
 
-    if ! mkfs.ext4 /dev/instance_storage/all; then
-        echo "Could not format 'instance_storage' as ext4."
-        exit 1
+        if ! mkfs.ext4 /dev/instance_storage/all; then
+            echo "Could not format 'instance_storage' as ext4."
+            exit 1
+        else
+            echo "Succesfully formated 'instance_storage' as ext4."
+            echo "Mounting logical volume"
+
+            # Our assumption is that workers are ephemeral. If errors are encountered, the
+            # worker should be thrown away. Workers are never rebooted. So filesystem
+            # durability isn't too important to us.
+
+            # Default mount options: rw,relatime,errors=remount-ro,data=ordered
+            #
+            # We make the following changes:
+            #
+            # errors=panic -- The worker is unusable if the mount isn't writable. So
+            # panic if we encounter this.
+            #
+            # data=writeback -- Don't require write ordering between journal and main
+            # filesystem. Since we don't have a separate journal device, this probably
+            # does little. But in theory it relaxes durability so it shouldn't hurt.
+            #
+            # nobarrier -- Loosen restrictions around writes to journal.
+            #
+            # commit=60 -- By default, ext4 tries to sync every 5s to ensure
+            # minimal data loss in case of system failure. We increase that to 60s to
+            # avoid excessive filesystem sync. The filesystem will still write out
+            # changes in the background. And a sync() issued by an application can
+            # still force a full flush sooner. But ext4 itself won't be flushing all
+            # changes as often.
+            mount -o 'rw,relatime,errors=panic,data=writeback,nobarrier,commit=60' /dev/instance_storage/all /mnt
+        fi
     else
-        echo "Succesfully formated 'instance_storage' as ext4."
-        echo "Mounting logical volume"
-
-        # Our assumption is that workers are ephemeral. If errors are encountered, the
-        # worker should be thrown away. Workers are never rebooted. So filesystem
-        # durability isn't too important to us.
-
-        # Default mount options: rw,relatime,errors=remount-ro,data=ordered
-        #
-        # We make the following changes:
-        #
-        # errors=panic -- The worker is unusable if the mount isn't writable. So
-        # panic if we encounter this.
-        #
-        # data=writeback -- Don't require write ordering between journal and main
-        # filesystem. Since we don't have a separate journal device, this probably
-        # does little. But in theory it relaxes durability so it shouldn't hurt.
-        #
-        # nobarrier -- Loosen restrictions around writes to journal.
-        #
-        # commit=60 -- By default, ext4 tries to sync every 5s to ensure
-        # minimal data loss in case of system failure. We increase that to 60s to
-        # avoid excessive filesystem sync. The filesystem will still write out
-        # changes in the background. And a sync() issued by an application can
-        # still force a full flush sooner. But ext4 itself won't be flushing all
-        # changes as often.
-        mount -o 'rw,relatime,errors=panic,data=writeback,nobarrier,commit=60' /dev/instance_storage/all /mnt
+        echo "Logical volume 'instance_storage' is already mounted."
     fi
-else
-    echo "Logical volume 'instance_storage' is already mounted."
 fi
 
 echo "Creating docker specific directories"
