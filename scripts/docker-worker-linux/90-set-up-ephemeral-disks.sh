@@ -42,16 +42,25 @@ elif ! lvdisplay | grep instance_storage; then
     if [ -e /dev/nvme0 ]; then
         # root device is /dev/nvme[0-9]
         root_device=\${root_device:0:10}
-        devices=\$(ls -1 /dev/nvme*n* | grep -v "\${root_device}")
-    else
+        devices=\$(ls -1 /dev/nvme*n* | grep -v "\${root_device}" || true)
+    elif [ -e /dev/sda ]; then
+        # root device is /dev/sd[a-z]
+        root_device=\${root_device:0:8}
+        devices=\$(ls /dev/sd* | grep -v "\${root_device}" || true)
+    elif [ -e /dev/xvda ]; then
         # root device is /dev/xvd[a-z]
         root_device=\${root_device:0:9}
-        devices=\$(ls -1 /dev/xvd* | grep -v "\${root_device}")
+        devices=\$(ls -1 /dev/xvd* | grep -v "\${root_device}" || true)
     fi
 
     if [ -z "\${devices}" ]; then
         echo "could not find devices to use for instance storage"
-        exit 1
+        # Bug 1570188; this is a hack to run in GCP where instance volumes aren't
+        # configured.  We should do something much smarter.
+        mkdir -p /mnt/var/lib/docker
+        mkdir -p /mnt/docker-tmp
+        mkdir -p /mnt/var/cache/docker-worker
+        exit
     fi
 
     echo "Found devices: \$devices"
