@@ -1,6 +1,8 @@
 - name: {{builder.vars.name}}
   type: amazon-ebs
   communicator: ssh
+  ami_users:
+    - "710952102342"
   # for initial connect
   ssh_timeout: {{builder.vars.ssh_timeout}}
   # for reboots
