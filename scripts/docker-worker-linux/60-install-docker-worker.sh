@@ -25,9 +25,9 @@ docker_worker_code="/home/ubuntu/docker-worker"
 
 # from worker-runner download location
 docker_worker_start_script="/usr/local/bin/start-docker-worker"
-docker_worker_version="v202004031836"
+docker_worker_version="v202004241848"
 
-retry curl -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/docker-worker/archive/${docker_worker_version}.tar.gz"
+retry curl -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/docker-worker-deploy/releases/download/$docker_worker_version/docker-worker.tgz"
 mkdir -p "${docker_worker_code}"
 tar xvf /tmp/docker-worker.tgz -C "${docker_worker_code}" --strip-components 1
 
