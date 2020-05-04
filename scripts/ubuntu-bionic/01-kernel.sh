@@ -14,7 +14,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Update kernel
 # We install the generic kernel because it has the V4L2 driver
-KERNEL_NOVARIANT_VERSION=4.15.0-1056
+KERNEL_NOVARIANT_VERSION=5.3.0-1017
 KERNEL_VERSION=$KERNEL_NOVARIANT_VERSION-aws
 
 # testing updating AWS kernel and adding extras package
@@ -39,7 +39,7 @@ pushd /var/kernel
 dpkg -i --force-confnew linux-modules-$KERNEL_VERSION*.deb
 dpkg -i --force-confnew linux-image-$KERNEL_VERSION*.deb
 dpkg -i --force-confnew linux-modules-extra-$KERNEL_VERSION*.deb
-dpkg -i --force-confnew linux-aws-headers-$KERNEL_NOVARIANT_VERSION*.deb
+dpkg -i --force-confnew linux-aws-*headers-$KERNEL_NOVARIANT_VERSION*.deb
 dpkg -i --force-confnew linux-headers-$KERNEL_VERSION*.deb
 dpkg -i --force-confnew linux-buildinfo-$KERNEL_VERSION*.deb
 popd

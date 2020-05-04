@@ -38,7 +38,7 @@ Device Driver -->
 Building `v4l2loopback`
 =======================
 
-* `export version=0.12.2`
+* `export version=0.12.5`
 * `sudo git clone -b v$version git://github.com/umlaeute/v4l2loopback /usr/src/v4l2loopback-$version`
 * Edit the file `v4l2looback.c` and change the `MAX_DEVICES` definition to `96`
 * `sudo dkms build -k $(uname -r) -m v4l2loopback -v $version`
