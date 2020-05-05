@@ -30,6 +30,7 @@ provisioners:
   # untar at /
   - type: shell
     inline:
+      - sudo mkdir -p /etc/taskcluster/secrets
       - sudo tar xvf /tmp/secrets.tar -C /
       - sudo chown root:root -R /etc/taskcluster
       - sudo chmod 0400 -R /etc/taskcluster/secrets
