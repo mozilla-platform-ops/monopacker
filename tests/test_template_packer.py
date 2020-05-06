@@ -6,18 +6,42 @@ MONOPACKER_PACKAGE = Path(__file__).parent.parent / "monopacker"
 sys.path.insert(0, str(MONOPACKER_PACKAGE))
 
 from template_packer import (
-    handle_vars,
+    merge_vars,
     get_files_from_subdirs,
     load_yaml_from_file,
     get_builders_for_templating,
 )
 
-def test_handle_vars():
+def test_merge_vars():
     base = {"abc": 123, "foo": "bar", "blah": {"sub_foo": "sub_bar", "cow": "quack"}}
     override = {"abc": 456, "blah": {"cow": "moo"}}
     expected = {"abc": 456, "foo": "bar", "blah": {"sub_foo": "sub_bar", "cow": "moo"}}
 
-    assert handle_vars(base, override) == expected
+    assert merge_vars(base, override) == expected
+
+
+def test_merge_vars_merge_sub_dicts():
+    base = {"base": 1, "combined": {"a": 1, "b": 2}}
+    override = {"override": 2, "combined": {"b": 12, "c": 13}}
+    expected = {"base": 1, "override": 2, "combined": {"a": 1, "b": 12, "c": 13}}
+
+    assert merge_vars(base, override) == expected
+
+
+def test_merge_vars_overwrite_arrays():
+    base = {"base": 1, "both": [1, 2]}
+    override = {"override": 2, "both": [3, 4]}
+    expected = {"base": 1, "override": 2, "both": [3, 4]}
+
+    assert merge_vars(base, override) == expected
+
+
+def test_merge_vars_merge_sub_sub_dicts():
+    base = {"combined": {"b": {1: 10, 2:20}}}
+    override = {"combined": {"b": {2: 120, 3: 130}}}
+    expected = {"combined": {"b": {1: 10, 2: 120, 3: 130}}}
+
+    assert merge_vars(base, override) == expected
 
 
 def test_load_yaml_from_file(tmpdir):

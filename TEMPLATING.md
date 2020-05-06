@@ -27,7 +27,8 @@ script_directories:
   be executed before `02-bar.sh`.
 
 The same concept applies to `builder_var_files`. Variables redefined in multiple `builder_var_files`
-will be overwritten by each subsequent file as it is loaded.
+will be overwritten by each subsequent file as it is loaded.  When merging, dictionaries are
+merged recursively, while all other values overwrite existing values.
 
 `builder_vars` override any variables specified in `builder_var_files`.
 
