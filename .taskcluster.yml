@@ -21,9 +21,8 @@ tasks:
             git clone "${event.pull_request.head.repo.clone_url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.pull_request.head.sha}"
-            pipenv install
-            pipenv run make validate
-            pipenv run make test
+            pip install -R requirements.txt
+            pytest
       metadata:
         name: monopacker tests
         description: runs tests, validates default packer builders
@@ -48,9 +47,8 @@ tasks:
             git clone "${event.repository.url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.after}"
-            pipenv install
-            pipenv run make validate
-            pipenv run make test
+            pip install -R requirements.txt
+            pytest
       metadata:
         name: monopacker tests
         description: runs tests, validates default packer builders
@@ -87,8 +85,8 @@ tasks:
               git clone "${event.repository.url}" "$CHECKOUT_DIR"
               cd "$CHECKOUT_DIR"
               git checkout "${event.after}"
-              pipenv install
-              pipenv run make build BUILDERS="docker_worker_gcp" SECRETS_FILE=/secrets/worker_secrets.yaml
+              python setup.py install
+              monopacker build BUILDERS="docker_worker_gcp" SECRETS_FILE=/secrets/worker_secrets.yaml
           artifacts:
             "packer-artifacts.json":
               type: file
