@@ -43,6 +43,7 @@ RUN go get -u github.com/hashicorp/packer && \
 WORKDIR /monopacker
 
 COPY ./monopacker /monopacker/monopacker
+COPY ./bin /monopacker/bin
 COPY ./builders /monopacker/builders
 COPY ./scripts /monopacker/scripts
 COPY ./template /monopacker/template
@@ -53,11 +54,8 @@ COPY ./tests /monopacker/tests
 COPY ./Makefile /monopacker
 COPY ./packer.yaml.jinja2 /monopacker
 COPY ./fake_secrets.yaml /monopacker
-COPY ./Pipfile /monopacker
-COPY ./Pipfile.lock /monopacker
+COPY ./setup.py /monopacker
 
-RUN pipenv install && pipenv run pip list
-RUN export PATH=${PATH}:"$(pipenv --venv)/bin"
+RUN python3 setup.py install
 
-ENTRYPOINT ["pipenv", "run"]
-CMD make validate
+CMD monopacker --help
