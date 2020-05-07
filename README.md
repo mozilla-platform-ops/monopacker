@@ -8,11 +8,18 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - Clarity: it should be clear which steps run on base images and which steps run on derived images
 - Portability: the configuration should be generic enough to be run beyond Firefox CI's worker deployment
 
+### Installation
+
+```
+# install package with runtime dependencies
+python setup.py install
+
+# install dev dependencies
+pip -r requirements.txt
+```
+
 ### Dependencies (alternatively, use docker)
 
-- `pipenv`
-  - Note: you can install all python dependencies using `pipenv` (`pipenv install`)
-  - If you do that, you probably want to be in a `pipenv shell`
 - `make`
 - `packer` (`go get github.com/hashicorp/packer`)
 - `vagrant`
@@ -81,10 +88,6 @@ make dockerbuild INPUT_FILE=packer.yaml
 See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
 
 ### FAQ
-
-#### I'm getting `ModuleNotFoundError: No module named 'ruamel'`
-
-Make sure you're in a `pipenv shell`.
 
 #### How do I build using only a single builder?
 
