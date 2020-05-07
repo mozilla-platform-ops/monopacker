@@ -56,16 +56,17 @@ def load_yaml_from_file(filename: str):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
 
-def handle_vars(base_vars, override_vars):
+def merge_vars(base_vars, override_vars):
     """Takes two dicts, returns a new dict. Values in the second dict take precedence.
 
-       If both dicts have a dictionary value for a key their subdicts are merged
+       If both dicts have a dictionary value for a key their subdicts are
+       merged, recursively.  All other values (including lists) are overridden.
     """
     d = {**base_vars}
     for k, v in override_vars.items():
-        # merge dicts
+        # recursively merge dicts
         if k in base_vars and type(v) == type(base_vars[k]) and isinstance(v, dict):
-            d[k] = {**base_vars[k], **v}
+            d[k] = merge_vars(base_vars[k], v)
         else:
             d[k] = v
     return d
@@ -80,7 +81,7 @@ def get_vars_from_files(files: Sequence[str]):
         try:
             y = load_yaml_from_file(file)
             if y:
-                d = handle_vars(d, y)
+                d = merge_vars(d, y)
         except Exception as e:
             print(f"Could not read yaml from {file}")
             raise e
@@ -135,7 +136,7 @@ def get_builders_for_templating(
         if "builder_vars" in builder_config:
             override_vars = builder_config["builder_vars"]
             exit_if_type_mismatch(override_vars, dict)
-            builder_vars = handle_vars(builder_vars, override_vars)
+            builder_vars = merge_vars(builder_vars, override_vars)
 
         # packer takes environment_vars as an array of "key=value" strings
         if "env_vars" in builder_vars:

@@ -62,6 +62,7 @@ builder_var_files:
 Which refer to YAML files in the `./template/vars` directory.
 Variables redefined in multiple `builder_var_files` will be overwritten by each subsequent file as it is loaded.
 `builder_vars` override any variables specified in `builder_var_files`.
+Variables are merged deeply, with sub-dictionaries also merged recursively.
 
 Note that in the builder template variables are namespaced under `builder.vars` -
 this avoids conflicts in templating where multiple builders specify the same variables.
