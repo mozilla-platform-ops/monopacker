@@ -1,4 +1,25 @@
 ---
+{##
+ # This file is processed into a YAML using Jinja2 by `monopacker/template_packer.py`,
+ # then converted to a JSON file and passed to packer.
+ #
+ # Variables:
+ #  - `builders` -- all builders
+ #  - `linux_builders` -- names of builders with platform = linux
+ #  - `windows_builders` -- names of builders with platform = windows
+ #
+ # Each builder has the form
+ # {
+ #    "template": .., // The Jinja2 template under `template/builders/` used to
+ #                    // generate the Packer builder definition
+ #    "vars": ..,     // The variables specific to this builder (available as
+ #                    // `builder.vars.<varname>` inside the builder template
+ #    "scripts": ..,  // Scripts derived from the `script_directories` builder config
+ #    "platform": .., // The platform from the builder config
+ # }
+ #
+ # The "name" var is always set to the name of the builder.
+ #}
 
 builders:
 {% for builder in builders %}
