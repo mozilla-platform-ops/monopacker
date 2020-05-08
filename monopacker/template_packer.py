@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import errno, os
+import click
 from pathlib import Path
 from typing import Any, Dict, Sequence
 from jinja2 import (
@@ -172,13 +173,52 @@ def get_builders_for_templating(
         )
     return builders
 
+def generate_packer_template_params(fn):
+    "Decorate a click function with options for generate_packer_template"
+    params = [
+        click.argument(
+            'packer_template',
+            type=str,
+            required=True),
+        click.argument(
+            'builders',
+            nargs=-1,
+            type=str,
+            required=True),
+        click.option(
+            "--builders_dir",
+            type=str,
+            help="directory for builder configuration",
+            default=os.environ.get("MONOPACKER_BUILDERS_DIR", "./builders")),
+        click.option(
+            "--var_files_dir",
+            type=str,
+            help="directory for builder var_files",
+            default=os.environ.get("MONOPACKER_VARS_DIR", "./template/vars")),
+        click.option(
+            "--templates_dir",
+            type=str,
+            help="directory for builder templates",
+            default=os.environ.get("MONOPACKER_TEMPLATES_DIR", "./template/builders")),
+        click.option(
+            "--scripts_dir",
+            type=str,
+            help="directory for builder templates",
+            default=os.environ.get("MONOPACKER_SCRIPTS_DIR", "./scripts")),
+        ]
+    params.reverse()
+    for param in params:
+        fn = param(fn)
+    return fn
+
 def generate_packer_template(*,
     packer_template,
     builders,
     builders_dir,
     var_files_dir,
     templates_dir,
-    scripts_dir):
+    scripts_dir,
+    **_):
     # variables namespaced per builder
     variables: Dict[str, Dict[str, Any]] = {}
 

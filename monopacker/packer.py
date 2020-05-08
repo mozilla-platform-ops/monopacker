@@ -1,30 +1,38 @@
+import sys
+import click
 import os
 import subprocess
-import tempfile
+import json
+import shlex
 
-def validate(packer_template) -> bytes:
-    """Run packer validate and return output.
-
-    :param packer_template: a json packer template that will be passed to `packer validate`
-    """
-
-    with tempfile.NamedTemporaryFile(mode='w') as tmpfile:
-        # write json to tmpfile
-
-        packer_args = [
-            'packer',
-            'validate',
-            tmpfile.path,
+def run_packer_params(fn):
+    "Decorate a click function with options for run_packer"
+    params = [
+        click.option(
+            "--packer",
+            type=str,
+            help="path to the packer binary",
+            default='packer'),
+        click.option(
+            "--packer-args",
+            type=str,
+            help="additional arguments to pass to packer (shell-quoted)",
+            default='')
         ]
-        try:
-            res = subprocess.run(packer_args,
-                                     cwd=cwd,
-                                     capture_output=True,
-                                     check=True)
-            print(f"templated helm chart: {res.stdout.decode('utf-8')}")
-            return res.stdout
-        except subprocess.CalledProcessError as e:
-            if e.stderr:
-                print(e.stderr.decode('utf-8'))
-            raise
-        return res.stdout
+    params.reverse()
+    for param in params:
+        fn = param(fn)
+    return fn
+
+def run_packer(command, input, *, packer, packer_args, **_):
+    """Run packer with the given (JSON) template, passing additional extra_args"""
+    packer_args = shlex.split(packer_args)
+    try:
+        subprocess.run(
+            [packer, command] + packer_args + ['-'],
+            input=bytes(json.dumps(input), 'utf8'),
+            check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"packer exited with code {e.returncode}", file=sys.stderr)
+        sys.exit(1)
