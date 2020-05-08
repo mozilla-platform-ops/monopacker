@@ -14,6 +14,7 @@ from jinja2 import (
 from ruamel.yaml import YAML
 
 from .filters import clean_gcp_image_name
+from .secrets import pack_secrets
 from . import monorepo
 
 yaml = YAML(typ="safe")
@@ -205,6 +206,11 @@ def generate_packer_template_params(fn):
             type=str,
             help="directory for builder templates",
             default=os.environ.get("MONOPACKER_SCRIPTS_DIR", "./scripts")),
+        click.option(
+            "--secrets_file",
+            type=str,
+            help="file containing secrets",
+            default='./fake_secrets.yaml'),
         ]
     params.reverse()
     for param in params:
@@ -218,7 +224,10 @@ def generate_packer_template(*,
     var_files_dir,
     templates_dir,
     scripts_dir,
+    secrets_file,
     **_):
+    pack_secrets(secrets_file, 'secrets.tar')
+
     # variables namespaced per builder
     variables: Dict[str, Dict[str, Any]] = {}
 

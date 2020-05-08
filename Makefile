@@ -1,7 +1,6 @@
 # adapted from https://www.andrewpage.me/infrastructure/2018/05/11/simplify-packer-configuration-with-yaml.html
 
 PACKER=packer
-PACK_SECRETS=./util/pack_secrets.py
 
 # for jinja2 templating
 MONOPACKER=./bin/monopacker
@@ -20,7 +19,7 @@ templatepacker:
 	$(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) > packer.yaml
 
 build: clean validate
-	/bin/bash -c "time $(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
+	$(MONOPACKER) build $(TEMPLATE) $(BUILDERS)
 
 vagrant: BUILDERS=vagrant_virtualbox_bionic
 vagrant: build
@@ -28,11 +27,8 @@ vagrant: build
 tar:
 	tar cf $(FILES_TAR) ./files
 
-packsecrets:
-	$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR)
-
-validate: clean tar packsecrets
-	$(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
+validate: clean tar
+	$(MONOPACKER) validate $(TEMPLATE) $(BUILDERS)
 
 clean:
 	rm -rf $(ARTIFACTS)
