@@ -25,7 +25,7 @@ def packer_template(**kwargs):
     ex: builder docker_worker_aws is configured at `./builders/docker_worker_aws.yaml`
     Outputs a packer JSON template to stdout."""
     packer_template = generate_packer_template(**kwargs)
-    print(json.dumps(packer_template))
+    print(json.dumps(packer_template, sort_keys=True, indent=4))
 
 @main.command(name='validate')
 @generate_packer_template_params
