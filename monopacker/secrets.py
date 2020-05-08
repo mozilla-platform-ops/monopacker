@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import os, sys, tarfile, tempfile
-from pathlib import Path
+import io
+import tarfile
 
 from ruamel.yaml import YAML
 
@@ -14,17 +14,16 @@ def pack_secrets(secrets_file, secrets_tar):
         # create a directory structure as defined
         # by the secrets yaml file
         with tarfile.open(secrets_tar, "w") as tar:
-            with tempfile.TemporaryDirectory() as d:
-                for secret in secrets:
-                    # name is optional
-                    if "name" not in secret:
-                        name = "unnamed"
-                    if "path" not in secret:
-                        print(f"Encountered secret {name} without `path` key, exiting.")
-                    if "value" not in secret:
-                        print(f"Encountered secret {name} without `value` key, exiting.")
-                    path = Path(d + secret["path"])
-                    os.makedirs(path.parent, exist_ok=True)
-                    with open(path, "w") as secret_file:
-                        secret_file.write(secret["value"])
-                    tar.add(path, arcname=secret["path"])
+            for secret in secrets:
+                # name is optional
+                if "name" not in secret:
+                    name = "unnamed"
+                if "path" not in secret:
+                    raise RuntimeError(f"Encountered secret {name} without `path` key")
+                if "value" not in secret:
+                    raise RuntimeError(f"Encountered secret {name} without `value` key")
+                path = secret["path"].lstrip('/')
+                value = bytes(secret["value"], "utf8")
+                ti = tarfile.TarInfo(path)
+                ti.size = len(value)
+                tar.addfile(ti, io.BytesIO(value))
