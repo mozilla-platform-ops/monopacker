@@ -4,7 +4,7 @@ PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
 # for jinja2 templating
-TEMPLATER=./bin/monopacker
+MONOPACKER=./bin/monopacker
 TEMPLATE=./packer.yaml.jinja2
 
 # default
@@ -38,7 +38,7 @@ dockervalidate: clean dockerimage tar
 		-e VAGRANT_LOG \
 		$(DOCKER_IMAGE) \
 		/bin/bash -c "$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR) && \
-					  $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -"
+					  $(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -"
 
 dockerbuild: dockervalidate
 	docker run \
@@ -53,16 +53,16 @@ dockerbuild: dockervalidate
 		-e VAGRANT_LOG \
 		$(DOCKER_IMAGE) \
 		/bin/bash -c "$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR) && \
-					  time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
+					  time $(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
 
 dockertest: dockerimage
 	docker run --mount type=bind,source="$(shell pwd)",target=/monopacker $(DOCKER_IMAGE) /bin/bash -c "python -m pytest tests/"
 
 templatepacker:
-	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) > packer.yaml
+	$(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) > packer.yaml
 
 build: clean validate
-	/bin/bash -c "time $(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
+	/bin/bash -c "time $(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) | $(PACKER) build $(PACKER_VARS) $(PACKER_ARGS) -"
 
 vagrant: BUILDERS=vagrant_virtualbox_bionic
 vagrant: build
@@ -74,7 +74,7 @@ packsecrets:
 	$(PACK_SECRETS) $(SECRETS_FILE) $(SECRETS_TAR)
 
 validate: clean tar packsecrets
-	$(TEMPLATER) $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
+	$(MONOPACKER) packer-template $(TEMPLATE) $(BUILDERS) | $(PACKER) validate $(PACKER_VARS) $(PACKER_ARGS) -
 
 clean:
 	rm -rf $(ARTIFACTS)
