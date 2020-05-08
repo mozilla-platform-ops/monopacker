@@ -15,6 +15,7 @@ from ruamel.yaml import YAML
 
 from .filters import clean_gcp_image_name
 from .secrets import pack_secrets
+from .files import pack_files
 from . import monorepo
 
 yaml = YAML(typ="safe")
@@ -207,6 +208,11 @@ def generate_packer_template_params(fn):
             help="directory for builder templates",
             default=os.environ.get("MONOPACKER_SCRIPTS_DIR", "./scripts")),
         click.option(
+            "--files_dir",
+            type=str,
+            help="directory for binary files used in packer provisioners",
+            default=os.environ.get("MONOPACKER_FILES_DIR", "./files")),
+        click.option(
             "--secrets_file",
             type=str,
             help="file containing secrets",
@@ -224,9 +230,11 @@ def generate_packer_template(*,
     var_files_dir,
     templates_dir,
     scripts_dir,
+    files_dir,
     secrets_file,
     **_):
     pack_secrets(secrets_file, 'secrets.tar')
+    pack_files(files_dir, 'files.tar')
 
     # variables namespaced per builder
     variables: Dict[str, Dict[str, Any]] = {}

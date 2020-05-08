@@ -9,10 +9,6 @@ TEMPLATE=./packer.yaml.jinja2
 # default
 BUILDERS=docker_worker_aws docker_worker_gcp docker_worker_azure
 
-FILES_TAR=files.tar
-SECRETS_FILE=fake_secrets.yaml
-SECRETS_TAR=secrets.tar
-
 ARTIFACTS=packer-artifacts.json $(FILES_TAR) $(SECRETS_TAR) output-vagrant *.log *.pem
 
 templatepacker:
@@ -24,10 +20,7 @@ build: clean validate
 vagrant: BUILDERS=vagrant_virtualbox_bionic
 vagrant: build
 
-tar:
-	tar cf $(FILES_TAR) ./files
-
-validate: clean tar
+validate: clean
 	$(MONOPACKER) validate $(TEMPLATE) $(BUILDERS)
 
 clean:
