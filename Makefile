@@ -4,7 +4,7 @@ PACKER=packer
 PACK_SECRETS=./util/pack_secrets.py
 
 # for jinja2 templating
-TEMPLATER=./monopacker/template_packer.py
+TEMPLATER=./bin/monopacker
 TEMPLATE=./packer.yaml.jinja2
 
 # default

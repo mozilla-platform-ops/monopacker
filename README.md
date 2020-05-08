@@ -10,13 +10,10 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - Clarity: it should be clear which steps run on base images and which steps run on derived images
 - Portability: the configuration should be generic enough to be run beyond Firefox CI's worker deployment
 
-## Installation
+### Installation
 
 ### Dependencies (alternatively, use docker)
 
-- `pipenv`
-  - Note: you can install all python dependencies using `pipenv` (`pipenv install`)
-  - If you do that, you probably want to be in a `pipenv shell`
 - `make`
 - `packer` (`go get github.com/hashicorp/packer`)
 - `vagrant`
@@ -30,6 +27,18 @@ The intention here is to create a single Packer + cloud-init configuration set t
   - run `gcloud auth application-default login` which creates `$HOME/.config/gcloud/application_default_credentials.json`
   - Configured Service Account credentials and have a JSON file whose location is specified by the GOOGLE_APPLICATION_CREDENTIALS environment variable.
   - In either case you need `Compute Engine Instance Admin (v1)` permissions, if using a service account you'll need `Service Account User`. See [here](https://www.packer.io/docs/builders/googlecompute.html#precedence-of-authentication-methods) for more information.
+
+### Install locally
+
+(you will probably want a virtualenv set up first!)
+
+```
+# install package with runtime dependencies
+python setup.py install
+
+# install dev dependencies
+pip -r requirements.txt
+```
 
 ## Usage
 
@@ -99,7 +108,7 @@ See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
 
 ## I'm getting `ModuleNotFoundError: No module named 'ruamel'`
 
-Make sure you're in a `pipenv shell`.
+Make sure that you are operating in a Python virtualenv and have installed the package.
 
 ## How do I build using only a single builder?
 
