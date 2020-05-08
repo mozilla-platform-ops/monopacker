@@ -86,7 +86,7 @@ tasks:
               cd "$CHECKOUT_DIR"
               git checkout "${event.after}"
               python setup.py install
-              monopacker build BUILDERS="docker_worker_gcp" SECRETS_FILE=/secrets/worker_secrets.yaml
+              monopacker build docker_worker_gcp --secrets_file=/secrets/worker_secrets.yaml
           artifacts:
             "packer-artifacts.json":
               type: file
