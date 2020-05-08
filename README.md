@@ -12,11 +12,10 @@ The intention here is to create a single Packer + cloud-init configuration set t
 
 ### Installation
 
-### Dependencies (alternatively, use docker)
+### Dependencies
 
-- `make`
 - `packer` (`go get github.com/hashicorp/packer`)
-- `vagrant`
+- `vagrant` (if building a local image)
 
 ### Pre-requisites
 
@@ -32,74 +31,39 @@ The intention here is to create a single Packer + cloud-init configuration set t
 
 (you will probably want a virtualenv set up first!)
 
-```
+```shell
 # install package with runtime dependencies
 python setup.py install
 
-# install dev dependencies
+# if developing this package, install dev dependencies
 pip -r requirements.txt
 ```
 
 ## Usage
 
+See `monopacker --help` for details.
+
 ### Building Images
 
-Non-docker invocation:
+You will need to know the builder or builders you want to build; `builder1 builder2` are used in the example here.
 
-```
-# packer build
-make build
-# get real debug logging from packer
-PACKER_LOG=1 make build
-# pass additional args to packer
-make build PACKER_ARGS="-only vagrant"
-# same as above
-make vagrant
+```shell
+monopacker build packer.yaml.jinja2 builder1 builder2
 ```
 
-Docker invocation:
-
-*Note*: vagrant builds are unsupported in Docker, see FAQ
-
-Set up:
-```bash
-# builds and tags a docker container to run monopacker in
-# monopacker:build by default, can override DOCKER_IMAGE make var
-make dockervalidate
-```
-
-Build images:
-```bash
-# look ma, no dependencies!
-make dockerbuild SECRETS_FILE=./real_secrets.yaml
-```
-
-You can override a few Make variables (with assignemnts after `make build` or `make dockerbuild`, as in the examples above:
-
-* `SECRETS_FILE`: path to a local file containing secrets (see below)
-* `BUILDERS`: builders to set up
-* `PACKER_VARS`: packer variables
-* `PACKER_ARGS`: additional arguments to packer
-
-Note that there are two ways to build only a single builder: `make .. BUILDERS=mybuilder` or `make .. PACKER_ARGS='-only mybuilder'`.
-The first produces a Packer config, naming only `mybuilder`, while the second produces a full Packer config but instructs Packer to only build `mybuilder`.
-In practice there is not much difference between the two options.
+Note that you can get more logging from packer by setting `PACKER_LOG=1`.
 
 ### Developing Templates
 
-```bash
-# generate packer.yaml from packer.yaml.jinja2
-make templatepacker
+When developing templates, you can run the validation without running packer with `monopacker validate` (which otherwise has the same arguments as `monopacker build`):
 
-# this runs ./util/template_packer.py
-# by default, the BUILDERS arg to the Makefile
-# templates certain builders
+```shell
+monopacker validate packer.yaml.jinja2 mynewbuilder
+```
 
-# you can control which builders are templated:
-make templatepacker BUILDERS=docker_worker_aws
-
-# once you are happy with packer.yml, begin invoking
-# Packer on it with `make build` or `make dockerbuild` as above.
+To see the generated packer template:
+```shell
+monopacker packer-template packer.yaml.jinja2 mynewbuilder
 ```
 
 See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
@@ -115,21 +79,7 @@ Make sure that you are operating in a Python virtualenv and have installed the p
 ```bash
 
 # all the debug output
-PACKER_LOG=1 VAGRANT_LOG=debug make build BUILDERS=vagrant_virtualbox_bionic
-```
-
-```bash
-
-# with a templated packer.yaml, this is simple
-
-# your packer.yaml has only the builders you specify:
-
-make templatepacker BUILDERS=vagrant_virtualbox_bionic
-
-# note that for now, packer.yaml.old is default
-
-make build INPUT_FILE=packer.yaml
-
+PACKER_LOG=1 VAGRANT_LOG=debug monopacker build packer.yaml.jinja2 my_builder
 ```
 
 ## How are secrets handled?
@@ -148,21 +98,10 @@ cat << EOF > fake_secrets.yaml
 
 EOF
 
-# creates secrets.tar by default
-
-./util/pack_secrets.py fake_secrets.yaml
-
-# note that make handles this for you
-
-# for a custom secrets file, pass SECRETS_FILE to make:
-
-make build SECRETS_FILE="/path/to/secrets.yaml"
-
-# for example
-make dockerbuild SECRETS_FILE="./real_secrets.yaml"
+# for a custom secrets file, pass --secrets_file to monopacker:
+monopacker build --secrets_file="/path/to/secrets.yaml" mybuilder
 
 # by default ./fake_secrets.yaml is used
-
 ```
 
 ## Why are Packer communicator (SSH) timeouts so long?

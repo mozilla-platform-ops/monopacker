@@ -124,7 +124,7 @@ script_directories:
 ## Secrets
 
 Secrets are handled in code shared between all builders and providers.
-A run of `make build` takes a `SECRETS_FILE=..` variable pointing to a file containing serets, with the format
+A run of `monopacker build` takes a `--secrets_file=..` option pointing to a file containing serets, with the format
 
 ```yaml
 ---
