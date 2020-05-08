@@ -3,9 +3,16 @@
 import errno, os
 from pathlib import Path
 from typing import Any, Dict, Sequence
-
+from jinja2 import (
+    Environment,
+    FileSystemLoader,
+    TemplateNotFound,
+    TemplateError,
+    TemplateSyntaxError,
+)
 from ruamel.yaml import YAML
 
+from .filters import clean_gcp_image_name
 from . import monorepo
 
 yaml = YAML(typ="safe")
@@ -165,3 +172,61 @@ def get_builders_for_templating(
         )
     return builders
 
+def generate_packer_template(*,
+    packer_template,
+    builders,
+    builders_dir,
+    var_files_dir,
+    templates_dir,
+    scripts_dir):
+    # variables namespaced per builder
+    variables: Dict[str, Dict[str, Any]] = {}
+
+    templated_builders = get_builders_for_templating(
+        builders,
+        builders_dir=builders_dir,
+        var_files_dir=var_files_dir,
+        scripts_dir=scripts_dir,
+    )
+
+    variables["builders"] = templated_builders
+    variables["linux_builders"] = [
+        builder["vars"]["name"]
+        for builder in templated_builders
+        if builder["platform"] == "linux"
+    ]
+    variables["windows_builders"] = [
+        builder["vars"]["name"]
+        for builder in templated_builders
+        if builder["platform"] == "windows"
+    ]
+
+    with open(packer_template, "r") as f:
+        packer_template_str = f.read()
+    try:
+        e = Environment(loader=FileSystemLoader([templates_dir]))
+        e.filters["clean_gcp_image_name"] = clean_gcp_image_name
+        t = e.from_string(packer_template_str)
+        output = t.render(variables)
+    except TemplateNotFound as err:
+        print(f"Template not found: {err.message}")
+        sys.exit(1)
+    except TemplateSyntaxError as err:
+        print(
+            f"Error in template {packer_template}: line {err.lineno}, error: {err.message}"
+        )
+        sys.exit(1)
+    except TemplateError as err:
+        print(f"Error for template {packer_template}, {err.message}")
+        sys.exit(1)
+
+    # output needs to be valid yaml
+    try:
+        data = yaml.load(output)
+    except Exception as e:
+        print(f"Generated invalid YAML:\n{output}\n")
+        print(f"Packer template variables:\n{variables}\n")
+        print(f"Got exception: {e}")
+        sys.exit(1)
+
+    return data
