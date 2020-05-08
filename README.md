@@ -48,7 +48,7 @@ See `monopacker --help` for details.
 You will need to know the builder or builders you want to build; `builder1 builder2` are used in the example here.
 
 ```shell
-monopacker build packer.yaml.jinja2 builder1 builder2
+monopacker build builder1 builder2
 ```
 
 Note that you can get more logging from packer by setting `PACKER_LOG=1`.
@@ -58,12 +58,12 @@ Note that you can get more logging from packer by setting `PACKER_LOG=1`.
 When developing templates, you can run the validation without running packer with `monopacker validate` (which otherwise has the same arguments as `monopacker build`):
 
 ```shell
-monopacker validate packer.yaml.jinja2 mynewbuilder
+monopacker validate mynewbuilder
 ```
 
 To see the generated packer template:
 ```shell
-monopacker packer-template packer.yaml.jinja2 mynewbuilder
+monopacker packer-template mynewbuilder
 ```
 
 See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
@@ -79,7 +79,7 @@ Make sure that you are operating in a Python virtualenv and have installed the p
 ```bash
 
 # all the debug output
-PACKER_LOG=1 VAGRANT_LOG=debug monopacker build packer.yaml.jinja2 my_builder
+PACKER_LOG=1 VAGRANT_LOG=debug monopacker build my_builder
 ```
 
 ## How are secrets handled?

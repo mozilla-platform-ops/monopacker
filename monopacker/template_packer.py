@@ -179,10 +179,6 @@ def generate_packer_template_params(fn):
     "Decorate a click function with options for generate_packer_template"
     params = [
         click.argument(
-            'packer_template',
-            type=str,
-            required=True),
-        click.argument(
             'builders',
             nargs=-1,
             type=str,
@@ -224,7 +220,6 @@ def generate_packer_template_params(fn):
     return fn
 
 def generate_packer_template(*,
-    packer_template,
     builders,
     builders_dir,
     var_files_dir,
@@ -258,6 +253,7 @@ def generate_packer_template(*,
         if builder["platform"] == "windows"
     ]
 
+    packer_template = "packer.yaml.jinja2"
     with open(packer_template, "r") as f:
         packer_template_str = f.read()
     try:
