@@ -12,7 +12,11 @@ setup(
     url='https://github.com/taskcluster/monopacker',
     packages=['monopacker', 'tests'],
     package_dir={'monopacker': 'monopacker'},
-    install_requires=['jinja2>=2.0', 'ruamel.yaml>=0.16'],
+    install_requires=[
+        'jinja2>=2.0',
+        'ruamel.yaml>=0.16',
+        'click~=7.0',
+    ],
     include_package_data=True,
     license='MPLv2',
     zip_safe=False,
