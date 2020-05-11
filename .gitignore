@@ -25,3 +25,4 @@ real_secrets.yaml
 # Python cache
 *.pyc
 *.egg-info
+/.eggs

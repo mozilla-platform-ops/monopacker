@@ -115,3 +115,9 @@ AWS Metal instances take a _long_ time to boot. See [here](https://docs.aws.amaz
 You can technically do this, but only on an OS that runs Docker natively.
 macOS runs Docker in a Linux VM under the hood, which means you can't do this easily.
 Mostly, I just haven't tried to make this work.
+
+# Development
+
+To run the tests for this library, run `python setup.py test`.
+
+To update dependencies, modify `setup.py`, install `pip-tools`, and then run `./pipupdate.sh`.
