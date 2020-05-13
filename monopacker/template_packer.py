@@ -2,6 +2,7 @@
 
 import errno, os
 import click
+import sys
 from pathlib import Path
 from typing import Any, Dict, Sequence
 from jinja2 import (

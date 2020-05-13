@@ -1,10 +1,12 @@
-import pytest, sys
+import pytest, sys, json
+import textwrap
 
 from monopacker.template_packer import (
     merge_vars,
     get_files_from_subdirs,
     load_yaml_from_file,
     get_builders_for_templating,
+    generate_packer_template,
 )
 
 def test_merge_vars():
@@ -127,3 +129,155 @@ def test_get_files_from_subdirs(tmpdir):
     # test that we get FileNotFoundError when passing a nonexistant subdir
     with pytest.raises(FileNotFoundError, match=r".*bloo.*"):
         files = get_files_from_subdirs("bloo", root_dir=tmpdir)
+
+
+def test_generate_packer_template(tmpdir):
+    builders_dir = tmpdir.mkdir("builders")
+    var_files_dir = tmpdir.mkdir("var_files")
+    templates_dir = tmpdir.mkdir("templates")
+    scripts_dir = tmpdir.mkdir("scripts")
+    files_dir = tmpdir.mkdir("files")
+    secrets_file = tmpdir.join("secrets.yml")
+
+    builders_dir.join("linux.yaml").write(json.dumps({
+        "template": "alibaba_linux",
+        "platform": "linux",
+        "builder_var_files": ["bv", "env"],
+        "script_directories": ["facebook-worker"],
+        "builder_vars": {
+            "execute_command": "do-it",
+            "ssh_timeout": "30m",
+        },
+    }))
+
+    builders_dir.join("winny.yaml").write(json.dumps({
+        "template": "openstack_windows",
+        "platform": "windows",
+        "builder_var_files": [],
+        "script_directories": ["win-worker"],
+        "builder_vars": {
+            "execute_command": "do-it",
+            "ssh_timeout": "30m",
+        },
+    }))
+
+    templates_dir.join("alibaba_linux.jinja2").write(textwrap.dedent("""\
+        - name: a packer builder
+          type: alibaba
+          a-is: {{builder.vars.a}}
+    """))
+
+    templates_dir.join("openstack_windows.jinja2").write(textwrap.dedent("""\
+        - name: a packer builder
+          type: openstack
+    """))
+
+    secrets_file.write(json.dumps([]))
+
+    scripts_dir.mkdir("facebook-worker").join("01-fb.sh").write("echo hello")
+
+    scripts_dir.mkdir("win-worker").join("01-win.ps1").write("ECHO hello")
+
+    var_files_dir.join("bv.yaml").write(json.dumps({
+        "a": 10,
+        "b": 20,
+    }))
+
+    var_files_dir.join("env.yaml").write(json.dumps({
+        "env_vars": {
+            "AN_ENV_VAR": 'env!',
+        },
+    }))
+
+    packer_template = generate_packer_template(
+        builders=["linux", "winny"],
+        builders_dir=str(builders_dir),
+        var_files_dir=str(var_files_dir),
+        templates_dir=str(templates_dir),
+        scripts_dir=str(scripts_dir),
+        files_dir=str(files_dir),
+        secrets_file=str(secrets_file),
+    )
+
+    assert(packer_template == {
+        'builders': [
+            {
+                'name': 'a packer builder',
+                'type': 'alibaba',
+                'a-is': 10,
+            },
+            {
+                'name': 'a packer builder',
+                'type': 'openstack',
+            },
+        ],
+        'provisioners': [
+            {
+                'type': 'file',
+                'source': './files.tar',
+                'destination': '/tmp/',
+            },
+            {
+                'type': 'shell',
+                'inline': [
+                    'sudo tar xvf /tmp/files.tar -C / --strip-components=2',
+                    'rm /tmp/files.tar',
+                ],
+            },
+            {
+                'type': 'file',
+                'source': './secrets.tar',
+                'destination': '/tmp/',
+            },
+            {
+                'type': 'shell',
+                'inline': [
+                    'sudo mkdir -p /etc/taskcluster/secrets',
+                    'sudo tar xvf /tmp/secrets.tar -C /',
+                    'sudo chown root:root -R /etc/taskcluster',
+                    'sudo chmod 0400 -R /etc/taskcluster/secrets',
+                    'rm /tmp/secrets.tar',
+                ],
+                'only': ['linux'],
+            },
+            {
+                'type': 'shell',
+                'inline': [
+                    '/usr/bin/cloud-init status --wait',
+                ],
+                'only': ['linux'],
+            },
+            {
+                'type': 'shell',
+                'scripts': [str(scripts_dir.join("facebook-worker", "01-fb.sh"))],
+                'environment_vars': ["AN_ENV_VAR=env!", "TASKCLUSTER_VERSION=v29.1.2"],
+                'execute_command': "do-it",
+                'expect_disconnect': True,
+                'start_retry_timeout': '30m',
+                'only': ['linux'],
+            },
+            {
+                'type': 'powershell',
+                'scripts': [str(scripts_dir.join("facebook-worker", "01-fb.sh"))],
+                'only': [],
+            },
+            {
+                'type': 'shell',
+                'scripts': [str(scripts_dir.join("win-worker", "01-win.ps1"))],
+                'environment_vars': None,
+                'execute_command': "do-it",
+                'expect_disconnect': True,
+                'start_retry_timeout': '30m',
+                'only': [],
+            },
+            {
+                'type': 'powershell',
+                'scripts': [str(scripts_dir.join("win-worker", "01-win.ps1"))],
+                'only': ['winny'],
+            }
+        ],
+        'post-processors': [
+            {'type': 'manifest', 'output': 'packer-artifacts.json', 'strip_path': True},
+        ],
+    })
+
