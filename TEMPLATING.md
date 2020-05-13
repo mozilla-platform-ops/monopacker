@@ -6,17 +6,22 @@ So understanding the basic concepts of Packer (builders, provisioners, and so on
 The following is a "top-down" description of how Monpacker operates.
 The "bottom" is where most of the interesting stuff occurs, so read on!
 
-## packer.yml.jinja2
+**Warning** some words here have multiple meanings!
+ * *template* - We use Jinja2 templates (textually substituting things like `{{..}}`) as well as a Packer template (which is just what Packer calls its input data)
+ * *builder* - Monpacker defines Monopacker builders that map loosely to Packer builders, but also specify scripts that are included in Packer provisioners.
 
-At the top level, the packer configuration is built from `packer.yml.jinja2`, which is a [Jinja](https://jinja.palletsprojects.com/) template the creates a YAML file which is then encoded to JSON for input to Packer.
+## Packer Template
 
-Each builder defined in `builders/` is defined as a Packer builder.
+At the top level, monopacker builds a "Packer template", which is the input to the Packer executable.
+The Packer docs explain in detail the contents of this file.
+
+In this Pacekr template, each Monpacker builder defined in `builders/` is included as a Packer builder.
 The Packer provisioners are set up such that, after some initial shared setup, one provisioner runs for each builder.
 This is a `shell` provisioner for linux builders and a `powershell` provisioner for windows builders, configured to run the scripts for that builder.
 
-## Builders
+## Monopacker Builders
 
-There is a one-to-one correspondance between builders and images (ignoring duplication of images to multiple regions).
+There is a one-to-one correspondance between Monopacker builders and images (ignoring duplication of images to multiple regions).
 That is, there is a distinct builder defined for each necessary combination of worker implementation, cloud, and platform.
 Additional builders can be defined for specific purposes, such as specific software installed or specific secrets.
 
@@ -152,8 +157,9 @@ and making sure that the template's variables are all accounted for by a combina
 In the unlikely scenario that you want to add an entirely new builder template
 simply create a `.jinja2` file with the name of your choice under `./template/builders`.
 
-Ensure that your builder template has a `name` key, as this is how `monopacker` templating
-maps `builders` to `provisioners` in `packer.yaml`.
+Ensure that your builder template has a `name` key set to `{{builder.vars.name}}`, as this is how `monopacker` templating
+maps `builders` to `provisioners` in the Packer template.
+
 # FAQ
 
 ## I'm getting `did not find expected key` in my template
@@ -161,7 +167,7 @@ maps `builders` to `provisioners` in `packer.yaml`.
 You might be using `{{foo}}` syntax to reference a variable that does not exist (in this case, foo).
 If you're trying to specify variable that Packer will supply, make sure your value is wrapped in quotes.
 
-## My variables aren't making it from by builder template to the generated packer.yaml
+## My variables aren't making it from by builder template to the generated Packer template
 
 A number of things could be going wrong here.
 

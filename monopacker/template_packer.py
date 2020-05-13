@@ -242,45 +242,133 @@ def generate_packer_template(*,
         scripts_dir=scripts_dir,
     )
 
+    # TODO: remove
     variables["builders"] = templated_builders
-    variables["linux_builders"] = [
+    linux_builders = variables["linux_builders"] = [
         builder["vars"]["name"]
         for builder in templated_builders
         if builder["platform"] == "linux"
     ]
-    variables["windows_builders"] = [
+    windows_builders = variables["windows_builders"] = [
         builder["vars"]["name"]
         for builder in templated_builders
         if builder["platform"] == "windows"
     ]
 
-    packer_template = "packer.yaml.jinja2"
-    with open(packer_template, "r") as f:
-        packer_template_str = f.read()
-    try:
-        e = Environment(loader=FileSystemLoader([templates_dir]))
-        e.filters["clean_gcp_image_name"] = clean_gcp_image_name
-        t = e.from_string(packer_template_str)
-        output = t.render(variables)
-    except TemplateNotFound as err:
-        print(f"Template not found: {err.message}")
-        sys.exit(1)
-    except TemplateSyntaxError as err:
-        print(
-            f"Error in template {packer_template}: line {err.lineno}, error: {err.message}"
-        )
-        sys.exit(1)
-    except TemplateError as err:
-        print(f"Error for template {packer_template}, {err.message}")
-        sys.exit(1)
+    pkr = {
+        "builders": [],
+        "provisioners": [],
+        "post-processors": [],
+    }
 
-    # output needs to be valid yaml
-    try:
-        data = yaml.load(output)
-    except Exception as e:
-        print(f"Generated invalid YAML:\n{output}\n")
-        print(f"Packer template variables:\n{variables}\n")
-        print(f"Got exception: {e}")
-        sys.exit(1)
+    # include some setup for linux and windows builders
+    if linux_builders:
+        pkr["provisioners"].append({
+            "type": "file",
+            "source": "./files.tar",
+            "destination": "/tmp/",
+            # TODO: only
+        })
+        pkr["provisioners"].append({
+            "type": "shell",
+            "inline": [
+                # files.tar is two levels deep (/tmp/files)
+                "sudo tar xvf /tmp/files.tar -C / --strip-components=2",
+                "rm /tmp/files.tar",
+            ],
+            # TODO: only
+        })
+        pkr["provisioners"].append({
+            'type': 'file',
+            'source': './secrets.tar',
+            'destination': '/tmp/',
+            # TODO: only
+        })
+        pkr["provisioners"].append({
+            'type': 'shell',
+            'inline': [
+                'sudo mkdir -p /etc/taskcluster/secrets',
+                'sudo tar xvf /tmp/secrets.tar -C /',
+                'sudo chown root:root -R /etc/taskcluster',
+                'sudo chmod 0400 -R /etc/taskcluster/secrets',
+                'rm /tmp/secrets.tar',
+            ],
+            'only': linux_builders,
+        })
+        pkr["provisioners"].append({
+            'type': 'shell',
+            'inline': [
+                '/usr/bin/cloud-init status --wait',
+            ],
+            'only': linux_builders,
+        })
 
-    return data
+    e = Environment(loader=FileSystemLoader([templates_dir]))
+    e.filters["clean_gcp_image_name"] = clean_gcp_image_name
+    for builder in templated_builders:
+
+        # for each monopacker builder, use the Jinja template to generate a Packer builder
+        template_file = Path(templates_dir) / (builder["template"] + ".jinja2")
+        with open(template_file) as f:
+            template_str = f.read()
+        try:
+            t = e.from_string(template_str)
+            variables = {
+                "builder": {
+                    "vars": builder["vars"],
+                }
+            }
+            output = t.render(variables)
+        except TemplateNotFound as err:
+            print(f"Template not found: {err.message}")
+            sys.exit(1)
+        except TemplateSyntaxError as err:
+            print(
+                f"Error in template {template_file}: line {err.lineno}, error: {err.message}"
+            )
+            sys.exit(1)
+        except TemplateError as err:
+            print(f"Error for template {template_file}, {err.message}")
+            sys.exit(1)
+
+        try:
+            template_builders = yaml.load(output)
+        except Exception as e:
+            print(f"Template {template_file} generated invalid YAML:\n{output}\n")
+            print(f"variables:\n{variables}\n")
+            print(f"Got exception: {e}")
+            sys.exit(1)
+
+        if type(template_builders) != list:
+            print(f"Template {template_file} generated YAML that is not an array:\n{output}\n")
+            print(f"Packer template variables:\n{variables}\n")
+            sys.exit(1)
+
+        pkr["builders"].extend(template_builders)
+
+        # make a provisioner for each builder, specialized to run only on that builder,
+        # with that builder's scripts and variables
+        if linux_builders:
+            pkr["provisioners"].append({
+                'type': 'shell',
+                'scripts': [str(Path(scripts_dir) / s) for s in builder["scripts"]],
+                'environment_vars': builder["vars"]["env_vars"] if "env_vars" in builder["vars"] else None,
+                'execute_command': builder["vars"]["execute_command"] if "execute_command" in builder["vars"] else None,
+                'expect_disconnect': True,
+                'start_retry_timeout': builder["vars"]["ssh_timeout"] if "ssh_timeout" in builder["vars"] else None,
+                'only': [builder["vars"]["name"]] if builder["platform"] == "linux" else [],
+            })
+
+        if windows_builders:
+            pkr["provisioners"].append({
+                'type': 'powershell',
+                'scripts': [str(Path(scripts_dir) / s) for s in builder["scripts"]],
+                'only': [builder["vars"]["name"]] if builder["platform"] == "windows" else [],
+            })
+
+    # ensure we output the expected artifacts..
+    pkr["post-processors"] =  [
+        {'type': 'manifest', 'output': 'packer-artifacts.json', 'strip_path': True},
+    ]
+
+    return pkr
