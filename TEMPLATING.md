@@ -15,7 +15,7 @@ The "bottom" is where most of the interesting stuff occurs, so read on!
 At the top level, monopacker builds a "Packer template", which is the input to the Packer executable.
 The Packer docs explain in detail the contents of this file.
 
-In this Pacekr template, each Monpacker builder defined in `builders/` is included as a Packer builder.
+In this Packer template, each Monopacker builder defined in `builders/` is included as a Packer builder.
 The Packer provisioners are set up such that, after some initial shared setup, one provisioner runs for each builder.
 This is a `shell` provisioner for linux builders and a `powershell` provisioner for windows builders, configured to run the scripts for that builder.
 
@@ -174,4 +174,3 @@ A number of things could be going wrong here.
 Ensure that the builder template properly
 references all variables as being namespaced under `builder.vars` and that your `builder_var_files`
 and `builder_vars` do _not_ have any namespacing. See above for a more thorough description.
-
