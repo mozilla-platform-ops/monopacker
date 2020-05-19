@@ -27,8 +27,8 @@ retry apt update
 retry apt install -y unattended-upgrades
 unattended-upgrade
 
-# uninstall old kernel
-apt remove -y $(ls -1 /boot/vmlinuz-*{aws,gcp} | sed -e 's,/boot/vmlinuz,linux-image,')
+# uninstall all kernels
+apt remove -y $(dpkg-query  -f '${binary:Package}\n' -W | grep 'linux-\(image\|modules\|headers\)')
 apt autoremove -y --purge
 
 # necessary for linux-modules-extra
@@ -53,6 +53,14 @@ echo linux-headers-$KERNEL_VERSION hold | dpkg --set-selections
 echo linux-buildinfo-$KERNEL_VERSION hold | dpkg --set-selections
 echo linux-image-aws hold | dpkg --set-selections
 echo linux-aws hold | dpkg --set-selections
+
+# Double-check that only the desired kernel is installed
+installed=$(ls -1 /boot/vmlinu*)
+if [ "$installed" != "/boot/vmlinuz-$KERNEL_VERSION" ]; then
+    echo "Failed to limit to a single kernel:"
+    ls /boot
+    exit 1
+fi
 
 # install crash debug tools
 retry apt install -y linux-crashdump kmod
