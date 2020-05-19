@@ -25,11 +25,15 @@ docker_worker_code="/home/ubuntu/docker-worker"
 
 # from worker-runner download location
 docker_worker_start_script="/usr/local/bin/start-docker-worker"
-docker_worker_version="v202004241848"
 
-retry curl -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/docker-worker-deploy/releases/download/$docker_worker_version/docker-worker.tgz"
+# use DOCKER_WORKER_VERSION, defaulting to TASKCLUSTER_VERSION
+docker_worker_version=${DOCKER_WORKER_VERSION:-$TASKCLUSTER_VERSION}
+
+# get the docker-worker tarball
+retry curl -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/taskcluster/releases/download/v$docker_worker_version/docker-worker-x64.tgz"
 mkdir -p "${docker_worker_code}"
-tar xvf /tmp/docker-worker.tgz -C "${docker_worker_code}" --strip-components 1
+tar xf /tmp/docker-worker.tgz -C "${docker_worker_code}" --strip-components 1
+rm /tmp/docker-worker.tgz
 
 cat << EOF > "${docker_worker_start_script}"
 #!/bin/bash
@@ -38,10 +42,6 @@ ${worker_runner} ${worker_runner_config} 2>&1 | logger --tag docker-worker
 EOF
 file "${docker_worker_start_script}"
 chmod +x "${docker_worker_start_script}"
-
-# install deps
-cd "${docker_worker_code}"
-yarn install --frozen-lockfile
 
 mkdir -p "$(dirname ${docker_worker_config})"
 mkdir -p "$(dirname ${worker_runner_config})"

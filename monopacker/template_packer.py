@@ -17,7 +17,6 @@ from ruamel.yaml import YAML
 from .filters import clean_gcp_image_name
 from .secrets import pack_secrets
 from .files import pack_files
-from . import monorepo
 
 yaml = YAML(typ="safe")
 
@@ -145,7 +144,6 @@ def get_builders_for_templating(
             exit_if_type_mismatch(env_vars, dict)
             env_vars = [f"{k}={v}" for k, v in env_vars.items()]
             builder_vars["env_vars"] = env_vars
-            builder_vars["env_vars"].append(f"TASKCLUSTER_VERSION={monorepo.version}")
 
         if "template" in builder_config:
             builder_template = builder_config["template"]

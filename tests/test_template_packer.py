@@ -250,7 +250,7 @@ def test_generate_packer_template(tmpdir):
             {
                 'type': 'shell',
                 'scripts': [str(scripts_dir.join("facebook-worker", "01-fb.sh"))],
-                'environment_vars': ["AN_ENV_VAR=env!", "TASKCLUSTER_VERSION=v29.1.2"],
+                'environment_vars': ["AN_ENV_VAR=env!"],
                 'execute_command': "do-it",
                 'expect_disconnect': True,
                 'start_retry_timeout': '30m',

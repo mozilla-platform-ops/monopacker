@@ -2,6 +2,7 @@ template: amazon_ebs
 platform: linux
 
 builder_var_files:
+  - taskcluster_version
   - default_linux
   - default_aws
   - amazon_ebs_bionic

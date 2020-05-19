@@ -2,6 +2,7 @@ template: googlecompute
 platform: linux
 
 builder_var_files:
+  - taskcluster_version
   - default_linux
   - default_gcp
   - googlecompute_bionic
