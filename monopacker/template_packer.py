@@ -273,7 +273,7 @@ def generate_packer_template(*,
             "type": "shell",
             "inline": [
                 # files.tar is two levels deep (/tmp/files)
-                "sudo tar xvf /tmp/files.tar -C / --strip-components=2",
+                "sudo tar xvf /tmp/files.tar -C / --strip-components=1",
                 "rm /tmp/files.tar",
             ],
             # TODO: only
