@@ -2,6 +2,7 @@ template: azure
 platform: linux
 
 builder_var_files:
+  - taskcluster_version
   - default_linux
   - default_azure
   - azure_bionic
