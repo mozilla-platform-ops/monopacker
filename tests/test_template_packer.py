@@ -220,7 +220,7 @@ def test_generate_packer_template(tmpdir):
             {
                 'type': 'shell',
                 'inline': [
-                    'sudo tar xvf /tmp/files.tar -C / --strip-components=2',
+                    'sudo tar xvf /tmp/files.tar -C / --strip-components=1',
                     'rm /tmp/files.tar',
                 ],
             },

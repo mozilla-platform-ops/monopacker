@@ -273,7 +273,7 @@ def generate_packer_template(*,
             "type": "shell",
             "inline": [
                 # files.tar is two levels deep (/tmp/files)
-                "sudo tar xvf /tmp/files.tar -C / --strip-components=2",
+                "sudo tar xvf /tmp/files.tar -C / --strip-components=1",
                 "rm /tmp/files.tar",
             ],
             # TODO: only
@@ -351,7 +351,7 @@ def generate_packer_template(*,
         if linux_builders:
             pkr["provisioners"].append({
                 'type': 'shell',
-                'scripts': [str(Path(scripts_dir) / s) for s in builder["scripts"]],
+                'scripts': builder["scripts"],
                 'environment_vars': builder["vars"]["env_vars"] if "env_vars" in builder["vars"] else None,
                 'execute_command': builder["vars"]["execute_command"] if "execute_command" in builder["vars"] else None,
                 'expect_disconnect': True,
@@ -362,7 +362,7 @@ def generate_packer_template(*,
         if windows_builders:
             pkr["provisioners"].append({
                 'type': 'powershell',
-                'scripts': [str(Path(scripts_dir) / s) for s in builder["scripts"]],
+                'scripts': builder["scripts"],
                 'only': [builder["vars"]["name"]] if builder["platform"] == "windows" else [],
             })
 
