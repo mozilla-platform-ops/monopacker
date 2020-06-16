@@ -29,8 +29,12 @@ docker_worker_start_script="/usr/local/bin/start-docker-worker"
 # use DOCKER_WORKER_VERSION, defaulting to TASKCLUSTER_VERSION
 docker_worker_version=${DOCKER_WORKER_VERSION:-$TASKCLUSTER_VERSION}
 
-# get the docker-worker tarball
-retry curl -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/taskcluster/releases/download/v$docker_worker_version/docker-worker-x64.tgz"
+# get the docker-worker tarball, either locally or from a TC release
+if [ -n "$DOCKER_WORKER_RELEASE_FILE" ]; then
+    mv "$DOCKER_WORKER_RELEASE_FILE" /tmp/docker-worker.tgz
+else
+    retry curl --fail -L -o /tmp/docker-worker.tgz "https://github.com/taskcluster/taskcluster/releases/download/v$docker_worker_version/docker-worker-x64.tgz"
+fi
 mkdir -p "${docker_worker_code}"
 tar xf /tmp/docker-worker.tgz -C "${docker_worker_code}" --strip-components 1
 rm /tmp/docker-worker.tgz
