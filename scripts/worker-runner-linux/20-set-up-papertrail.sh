@@ -40,5 +40,5 @@ cat << EOF > /etc/rsyslog.d/0-taskcluster.conf
 \$ActionQueueSaveOnShutdown on
 \$ActionQueueTimeoutEnqueue 10
 \$ActionQueueDiscardSeverity 0
-*.* @@$PAPERTRAIL_HOST
+*.info @@$PAPERTRAIL_HOST
 EOF
