@@ -10,7 +10,7 @@ deb-src http://archive.ubuntu.com/ubuntu bionic main
 deb-src http://archive.ubuntu.com/ubuntu bionic-updates main
 ```
 * `sudo apt-get build-dep linux linux-image-$rev`
-* `sudo apt-get install libncurses-dev flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf fakeroot gcc-aarch64-linux-gnu`
+* `sudo apt-get install libncurses-dev flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf fakeroot gcc-aarch64-linux-gnu` (cross-compiler appears to be necessary to run `editconfigs` below, but this does not build aarch64 images)
 * `apt-get source linux-image-$rev`
 * `cd /root/linux-*`
 * `chmod a+x debian/rules`
