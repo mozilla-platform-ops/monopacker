@@ -10,3 +10,6 @@ echo "new kernel: $(uname -r)"
 
 # verify kernel crash dump is ready to go
 kdump-config show
+
+# uninstall things we used to build the kernel
+apt-get remove -y dkms
