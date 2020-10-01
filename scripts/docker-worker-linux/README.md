@@ -4,9 +4,9 @@ This scripts directory installs docker-worker
 
 ## Inputs
 
+* `CLOUD` - the cloud being built for (`azure`, `aws`, or `google`)
 * `DOCKER_WORKER_VERSION` - the version of docker-worker to install, defaulting to `$TASKCLUSTER_VERSION`
 * `DOCKER_WORKER_RELEASE_FILE` - a filename on the image containing a docker-worker release to install; this overrides `DOCKER_WORKER_VERSION`.
-* `WORKER_RUNNER_PROVIDER` - the worker-runner provider implementation
 
 ## Behaviors
 

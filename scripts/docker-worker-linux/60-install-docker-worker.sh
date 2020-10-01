@@ -51,7 +51,7 @@ mkdir -p "$(dirname ${docker_worker_config})"
 mkdir -p "$(dirname ${worker_runner_config})"
 cat << EOF > "${worker_runner_config}"
 provider:
-    providerType: ${WORKER_RUNNER_PROVIDER}
+    providerType: ${CLOUD}
 worker:
     implementation: docker-worker
     path: "${docker_worker_code}"
@@ -65,7 +65,7 @@ workerConfig:
         key: "${taskcluster_secrets_dir}/worker_livelog_tls_key"
 EOF
 
-if [ "$WORKER_RUNNER_PROVIDER" == "azure" ]; then
+if [ "$CLOUD" == "azure" ]; then
   extra_required_units="walinuxagent.service"
 fi
 
