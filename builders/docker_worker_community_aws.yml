@@ -5,6 +5,7 @@ builder_var_files:
   - taskcluster_version
   - default_linux
   - default_aws
+  - default_community
   - amazon_ebs_bionic
 
 script_directories:

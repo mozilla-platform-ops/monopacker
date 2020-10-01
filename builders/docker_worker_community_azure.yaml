@@ -5,6 +5,7 @@ builder_var_files:
   - taskcluster_version
   - default_linux
   - default_azure
+  - default_community
   - azure_bionic
 
 script_directories:

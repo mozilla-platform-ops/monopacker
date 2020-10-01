@@ -8,57 +8,18 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
-echo "start kernel: $(uname -r)"
+KERNEL_VERSION=$(uname -r)
+echo "KERNEL_VERSION=$KERNEL_VERSION"
+echo "REBUILD_KERNEL=$REBUILD_KERNEL"
+echo "SETUP_SND_ALOOP=$SETUP_SND_ALOOP"
+echo "BUILD_V4L2LOOPBACK=$BUILD_V4L2LOOPBACK"
 
 # prevents interactive installation
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 export DEBIAN_FRONTEND=noninteractive
 
-# Update kernel
-# We install the generic kernel because it has the V4L2 driver
-KERNEL_NOVARIANT_VERSION=5.4.0-1024
-KERNEL_VERSION=$KERNEL_NOVARIANT_VERSION-aws
-
-retry apt update
-
-# Upgrade to the latest kernel from the base image. If not, a bug in apt-get remove
-# may install a newer kernel after we remove the old one
-retry apt install -y unattended-upgrades
-unattended-upgrade
-
-# uninstall all kernels
-apt remove -y $(dpkg-query  -f '${binary:Package}\n' -W | grep 'linux-\(image\|modules\|headers\)')
-apt autoremove -y --purge
-
-# necessary for linux-modules-extra
-retry apt install -y crda wireless-crda
-
-# install new kernel
-pushd /var/kernel
-dpkg -i --force-confnew linux-modules-$KERNEL_VERSION*.deb
-dpkg -i --force-confnew linux-image-$KERNEL_VERSION*.deb
-dpkg -i --force-confnew linux-modules-extra-$KERNEL_VERSION*.deb
-dpkg -i --force-confnew linux-aws-*headers-$KERNEL_NOVARIANT_VERSION*.deb
-dpkg -i --force-confnew linux-headers-$KERNEL_VERSION*.deb
-dpkg -i --force-confnew linux-buildinfo-$KERNEL_VERSION*.deb
-popd
-
-# Avoid kernel upgrades
-echo linux-image-$KERNEL_VERSION hold | dpkg --set-selections
-echo linux-modules-$KERNEL_VERSION hold | dpkg --set-selections
-echo linux-modules-extra-$KERNEL_VERSION hold | dpkg --set-selections
-echo linux-aws-headers-$KERNEL_NOVARIANT_VERSION hold | dpkg --set-selections
-echo linux-headers-$KERNEL_VERSION hold | dpkg --set-selections
-echo linux-buildinfo-$KERNEL_VERSION hold | dpkg --set-selections
-echo linux-image-aws hold | dpkg --set-selections
-echo linux-aws hold | dpkg --set-selections
-
-# Double-check that only the desired kernel is installed
-installed=$(ls -1 /boot/vmlinu*)
-if [ "$installed" != "/boot/vmlinuz-$KERNEL_VERSION" ]; then
-    echo "Failed to limit to a single kernel:"
-    ls /boot
-    exit 1
+if $REBUILD_KERNEL; then
+    exit 1 # TODO
 fi
 
 # install crash debug tools
@@ -69,8 +30,10 @@ grep 'USE_KDUMP' /etc/default/kdump-tools
 echo 'USE_KDUMP=1' >> /etc/default/kdump-tools
 
 # Ensure that we load AWS / Nitro modules
-echo "ena" | tee --append /etc/modules
-echo "nvme" | tee --append /etc/modules
+if [ "$CLOUD" = "aws" ]; then
+    echo "ena" | tee --append /etc/modules
+    echo "nvme" | tee --append /etc/modules
+fi
 
 # At this point we need a reboot to handle the kernel update
 # this is handled in the grub script

@@ -1,4 +1,3 @@
-# copy of docker_worker_gcp in l3 project
 template: googlecompute
 platform: linux
 
@@ -6,14 +5,11 @@ builder_var_files:
   - taskcluster_version
   - default_linux
   - default_gcp
+  - default_firefoxci
   - googlecompute_bionic
+  - firefoxci_gcp_l3
 
 script_directories:
   - ubuntu-bionic
   - worker-runner-linux
   - docker-worker-linux
-
-# Note: this project disallows port 22, so baking images requires
-# temporarily allowing access
-builder_vars:
-  project_id: fxci-production-level3-workers
