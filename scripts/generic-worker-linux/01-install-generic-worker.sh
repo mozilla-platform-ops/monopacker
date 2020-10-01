@@ -4,7 +4,9 @@ set -exv
 
 # init helpers
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
-. ${helpers_dir}/*.sh
+for h in ${helpers_dir}/*.sh; do
+    . $h;
+done
 
 # Version numbers
 GENERIC_WORKER_VERSION=$TASKCLUSTER_VERSION

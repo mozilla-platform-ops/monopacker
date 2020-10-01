@@ -4,7 +4,9 @@ set -exv
 
 # init helpers
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
-. ${helpers_dir}/*.sh
+for h in ${helpers_dir}/*.sh; do
+    . $h;
+done
 
 # GRUB
 # adapted from https://bgstack15.wordpress.com/2018/05/02/update-etc-default-grub-programmatically/

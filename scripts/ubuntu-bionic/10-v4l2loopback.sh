@@ -4,7 +4,9 @@ set -exv
 
 # init helpers
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
-. ${helpers_dir}/*.sh
+for h in ${helpers_dir}/*.sh; do
+    . $h;
+done
 
 ## Install the v4l2loopback out-of-tree kernel module at the given version, with the given number of devices enabled.  The
 ## number of devices dictates the number of parallel jobs The worker can run that use the driver.

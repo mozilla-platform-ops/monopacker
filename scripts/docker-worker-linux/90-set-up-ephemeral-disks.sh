@@ -4,7 +4,9 @@ set -exv
 
 # init helpers
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
-. ${helpers_dir}/*.sh
+for h in ${helpers_dir}/*.sh; do
+    . $h;
+done
 
 # This is copied over from docker-worker almost verbatim but
 # with a modified grep for nvme0 to get devices. This should
