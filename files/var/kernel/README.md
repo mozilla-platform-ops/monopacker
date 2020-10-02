@@ -39,15 +39,3 @@ Device Driver -->
 * `ls *.deb`
 
 Copy those `*.deb` files into this directory and point to them in `scripts/ubuntu-bionic/01-kernel.sh`.
-
-Building `v4l2loopback`
-=======================
-
-* Install everything you just built with `dpkg -i *.deb`.  It's OK that the tools don't install.
-* `export version=0.12.5`
-* `sudo git clone -b v$version git://github.com/umlaeute/v4l2loopback /usr/src/v4l2loopback-$version`
-* `cd /usr/src/v4l2loopback-$version`
-* Edit the file `v4l2looback.c` and change the `MAX_DEVICES` definition to `100` (ignore the comments about overriding it in a `make` invocation)
-* `sudo dkms build -k $rev -m v4l2loopback -v $version`
-* `sudo dkms mkdeb -k $rev -m v4l2loopback -v $version`
-* The `deb` package is available at `/var/lib/dkms/v4l2loopback/$version/deb/`.  Note that the package name does not include the kernel version.
