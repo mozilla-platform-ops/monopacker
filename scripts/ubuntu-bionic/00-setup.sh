@@ -18,6 +18,7 @@ fail() {
     exit 1
 }
 
+# TODO: NEED_KERNEL_SOURCE? REBUILD_MODULES?
 REBUILD_KERNEL=false
 case $CLOUD in
     google)
@@ -39,17 +40,17 @@ case $CLOUD in
         esac
         case $NUM_LOOPBACK_VIDEO_DEVICES in
             0) BUILD_V4L2LOOPBACK=false ;;
-            *) BUILD_V4L2LOOPBACK=true ;;
+            *) BUILD_V4L2LOOPBACK=true REBUILD_KERNEL=true ;;
         esac
         ;;
     azure)
         case $NUM_LOOPBACK_AUDIO_DEVICES in
             0) SETUP_SND_ALOOP=false ;;
-            *) fail "Azure does not support loopback audio" ;;
+            *) fail "Azure does not support loopback audio (see ubuntu-bionic README)" ;;
         esac
         case $NUM_LOOPBACK_VIDEO_DEVICES in
             0) BUILD_V4L2LOOPBACK=false ;;
-            *) fail "Azure does not support loopback video" ;;
+            *) fail "Azure does not support loopback video (see ubuntu-bionic README)" ;;
         esac
         ;;
     *) fail "Unknown CLOUD $CLOUD" ;;
