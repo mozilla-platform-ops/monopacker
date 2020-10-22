@@ -18,7 +18,6 @@ fail() {
     exit 1
 }
 
-OLD_KERNEL=false
 case $CLOUD in
     google)
         case $NUM_LOOPBACK_AUDIO_DEVICES in
@@ -34,12 +33,11 @@ case $CLOUD in
     aws)
         case $NUM_LOOPBACK_AUDIO_DEVICES in
             0) SETUP_SND_ALOOP=false ;;
-            32) SETUP_SND_ALOOP=true ;;
-            *) SETUP_SND_ALOOP=true OLD_KERNEL=true ;;
+            *) fail "AWS kernel does not support loopback audio (has not been build with snd-aloop)" ;;
         esac
         case $NUM_LOOPBACK_VIDEO_DEVICES in
             0) BUILD_V4L2LOOPBACK=false ;;
-            *) BUILD_V4L2LOOPBACK=true OLD_KERNEL=true ;;
+            *) BUILD_V4L2LOOPBACK=true ;;
         esac
         ;;
     azure)
@@ -56,6 +54,5 @@ case $CLOUD in
 esac
 
 # Results (used by subsequent scripts, hence putting them in helpers_dir)
-echo "OLD_KERNEL=$OLD_KERNEL" | tee ${helpers_dir}/kernel-inputs.sh
 echo "SETUP_SND_ALOOP=$SETUP_SND_ALOOP" | tee -a ${helpers_dir}/kernel-inputs.sh
 echo "BUILD_V4L2LOOPBACK=$BUILD_V4L2LOOPBACK" | tee -a ${helpers_dir}/kernel-inputs.sh
