@@ -1,6 +1,0 @@
-env_vars:
-  # The .metal workers will run with capacity=96, so they need more than the default
-  # 32 devices
-  NUM_LOOPBACK_AUDIO_DEVICES: 96
-  NUM_LOOPBACK_VIDEO_DEVICES: 96
-
