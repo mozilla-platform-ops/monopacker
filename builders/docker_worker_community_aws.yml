@@ -1,11 +1,12 @@
-template: googlecompute
+template: amazon_ebs
 platform: linux
 
 builder_var_files:
   - taskcluster_version
   - default_linux
-  - default_gcp
-  - googlecompute_bionic
+  - default_aws
+  - default_community
+  - amazon_ebs_bionic
 
 script_directories:
   - ubuntu-bionic

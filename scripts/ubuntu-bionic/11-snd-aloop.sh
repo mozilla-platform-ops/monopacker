@@ -4,12 +4,32 @@ set -exv
 
 # init helpers
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
-. ${helpers_dir}/*.sh
+for h in ${helpers_dir}/*.sh; do
+    . $h;
+done
 
-# Configure audio loopback devices
-echo "options snd-aloop enable=1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 index=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31" > /etc/modprobe.d/snd-aloop.conf
+if ! $SETUP_SND_ALOOP; then
+    echo "Skiping snd-aloop"
+    exit
+fi
+
+# Configure audio loopback devices, with options enable=1,1,1...,1 index = 0,1,...,N
+i=0
+enable=''
+index=''
+while [ $i -lt $NUM_LOOPBACK_AUDIO_DEVICES ]; do
+    enable="$enable,1"
+    index="$index,$i"
+    i=$((i + 1))
+done
+# slice off the leading `,` in each variable
+enable=${enable:1}
+index=${index:1}
+
+echo "options snd-aloop enable=$enable index=$index" > /etc/modprobe.d/snd-aloop.conf
 echo "snd-aloop" | tee --append /etc/modules
 
 # Test
 modprobe snd-aloop
 lsmod | grep snd_aloop
+test -e /dev/snd/controlC$((NUM_LOOPBACK_AUDIO_DEVICES - 1))

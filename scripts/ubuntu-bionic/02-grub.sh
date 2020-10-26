@@ -4,7 +4,9 @@ set -exv
 
 # init helpers
 helpers_dir=${MONOPACKER_HELPERS_DIR:-"/etc/monopacker/scripts"}
-. ${helpers_dir}/*.sh
+for h in ${helpers_dir}/*.sh; do
+    . $h;
+done
 
 # GRUB
 # adapted from https://bgstack15.wordpress.com/2018/05/02/update-etc-default-grub-programmatically/
@@ -33,6 +35,7 @@ rm -rf "${TMP_DIR}" 2>/dev/null
 # shown here https://launchpad.net/ubuntu/+source/linux-signed/4.15.0-58.64
 # retry apt install -y linux-image-$KERNEL_VERSION-dbgsym
 
+# Shutdown and wait forever; packer will consider this script to have finished and
+# start on the next script when it reconnects
 shutdown -r now
-
-# Continues in next script
+while true; do sleep 1; done

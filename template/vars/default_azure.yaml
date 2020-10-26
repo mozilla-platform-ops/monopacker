@@ -4,4 +4,5 @@ managed_image_resource_group_name: taskcluster-images
 location: westus
 
 env_vars:
-  WORKER_RUNNER_PROVIDER: azure
+  # CLOUD is the worker-runner provider name for this cloud
+  CLOUD: azure
