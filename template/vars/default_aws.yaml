@@ -9,3 +9,6 @@ volume_size: 40
 env_vars:
   # CLOUD is the worker-runner provider name for this cloud
   CLOUD: aws
+  # These aren't currently supported in our aws images
+  NUM_LOOPBACK_AUDIO_DEVICES: 0
+  NUM_LOOPBACK_VIDEO_DEVICES: 0
