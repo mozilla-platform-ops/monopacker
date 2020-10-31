@@ -4,3 +4,9 @@ source_ami_filter: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*
 # canonical ami owner account
 source_ami_owners: ["099720109477"]
 ssh_username: ubuntu
+
+env_vars:
+  # These aren't currently supported in our aws images
+  # but community overrides these so we need to re-override
+  NUM_LOOPBACK_AUDIO_DEVICES: 0
+  NUM_LOOPBACK_VIDEO_DEVICES: 0

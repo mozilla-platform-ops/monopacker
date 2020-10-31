@@ -15,6 +15,8 @@ echo "KERNEL_VERSION=$KERNEL_VERSION"
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 export DEBIAN_FRONTEND=noninteractive
 
+retry apt update
+
 # install crash debug tools
 retry apt install -y linux-crashdump kmod
 

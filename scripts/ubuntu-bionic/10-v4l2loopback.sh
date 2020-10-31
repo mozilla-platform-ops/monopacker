@@ -9,7 +9,7 @@ for h in ${helpers_dir}/*.sh; do
 done
 
 if ! $BUILD_V4L2LOOPBACK; then
-    echo "Skiping v4l2loopback"
+    echo "Skipping v4l2loopback"
     exit
 fi
 
