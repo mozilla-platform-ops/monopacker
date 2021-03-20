@@ -13,7 +13,7 @@ setup(
     packages=['monopacker', 'tests'],
     package_dir={'monopacker': 'monopacker'},
     install_requires=[
-        'jinja2==2.11.2',
+        'jinja2==2.11.3',
         'ruamel.yaml==0.16.10',
         'click==7.0',
     ],
