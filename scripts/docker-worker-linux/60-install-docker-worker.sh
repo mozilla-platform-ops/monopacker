@@ -60,7 +60,6 @@ worker:
     configPath: "${docker_worker_config}"
 # becomes part of docker-worker config
 workerConfig:
-    dockerWorkerPrivateKey: "${taskcluster_secrets_dir}/worker_cot_key"
     ed25519SigningKeyLocation: "${taskcluster_secrets_dir}/worker_ed25519_cot_key"
     ssl:
         certificate: "${taskcluster_secrets_dir}/worker_livelog_tls_cert"
