@@ -26,3 +26,9 @@ real_secrets.yaml
 *.pyc
 *.egg-info
 /.eggs
+
+# Python Virtualenv
+.venv
+
+build
+dist

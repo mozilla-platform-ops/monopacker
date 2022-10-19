@@ -9,6 +9,6 @@ for h in ${helpers_dir}/*.sh; do
 done
 
 # https://github.com/moby/libnetwork/issues/1090
-retry apt install -y iptables-persistent
+retry apt-get install -y iptables-persistent
 iptables -I INPUT -m conntrack --ctstate INVALID -j DROP
 iptables-save > /etc/iptables/rules.v4

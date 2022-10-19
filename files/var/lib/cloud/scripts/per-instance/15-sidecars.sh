@@ -11,13 +11,11 @@ docker --version
 # Versions for sidecar containers
 
 # Pull images used for sidecar containers
-taskcluster_proxy_version=5.1.0
-retry docker pull taskcluster/taskcluster-proxy:$taskcluster_proxy_version
+retry docker pull taskcluster/taskcluster-proxy:v$TASKCLUSTER_VERSION
 
-livelog_version=4
-retry docker pull taskcluster/livelog:v$livelog_version
+retry docker pull taskcluster/livelog:v$TASKCLUSTER_VERSION
 
-dind_service_version=4.0
+dind_service_version=4.1
 retry docker pull taskcluster/dind-service:v$dind_service_version
 
 relengapi_proxy_version=2.3.1

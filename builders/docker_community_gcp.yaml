@@ -6,7 +6,7 @@ builder_var_files:
   - default_linux
   - default_gcp
   - default_community
-  - googlecompute_bionic
+  - googlecompute_jammy
 
 script_directories:
   - ubuntu-bionic

@@ -16,6 +16,8 @@ setup(
         'jinja2==2.11.3',
         'ruamel.yaml==0.16.10',
         'click==7.0',
+        'markupsafe==2.0.1',
+        'pip-tools==6.9.0',
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "pyfakefs"],

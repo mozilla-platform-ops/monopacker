@@ -11,4 +11,4 @@ done
 rm -rf /usr/src/*
 
 # Do one final package cleanup, just in case.
-apt autoremove -y --purge
+apt-get autoremove -y --purge

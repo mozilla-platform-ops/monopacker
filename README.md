@@ -25,7 +25,7 @@ The intention here is to create a single Packer + cloud-init configuration set t
 - If building Google Cloud Images you should have done one of:
   - run `gcloud auth application-default login` which creates `$HOME/.config/gcloud/application_default_credentials.json`
   - Configured Service Account credentials and have a JSON file whose location is specified by the GOOGLE_APPLICATION_CREDENTIALS environment variable.
-  - In either case you need `Compute Engine Instance Admin (v1)` permissions, if using a service account you'll need `Service Account User`. See [here](https://www.packer.io/docs/builders/googlecompute.html#precedence-of-authentication-methods) for more information.
+  - In either case you need `Compute Instance Admin (v1)` permissions, if using a service account you'll need `Service Account User`. See [here](https://www.packer.io/docs/builders/googlecompute.html#precedence-of-authentication-methods) for more information.
 
 ### Install locally
 
