@@ -8,11 +8,6 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
-if [[ "$CLOUD" == "aws" ]]; then
-    # install generic kernel for audio/video loopback
-    apt-get install linux-generic -y
-fi
-
 # GRUB
 # adapted from https://bgstack15.wordpress.com/2018/05/02/update-etc-default-grub-programmatically/
 GRUB_INFILE=/etc/default/grub
@@ -29,11 +24,6 @@ cat "${GRUB_INFILE}" > "${TMP_FILE}"
 add_value_to_grub_line "${TMP_FILE}" "GRUB_CMDLINE_LINUX" "debug g"
 add_value_to_grub_line "${TMP_FILE}" "GRUB_CMDLINE_LINUX_DEFAULT" "splash"
 remove_value_from_grub_line "${TMP_FILE}" "GRUB_CMDLINE_LINUX_DEFAULT" "quiet"
-
-if [[ "$CLOUD" == "aws" ]]; then
-    # change the default kernel to generic for audio/video loopback
-    replace_value_in_grub_line "${TMP_FILE}" "GRUB_DEFAULT" "0" '"1>2"'
-fi
 
 update_grub_if_changed "${GRUB_INFILE}" "${TMP_FILE}"
 

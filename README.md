@@ -21,6 +21,10 @@ The intention here is to create a single Packer + cloud-init configuration set t
 
 - If building AWS AMIs you should have:
   - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, environment variables, representing your AWS Access Key and AWS Secret Key, respectively. [(see here)](https://www.packer.io/docs/builders/amazon.html#environment-variables)
+  - Run the following command to get temporary credentials:
+    ```bash
+    eval "$(./aws-signin.sh)"
+    ```
   - You need a whole set of IAM privileges, see [here](https://www.packer.io/docs/builders/amazon.html#iam-task-or-instance-role)
 - If building Google Cloud Images you should have done one of:
   - run `gcloud auth application-default login` which creates `$HOME/.config/gcloud/application_default_credentials.json`

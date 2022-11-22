@@ -45,7 +45,7 @@ function update_grub_if_changed() {
       # changes were made
       cp -p "${tmpfile}" "${infile}"
       # writes from /etc/default/grub
-      update-grub
+      grub-mkconfig -o "/boot/grub/grub.cfg"
    else
       # no changes
       :
@@ -72,18 +72,6 @@ function remove_value_from_grub_line() {
    local thisvalue="${3}"
 
    sed -i -r -e "/^${thisvar}=/{ /${thisvalue}/ { s/\s*${thisvalue}//; } ; }" "${infile}"
-
-}
-
-function replace_value_in_grub_line() {
-   # call: replace_value_in_grub_line "${TMP_FILE}" "GRUB_CMDLINE_LINUX" "quiet" "debug"
-
-   local infile="${1}"
-   local thisvar="${2}"
-   local thisvalue="${3}"
-   local newvalue="${4}"
-
-   sed -i -r -e "/^${thisvar}=/{ s/${thisvalue}/${newvalue}/; }" "${infile}"
 
 }
 
