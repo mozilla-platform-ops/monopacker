@@ -11,12 +11,12 @@ done
 # Get recent CA bundle for papertrail
 retry curl -s -o /etc/papertrail-bundle.pem https://papertrailapp.com/tools/papertrail-bundle.pem
 md5=`md5sum /etc/papertrail-bundle.pem | awk '{ print $1 }'`
-if [ "$md5" != "2c43548519379c083d60dd9e84a1b724" ]; then
+if [ "$md5" != "1062c59e49c4585a9acfaad740a79c5d" ]; then
     echo "md5 for papertrail CA bundle does not match"
     exit -1
 fi
 
-retry apt install -y rsyslog-gnutls
+retry apt-get install -y rsyslog-gnutls
 
 echo "Setting +x and importing papertrail host"
 set +x

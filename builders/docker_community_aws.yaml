@@ -6,7 +6,7 @@ builder_var_files:
   - default_linux
   - default_aws
   - default_community
-  - amazon_ebs_bionic
+  - amazon_ebs_jammy
 
 script_directories:
   - ubuntu-bionic

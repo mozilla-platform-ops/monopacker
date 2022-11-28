@@ -8,11 +8,11 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
-retry apt update
-retry apt upgrade -y
+retry apt-get update
+retry apt-get upgrade -y
 
 # docker wants these
-retry apt install -y \
+retry apt-get install -y \
   apt-transport-https \
   build-essential \
   ca-certificates \
@@ -21,12 +21,12 @@ retry apt install -y \
   software-properties-common
 
 MISC_PACKAGES=()
-MISC_PACKAGES+=(zstd python-pip jq)
+MISC_PACKAGES+=(zstd python3-pip jq)
 # docker-worker needs this for unpacking lz4 images
 MISC_PACKAGES+=(liblz4-tool)
 
 # misc
-retry apt install -y ${MISC_PACKAGES[@]}
+retry apt-get install -y ${MISC_PACKAGES[@]}
 
 # Remove apport because it prevents obtaining crashes from containers
 # and because it may send data to Canonical.

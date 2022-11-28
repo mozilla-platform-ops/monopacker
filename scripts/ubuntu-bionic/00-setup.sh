@@ -26,18 +26,18 @@ case $CLOUD in
             *) fail "GCP supports only 0 or 32 loopback audio devices."
         esac
         case $NUM_LOOPBACK_VIDEO_DEVICES in
-            0) BUILD_V4L2LOOPBACK=false ;;
-            *) BUILD_V4L2LOOPBACK=true ;;
+            0) SETUP_V4L2LOOPBACK=false ;;
+            *) SETUP_V4L2LOOPBACK=true ;;
         esac
         ;;
     aws)
         case $NUM_LOOPBACK_AUDIO_DEVICES in
             0) SETUP_SND_ALOOP=false ;;
-            *) fail "AWS kernel does not support loopback audio (has not been build with snd-aloop)" ;;
+            *) SETUP_SND_ALOOP=true ;;
         esac
         case $NUM_LOOPBACK_VIDEO_DEVICES in
-            0) BUILD_V4L2LOOPBACK=false ;;
-            *) BUILD_V4L2LOOPBACK=true ;;
+            0) SETUP_V4L2LOOPBACK=false ;;
+            *) SETUP_V4L2LOOPBACK=true ;;
         esac
         ;;
     azure)
@@ -46,7 +46,7 @@ case $CLOUD in
             *) fail "Azure does not support loopback audio (see ubuntu-bionic README)" ;;
         esac
         case $NUM_LOOPBACK_VIDEO_DEVICES in
-            0) BUILD_V4L2LOOPBACK=false ;;
+            0) SETUP_V4L2LOOPBACK=false ;;
             *) fail "Azure does not support loopback video (see ubuntu-bionic README)" ;;
         esac
         ;;
@@ -55,4 +55,4 @@ esac
 
 # Results (used by subsequent scripts, hence putting them in helpers_dir)
 echo "SETUP_SND_ALOOP=$SETUP_SND_ALOOP" | tee -a ${helpers_dir}/kernel-inputs.sh
-echo "BUILD_V4L2LOOPBACK=$BUILD_V4L2LOOPBACK" | tee -a ${helpers_dir}/kernel-inputs.sh
+echo "SETUP_V4L2LOOPBACK=$SETUP_V4L2LOOPBACK" | tee -a ${helpers_dir}/kernel-inputs.sh

@@ -15,10 +15,10 @@ echo "KERNEL_VERSION=$KERNEL_VERSION"
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 export DEBIAN_FRONTEND=noninteractive
 
-retry apt update
+retry apt-get update
 
 # install crash debug tools
-retry apt install -y linux-crashdump kmod
+retry apt-get install -y linux-crashdump kmod
 
 # kernel debug
 grep 'USE_KDUMP' /etc/default/kdump-tools

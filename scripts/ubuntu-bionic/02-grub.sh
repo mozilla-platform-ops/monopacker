@@ -33,7 +33,7 @@ rm -rf "${TMP_DIR}" 2>/dev/null
 
 # FIXME does not exist?
 # shown here https://launchpad.net/ubuntu/+source/linux-signed/4.15.0-58.64
-# retry apt install -y linux-image-$KERNEL_VERSION-dbgsym
+# retry apt-get install -y linux-image-$KERNEL_VERSION-dbgsym
 
 # Shutdown and wait forever; packer will consider this script to have finished and
 # start on the next script when it reconnects

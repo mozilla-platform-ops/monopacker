@@ -13,6 +13,10 @@ if ! $SETUP_SND_ALOOP; then
     exit
 fi
 
+if [[ "$CLOUD" == "aws" ]]; then
+    apt-get install -y linux-modules-extra-$(uname -r)
+fi
+
 # Configure audio loopback devices, with options enable=1,1,1...,1 index = 0,1,...,N
 i=0
 enable=''
