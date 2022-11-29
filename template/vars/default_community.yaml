@@ -1,3 +1,4 @@
 env_vars:
   NUM_LOOPBACK_AUDIO_DEVICES: 32
   NUM_LOOPBACK_VIDEO_DEVICES: 1 # This is only used in docker-worker's own ci currently
+  PERF_EVENT_PARANOID_VALUE: 3
