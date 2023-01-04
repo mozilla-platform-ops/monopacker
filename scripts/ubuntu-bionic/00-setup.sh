@@ -12,6 +12,12 @@ echo "CLOUD=$CLOUD"
 echo "NUM_LOOPBACK_AUDIO_DEVICES=$NUM_LOOPBACK_AUDIO_DEVICES"
 echo "NUM_LOOPBACK_VIDEO_DEVICES=$NUM_LOOPBACK_VIDEO_DEVICES"
 
+# Check if the BUILD_V4L2LOOPBACK variable is set. Currently
+# we only set this for FirefoxCI.
+if [[ -v $BUILD_V4L2LOOPBACK ]] ; then
+echo "BUILD_V4L2LOOPBACK=$BUILD_V4L2LOOPBACK"
+fi
+
 # Look at the given inputs and see if we can even do this.
 fail() {
     echo "${@}"
