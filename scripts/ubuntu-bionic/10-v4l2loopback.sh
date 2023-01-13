@@ -21,7 +21,7 @@ if [[ "$BUILD_V4L2LOOPBACK" ]]; then
     git clone -b v$V4L2LOOPBACK_VERSION https://github.com/umlaeute/v4l2loopback /usr/src/v4l2loopback-$V4L2LOOPBACK_VERSION
     # Edit the file `v4l2looback.c` and change the `MAX_DEVICES` definition to `100`
     # (NOTE: ignore the comments about overriding it in a `make` invocation; this isn't possible via dkms)
-    sed -i -e "s/# *define MAX_DEVICES 8/# define MAX_DEVICES $NUM_LOOPBACK_VIDEO_DEVICES/g" /usr/src/v4l2loopback-$V4L2LOOPBACK_VERSION/v4l2loopback.c
+    sed -i -e "s/# *define MAX_DEVICES *[0-9]*/# define MAX_DEVICES $NUM_LOOPBACK_VIDEO_DEVICES/g" /usr/src/v4l2loopback-$V4L2LOOPBACK_VERSION/v4l2loopback.c
     dkms install -m v4l2loopback -v $V4L2LOOPBACK_VERSION
 fi
 
