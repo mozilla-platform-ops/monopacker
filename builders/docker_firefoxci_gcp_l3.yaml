@@ -2,7 +2,7 @@ template: googlecompute
 platform: linux
 
 builder_var_files:
-  - taskcluster_version
+  - ub1804-gcp
   - default_linux
   - default_gcp
   - default_firefoxci

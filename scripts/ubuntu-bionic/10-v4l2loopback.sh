@@ -15,7 +15,18 @@ fi
 
 apt-get install v4l2loopback-dkms -y
 
+if [[ "$BUILD_V4L2LOOPBACK" ]]; then
+    # This is for Ubuntu 18.04 in GCP. We have to build the module, otherwise it will not work.
+    V4L2LOOPBACK_VERSION=${V4L2LOOPBACK_VERSION:-0.12.5}
+    git clone -b v$V4L2LOOPBACK_VERSION https://github.com/umlaeute/v4l2loopback /usr/src/v4l2loopback-$V4L2LOOPBACK_VERSION
+    # Edit the file `v4l2looback.c` and change the `MAX_DEVICES` definition to `100`
+    # (NOTE: ignore the comments about overriding it in a `make` invocation; this isn't possible via dkms)
+    sed -i -e "s/# *define MAX_DEVICES *[0-9]*/# define MAX_DEVICES $NUM_LOOPBACK_VIDEO_DEVICES/g" /usr/src/v4l2loopback-$V4L2LOOPBACK_VERSION/v4l2loopback.c
+    dkms install -m v4l2loopback -v $V4L2LOOPBACK_VERSION
+fi
+
 if [[ "$CLOUD" == "google" ]]; then
+    # Required in GCP.
     apt-get install linux-modules-extra-gcp -y
 fi
 
