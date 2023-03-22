@@ -1,0 +1,1 @@
+../ubuntu-bionic/01-kernel.sh

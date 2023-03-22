@@ -5,10 +5,10 @@ builder_var_files:
   - taskcluster_version_latest  # new file as non-latest still needed for d-w
   - default_linux
   - translations_gcp
-  # - default_community  # needed? seems specific to d-w
   - googlecompute_cuda
 
 script_directories:
-  # - ubuntu-bionic  # needed with provided image? maybe just packages and a few others?
+  - ubuntu-bionic-minimal  # see if we can get away with fewer things, fall back to non minimal
   - worker-runner-linux
   - generic-worker-linux
+  - worker-runner-gw-systemd  # TODO: not complete yet
