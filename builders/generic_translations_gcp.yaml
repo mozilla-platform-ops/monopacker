@@ -1,0 +1,13 @@
+template: googlecompute
+platform: linux
+
+builder_var_files:
+  - taskcluster_version
+  - default_linux
+  # - default_gcp  # needed? seems specific to d-w
+  # - default_community  # needed? seems specific to d-w
+  - googlecompute_cuda
+
+script_directories:
+  # - ubuntu-bionic  # needed with provided image?
+  - generic-worker-linux
