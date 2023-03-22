@@ -11,4 +11,4 @@ script_directories:
   - ubuntu-bionic-minimal  # see if we can get away with fewer things, fall back to non minimal
   - worker-runner-linux
   - generic-worker-linux
-  - worker-runner-gw-systemd  # TODO: not complete yet
+  - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
