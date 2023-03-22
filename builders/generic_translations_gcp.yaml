@@ -9,6 +9,6 @@ builder_var_files:
   - googlecompute_cuda
 
 script_directories:
-  # - ubuntu-bionic  # needed with provided image?
+  # - ubuntu-bionic  # needed with provided image? maybe just packages and a few others?
   - worker-runner-linux
   - generic-worker-linux
