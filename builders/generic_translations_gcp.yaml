@@ -10,4 +10,5 @@ builder_var_files:
 
 script_directories:
   # - ubuntu-bionic  # needed with provided image?
+  - worker-runner-linux
   - generic-worker-linux
