@@ -4,7 +4,7 @@ platform: linux
 builder_var_files:
   - taskcluster_version_latest  # new file as non-latest still needed for d-w
   - default_linux
-  # - default_gcp  # needed? seems specific to d-w
+  - translations_gcp
   # - default_community  # needed? seems specific to d-w
   - googlecompute_cuda
 

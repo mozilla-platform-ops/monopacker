@@ -1,0 +1,7 @@
+---
+project_id: translations  # TODO: get final project_id
+zone: us-west1-a
+
+env_vars:
+  # CLOUD is the worker-runner provider name for this cloud
+  CLOUD: google
