@@ -2,7 +2,7 @@ template: googlecompute
 platform: linux
 
 builder_var_files:
-  - taskcluster_version
+  - taskcluster_version_latest  # new file as non-latest still needed for d-w
   - default_linux
   # - default_gcp  # needed? seems specific to d-w
   # - default_community  # needed? seems specific to d-w
