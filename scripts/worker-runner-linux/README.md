@@ -4,8 +4,8 @@ This scripts directory installs worker-runner and a papertrail log destination o
 
 ## Inputs
 
-* `WORKER_RUNNER_VERSION` - the version of docker-worker to install, defaulting to `$TASKCLUSTER_VERSION`
-* `WORKER_RUNNER_RELEASE_FILE` - a filename on the image containing a docker-worker release to install; this overrides `WORKER_RUNNER_VERSION`.
+* `WORKER_RUNNER_VERSION` - the version of worker-runner to install, defaulting to `$TASKCLUSTER_VERSION`
+* `WORKER_RUNNER_RELEASE_FILE` - a filename on the image containing a worker-runner release to install; this overrides `WORKER_RUNNER_VERSION`.
 
 ### Secrets
 
