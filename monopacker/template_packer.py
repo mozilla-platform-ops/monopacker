@@ -252,6 +252,13 @@ def generate_packer_template(*,
         for builder in templated_builders
         if builder["platform"] == "windows"
     ]
+    disable_cloud_init = variables["disable_cloud_init"] = [
+        builder["vars"]["name"]
+        for builder in templated_builders
+        # TODO: relax/fix check
+        if "disable_cloud_init" in builder
+    ]
+    # TODO: debug, print out windows_builders and see what it looks like
 
     pkr = {
         "builders": [],
@@ -293,13 +300,14 @@ def generate_packer_template(*,
             ],
             'only': linux_builders,
         })
-        pkr["provisioners"].append({
-            'type': 'shell',
-            'inline': [
-                '/usr/bin/cloud-init status --wait',
-            ],
-            'only': linux_builders,
-        })
+        # TODO: fix except, not working
+        # pkr["provisioners"].append({
+        #     'type': 'shell',
+        #     'inline': [
+        #         '/usr/bin/cloud-init status --wait',
+        #     ],
+        #     'except': disable_cloud_init,
+        # })
 
     e = Environment(loader=FileSystemLoader([templates_dir]))
     e.filters["clean_gcp_image_name"] = clean_gcp_image_name

@@ -1,1 +1,0 @@
-../ubuntu-bionic/99-clean.sh

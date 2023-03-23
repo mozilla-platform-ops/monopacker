@@ -1,1 +1,0 @@
-../ubuntu-bionic/02-grub.sh

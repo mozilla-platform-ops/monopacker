@@ -1,14 +1,18 @@
 template: googlecompute
 platform: linux
+disable_cloud_init: true
 
 builder_var_files:
   - taskcluster_version_latest  # new file as non-latest still needed for d-w
   - default_linux
-  - translations_gcp
-  - googlecompute_cuda
+  - translations_gcp  # TODO: merge this and following?
+  - googlecompute_translations
 
 script_directories:
-  - ubuntu-bionic-minimal  # see if we can get away with fewer things, fall back to non minimal
+  # - ubuntu-jammy # see if we can get away with fewer things, fall back to non minimal
+  # TODO: install cuda
+  - ubuntu-cuda
   - worker-runner-linux
   - generic-worker-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
+ 

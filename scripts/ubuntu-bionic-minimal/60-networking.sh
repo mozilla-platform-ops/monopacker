@@ -1,1 +1,0 @@
-../ubuntu-bionic/60-networking.sh
