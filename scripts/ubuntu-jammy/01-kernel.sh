@@ -17,12 +17,17 @@ export DEBIAN_FRONTEND=noninteractive
 
 retry apt-get update
 
+# TODO: figure out issue on jammy
+# error: 
+#   The following packages have unmet dependencies:
+#   linux-crashdump : Depends: kdump-tools but it is not installable
+#
 # install crash debug tools
-retry apt-get install -y linux-crashdump kmod
+# retry apt-get install -y linux-crashdump kmod
 
 # kernel debug
-grep 'USE_KDUMP' /etc/default/kdump-tools
-echo 'USE_KDUMP=1' >> /etc/default/kdump-tools
+# grep 'USE_KDUMP' /etc/default/kdump-tools
+# echo 'USE_KDUMP=1' >> /etc/default/kdump-tools
 
 # Ensure that we load AWS / Nitro modules
 if [ "$CLOUD" = "aws" ]; then
