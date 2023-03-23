@@ -1,3 +1,4 @@
 ---
 ssh_username: ubuntu
-source_image_family: common-cu113-v20230314-ubuntu-2004
+source_image_family: common-dl-gpu-debian-10 
+#source_image_family: common-cu113-v20230314-ubuntu-2004
