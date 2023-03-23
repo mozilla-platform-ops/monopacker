@@ -1,5 +1,5 @@
 ---
-project_id: translations  # TODO: get final project_id
+project_id: translations-sandbox  # TODO: get final project_id
 zone: us-west1-a
 
 env_vars:
