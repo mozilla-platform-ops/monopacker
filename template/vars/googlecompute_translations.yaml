@@ -1,5 +1,13 @@
 ---
 ssh_username: ubuntu
-source_image_family: ubuntu-minimal-2204-lts 
+source_image_family: ubuntu-2204-lts
+# TODO: move to minimal, but will need more packages added. cuda installer fails.
+#source_image_family: ubuntu-minimal-2204-lts 
+
+# images i've tried that didn't work
+# 
+# /tmp not writable?!? packer was not happy
 #source_image_family: cos-101-lts  
+#
+# doesn't include nvidia-drivers... why bother. 
 #source_image_family: common-cu113-v20230314-ubuntu-2004

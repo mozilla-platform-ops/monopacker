@@ -9,10 +9,9 @@ builder_var_files:
   - googlecompute_translations
 
 script_directories:
-  # - ubuntu-jammy # see if we can get away with fewer things, fall back to non minimal
-  # TODO: install cuda
+  - ubuntu-jammy # see if we can get away with fewer things, fall back to non minimal
   - ubuntu-cuda
-  - worker-runner-linux
   - generic-worker-linux
+  - worker-runner-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
  
