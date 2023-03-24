@@ -6,8 +6,9 @@ source_image_family: ubuntu-2204-lts
 
 # images i've tried that didn't work
 # 
-# /tmp not writable?!? packer was not happy
+# - /tmp not writable?!? packer was not happy
 #source_image_family: cos-101-lts  
 #
-# doesn't include nvidia-drivers... why bother. 
+# - doesn't include nvidia-drivers... why bother. 
+# - not cloud init, had to hack up monopacker
 #source_image_family: common-cu113-v20230314-ubuntu-2004
