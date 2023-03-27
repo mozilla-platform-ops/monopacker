@@ -16,10 +16,10 @@ done
 # sudo apt update
 # sudo apt install -y libxml2
 
-# problem: broken symlinks in:
-# ls -la ls /usr/src/linux-headers-5.15.0-1030-gcp
+# problem: broken symlinks in directory below
+#   ls -la ls /usr/src/linux-headers-5.15.0-1030-gcp
 # fix:
-# sudo apt reinstall linux-gcp-headers-5.15.0-1030
+#   sudo apt reinstall linux-gcp-headers-5.15.0-1030
 #
 # ensure kernel headers are present so dkms works
 # - had issue where there were broken symlinks
