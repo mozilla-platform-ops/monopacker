@@ -33,14 +33,14 @@ The intention here is to create a single Packer + cloud-init configuration set t
 
 ### Install locally
 
-(you will probably want a virtualenv set up first!)
+Install Poetry (https://python-poetry.org/) if you don't already have it.
 
 ```shell
-# install package with runtime dependencies
-python setup.py install
+# create and activate a poetry virtualenv for this repo
+poetry shell
 
-# if developing this package, install dev dependencies
-pip -r requirements.txt
+# install package
+poetry install
 ```
 
 ## Usage
@@ -122,6 +122,6 @@ Mostly, I just haven't tried to make this work.
 
 # Development
 
-To run the tests for this library, run `python setup.py test`.
+To run the tests for this library, run `poetry run pytest`.
 
-To update dependencies, modify `setup.py`, install `pip-tools`, and then run `./pipupdate.sh`.
+To update dependencies, run `poetry update`.
