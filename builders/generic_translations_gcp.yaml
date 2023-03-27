@@ -1,6 +1,5 @@
 template: googlecompute
 platform: linux
-disable_cloud_init: true
 
 builder_var_files:
   - taskcluster_version_latest  # new file as non-latest still needed for d-w
