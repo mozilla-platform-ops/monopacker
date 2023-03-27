@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "monopacker"
 version = "0.1.0"
-description = ""
+description = "builds taskcluster worker images for AWS and GCP using packer"
 authors = ["Miles Crabill <mcrabill@mozilla.com>", "Dustin J. Mitchell <dustin@mozilla.com>"]
 license = "MPL 2.0"
 readme = "README.md"
