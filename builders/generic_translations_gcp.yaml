@@ -8,7 +8,7 @@ builder_var_files:
   - googlecompute_translations
 
 script_directories:
-  - ubuntu-jammy # see if we can get away with fewer things, fall back to non minimal
+  - ubuntu-jammy
   - ubuntu-cuda
   - generic-worker-linux
   - worker-runner-linux
