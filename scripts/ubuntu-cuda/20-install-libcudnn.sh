@@ -28,12 +28,3 @@ sudo apt-get update
 
 sudo apt-get install libcudnn8=${cudnn_version}-1+${cuda_version}
 sudo apt-get install libcudnn8-dev=${cudnn_version}-1+${cuda_version}
-
-# alternate steps
-
-# # set up apt repo
-# sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/x86_64/3bf863cc.pub
-# echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/${DISTRO}/x86_64 /" | sudo tee -a /etc/apt/sources.list.d/cuda.list
-
-# # install
-# sudo apt-get install -y libcudnn${CUDNN_VERSION}-dev
