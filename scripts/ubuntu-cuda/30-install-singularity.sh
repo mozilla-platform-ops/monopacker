@@ -13,6 +13,14 @@ done
 
 VERSION_TAG="v3.1.1"
 
+# pre-reqs
+sudo apt-get update && \
+    sudo apt-get install \
+    python \
+    dh-autoreconf \
+    build-essential \
+    libarchive-dev
+
 # get client and checkout appropriate tag
 git clone https://github.com/sylabs/singularity.git
 cd singularity
