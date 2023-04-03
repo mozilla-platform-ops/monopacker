@@ -15,8 +15,8 @@ VERSION_TAG="v3.1.1"
 
 # pre-reqs
 sudo apt-get update && \
-    sudo apt-get install \
-    python \
+    sudo apt-get install -y \
+    python3 \
     dh-autoreconf \
     build-essential \
     libarchive-dev
