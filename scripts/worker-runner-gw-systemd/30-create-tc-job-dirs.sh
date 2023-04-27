@@ -12,5 +12,5 @@ done
 USER_DIR="/home/ubuntu"
 DIR_LIST="${USER_DIR}/tasks ${USER_DIR}/caches ${USER_DIR}/downloads"
 
-mkdir -p ${DIR_LIST}
-chown ubuntu:ubuntu ${DIR_LIST}
+sudo mkdir -p ${DIR_LIST}
+sudo chown -R ubuntu:ubuntu ${DIR_LIST}
