@@ -10,7 +10,7 @@ done
 
 # from https://docs.taskcluster.net/docs/reference/workers/worker-runner/deployment
 
-# place in systemd user service dir
+# place systemd unit file
 cat << EOF > /etc/systemd/system/generic-worker.service
 [Unit]
 Description=Start TC worker
