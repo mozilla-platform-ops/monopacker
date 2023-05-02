@@ -1,5 +1,6 @@
 template: googlecompute
 platform: linux
+# machine_type:  # TODO: use a larger instance for faster builds (singularity)
 
 builder_var_files:
   - taskcluster_version_latest  # new file as non-latest still needed for d-w
@@ -10,6 +11,7 @@ builder_var_files:
 script_directories:
   - ubuntu-jammy
   - ubuntu-cuda
+  - tc-packages
   - generic-worker-linux
   - worker-runner-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?

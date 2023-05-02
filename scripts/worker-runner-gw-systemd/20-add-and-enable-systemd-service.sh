@@ -10,8 +10,8 @@ done
 
 # from https://docs.taskcluster.net/docs/reference/workers/worker-runner/deployment
 
-# TODO: change requiredby target to non-graphical?
-cat << EOF > /etc/systemd/system/generic-worker.service
+# place in systemd user service dir
+cat << EOF > /etc/systemd/user/generic-worker.service
 [Unit]
 Description=Start TC worker
 
@@ -22,10 +22,10 @@ ExecStart=/usr/local/bin/start-worker /etc/start-worker.yml
 # redirecting to external logging services
 StandardOutput=syslog+console
 StandardError=syslog+console
-User=root
+User=ubuntu
 
 [Install]
-RequiredBy=graphical.target
+WantedBy=multi-user.target
 EOF
 
 systemctl enable generic-worker
