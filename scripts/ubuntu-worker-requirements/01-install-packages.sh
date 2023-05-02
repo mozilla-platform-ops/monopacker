@@ -16,7 +16,7 @@ retry apt-get install -y \
   build-essential \
   git \
   mercurial \
-  python3-zstandard \
+  python3-zstd \
   python3-certifi \
   python3-psutil \
   zstd

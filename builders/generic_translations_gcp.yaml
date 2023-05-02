@@ -10,8 +10,8 @@ builder_var_files:
 
 script_directories:
   - ubuntu-jammy
+  - ubuntu-worker-requirements
   - ubuntu-cuda
-  - tc-packages
   - generic-worker-linux
   - worker-runner-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
