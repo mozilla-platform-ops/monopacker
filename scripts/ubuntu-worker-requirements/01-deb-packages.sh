@@ -15,6 +15,8 @@ retry apt-get update
 retry apt-get install -y \
   build-essential \
   git \
+  libhunspell-1.7-0 \
+  libhunspell-dev \
   mercurial \
   python3-zstd \
   python3-certifi \
