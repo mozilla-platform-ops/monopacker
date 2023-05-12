@@ -1,6 +1,6 @@
 # ubuntu-cuda
 
-## TOOD
+## TODO
 
 - rename to ubuntu-translations
 
