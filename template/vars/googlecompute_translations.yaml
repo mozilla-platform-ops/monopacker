@@ -1,0 +1,4 @@
+---
+ssh_username: ubuntu
+# TODO: move to minimal, but will need more packages added. cuda installer fails.
+source_image_family: ubuntu-2204-lts
