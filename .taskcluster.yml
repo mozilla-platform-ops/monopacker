@@ -24,6 +24,7 @@ tasks:
             curl -sSL https://install.python-poetry.org | python3 -
             export PATH="/root/.local/bin:$PATH"
             poetry install
+            poetry run pip list
             poetry run pytest
             poetry update
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
@@ -58,6 +59,7 @@ tasks:
             curl -sSL https://install.python-poetry.org | python3 -
             export PATH="/root/.local/bin:$PATH"
             poetry install
+            poetry run pip list
             poetry run pytest
       metadata:
         name: monopacker tests
