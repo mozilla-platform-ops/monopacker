@@ -24,10 +24,10 @@ tasks:
             curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
             export PATH="/root/.local/bin:$PATH"
             poetry config virtualenvs.in-project true
-            poetry install -vvv --no-ansi
+            poetry install --no-ansi
             poetry run pip list
             poetry run pytest
-            poetry update -vvv --no-ansi
+            poetry update --no-ansi
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
                 echo "*** `poetry update` produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
@@ -60,7 +60,7 @@ tasks:
             curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
             export PATH="/root/.local/bin:$PATH"
             poetry config virtualenvs.in-project true
-            poetry install -vvv --no-ansi
+            poetry install --no-ansi
             poetry run pip list
             poetry run pytest
       metadata:
