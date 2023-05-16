@@ -25,7 +25,7 @@ tasks:
             export PATH="/root/.local/bin:$PATH"
             # there's some bug in this version of python and poetry that causes it to exit 1
             set +e
-            poetry install
+            poetry install -vvvv
             set -e
             poetry run pip list
             poetry run pytest
@@ -63,7 +63,7 @@ tasks:
             export PATH="/root/.local/bin:$PATH"
             # there's some bug in this version of python and poetry that causes it to exit 1
             set +e
-            poetry install
+            poetry install -vvvv
             set -e
             poetry run pip list
             poetry run pytest
