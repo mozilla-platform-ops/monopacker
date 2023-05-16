@@ -24,10 +24,7 @@ tasks:
             curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
             export PATH="/root/.local/bin:$PATH"
             poetry config virtualenvs.in-project true
-            # there's some bug in this version of python and poetry that causes it to exit 1
-            set +e
-            poetry install -vvvv --no-ansi
-            set -e
+            poetry install -vvv --no-ansi
             poetry run pip list
             poetry run pytest
             poetry update
@@ -63,10 +60,7 @@ tasks:
             curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
             export PATH="/root/.local/bin:$PATH"
             poetry config virtualenvs.in-project true
-            # there's some bug in this version of python and poetry that causes it to exit 1
-            set +e
-            poetry install -vvvv --no-ansi
-            set -e
+            poetry install -vvv --no-ansi
             poetry run pip list
             poetry run pytest
       metadata:
