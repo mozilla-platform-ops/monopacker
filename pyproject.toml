@@ -3,8 +3,11 @@ name = "monopacker"
 version = "0.1.0"
 description = "builds taskcluster worker images for AWS and GCP using packer"
 authors = ["Miles Crabill <mcrabill@mozilla.com>", "Dustin J. Mitchell <dustin@mozilla.com>"]
+maintainers = [ "Taskcluster Team <tools-taskcluster@lists.mozilla.org>",
+                "Release SRE <relops@mozilla.com>",]
 license = "MPL 2.0"
 readme = "README.md"
+keywords = ["packer", "templating"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
