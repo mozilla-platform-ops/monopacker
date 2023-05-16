@@ -22,10 +22,9 @@ tasks:
             cd "$CHECKOUT_DIR"
             git checkout "${event.pull_request.head.sha}"
             python --version
-            export POETRY_HOME=$HOME/.poetry
-            python3 -m venv $POETRY_HOME
-            pip install poetry==1.4.2
-            export PATH="$PATH:$POETRY_HOME/bin"
+            python3 -m pip install --user pipx
+            python3 -m pipx ensurepath
+            pipx install poetry==1.4.2
             poetry --version
             poetry install -vvvv
             poetry run pip list
@@ -60,10 +59,9 @@ tasks:
             git clone "${event.repository.url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.after}"
-            export POETRY_HOME=$HOME/.poetry
-            python3 -m venv $POETRY_HOME
-            pip install poetry==1.4.2
-            export PATH="$PATH:$POETRY_HOME/bin"
+            python3 -m pip install --user pipx
+            python3 -m pipx ensurepath
+            pipx install poetry==1.4.2
             poetry --version
             python --version
             poetry install -vvvv
