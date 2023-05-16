@@ -10,7 +10,7 @@ readme = "README.md"
 python = "^3.7"
 ruamel-yaml = "^0.16.10"
 jinja2 = "^2.11.3"
-click = "^6.0"
+click = "^7.0"
 markupsafe = "2.0.1"
 
 [tool.poetry.group.dev.dependencies]
