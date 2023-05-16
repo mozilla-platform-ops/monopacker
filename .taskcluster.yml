@@ -22,6 +22,7 @@ tasks:
             cd "$CHECKOUT_DIR"
             git checkout "${event.pull_request.head.sha}"
             curl -sSL https://install.python-poetry.org | python3 -
+            export PATH="/root/.local/bin:$PATH"
             poetry install
             poetry run pytest
             poetry update
@@ -55,6 +56,7 @@ tasks:
             cd "$CHECKOUT_DIR"
             git checkout "${event.after}"
             curl -sSL https://install.python-poetry.org | python3 -
+            export PATH="/root/.local/bin:$PATH"
             poetry install
             poetry run pytest
       metadata:
