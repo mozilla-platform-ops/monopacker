@@ -27,7 +27,7 @@ tasks:
             poetry run pytest
             poetry update
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
-                echo "*** ./pipupdate.sh produced changes to the repository; these changes should be checked in ***";
+                echo "*** `poetry update` produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
                 exit 1;
             fi
