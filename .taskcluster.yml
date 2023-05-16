@@ -21,7 +21,7 @@ tasks:
             git clone "${event.pull_request.head.repo.clone_url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.pull_request.head.sha}"
-            curl -sSL https://install.python-poetry.org | python3 - --version 1.3.2
+            curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
             export PATH="/root/.local/bin:$PATH"
             poetry config virtualenvs.in-project true
             # there's some bug in this version of python and poetry that causes it to exit 1
@@ -60,7 +60,7 @@ tasks:
             git clone "${event.repository.url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.after}"
-            curl -sSL https://install.python-poetry.org | python3 -
+            curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
             export PATH="/root/.local/bin:$PATH"
             poetry config virtualenvs.in-project true
             # there's some bug in this version of python and poetry that causes it to exit 1
