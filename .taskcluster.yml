@@ -26,6 +26,8 @@ tasks:
             # export LC_ALL=C.UTF-8
             # export LANG=C.UTF-8
             # export LANGUAGE=C.UTF-8  
+            python --version
+            poetry --version
             poetry install -vvvv
             poetry run pip list
             poetry run pytest
@@ -64,6 +66,8 @@ tasks:
             # export LC_ALL=C.UTF-8
             # export LANG=C.UTF-8
             # export LANGUAGE=C.UTF-8  
+            python --version
+            poetry --version
             poetry install -vvvv
             poetry run pip list
             poetry run pytest
