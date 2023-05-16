@@ -23,7 +23,10 @@ tasks:
             git checkout "${event.pull_request.head.sha}"
             curl -sSL https://install.python-poetry.org | python3 -
             export PATH="/root/.local/bin:$PATH"
+            # there's some bug in this version of python and poetry that causes it to exit 1
+            set +e
             poetry install
+            set -e
             poetry run pip list
             poetry run pytest
             poetry update
@@ -58,8 +61,10 @@ tasks:
             git checkout "${event.after}"
             curl -sSL https://install.python-poetry.org | python3 -
             export PATH="/root/.local/bin:$PATH"
+            # there's some bug in this version of python and poetry that causes it to exit 1
+            set +e
             poetry install
-            poetry install -vvvv
+            set -e
             poetry run pip list
             poetry run pytest
       metadata:
