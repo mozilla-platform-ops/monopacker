@@ -21,10 +21,9 @@ tasks:
             git clone "${event.pull_request.head.repo.clone_url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.pull_request.head.sha}"
-            pip install --no-use-pep517 -r requirements.txt
-            python setup.py test
-            pip install pip-tools
-            ./pipupdate.sh
+            poetry install
+            poetry run pytest
+            poetry update
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
                 echo "*** ./pipupdate.sh produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
@@ -54,8 +53,8 @@ tasks:
             git clone "${event.repository.url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.after}"
-            pip install -r requirements.txt
-            python setup.py test
+            poetry install
+            poetry run pytest
       metadata:
         name: monopacker tests
         description: runs tests, validates default packer builders
