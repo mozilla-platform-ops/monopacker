@@ -23,10 +23,10 @@ tasks:
             git checkout "${event.pull_request.head.sha}"
             curl -sSL https://install.python-poetry.org | python3 -
             export PATH="/root/.local/bin:$PATH"
-            export LC_ALL=C.UTF-8
-            export LANG=C.UTF-8
-            export LANGUAGE=C.UTF-8  
-            poetry install
+            # export LC_ALL=C.UTF-8
+            # export LANG=C.UTF-8
+            # export LANGUAGE=C.UTF-8  
+            poetry install -vvvv
             poetry run pip list
             poetry run pytest
             poetry update
@@ -61,10 +61,10 @@ tasks:
             git checkout "${event.after}"
             curl -sSL https://install.python-poetry.org | python3 -
             export PATH="/root/.local/bin:$PATH"
-            export LC_ALL=C.UTF-8
-            export LANG=C.UTF-8
-            export LANGUAGE=C.UTF-8  
-            poetry install
+            # export LC_ALL=C.UTF-8
+            # export LANG=C.UTF-8
+            # export LANGUAGE=C.UTF-8  
+            poetry install -vvvv
             poetry run pip list
             poetry run pytest
       metadata:
