@@ -27,7 +27,7 @@ tasks:
             poetry install -vvv --no-ansi
             poetry run pip list
             poetry run pytest
-            poetry update
+            poetry update -vvv --no-ansi
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
                 echo "*** `poetry update` produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
