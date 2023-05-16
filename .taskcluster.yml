@@ -26,7 +26,7 @@ tasks:
             poetry config virtualenvs.in-project true
             # there's some bug in this version of python and poetry that causes it to exit 1
             set +e
-            poetry install -vvvv
+            poetry install -vvvv --no-ansi
             set -e
             poetry run pip list
             poetry run pytest
@@ -65,7 +65,7 @@ tasks:
             poetry config virtualenvs.in-project true
             # there's some bug in this version of python and poetry that causes it to exit 1
             set +e
-            poetry install -vvvv
+            poetry install -vvvv --no-ansi
             set -e
             poetry run pip list
             poetry run pytest
