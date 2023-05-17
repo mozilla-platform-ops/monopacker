@@ -15,18 +15,21 @@ tasks:
         command:
           - /bin/bash
           - --login
-          - -cx
+          - -cxe
           - |
             CHECKOUT_DIR="/monopacker_checkout"
             git clone "${event.pull_request.head.repo.clone_url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.pull_request.head.sha}"
-            pip install --no-use-pep517 -r requirements.txt
-            python setup.py test
-            pip install pip-tools
-            ./pipupdate.sh
+            curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
+            export PATH="/root/.local/bin:$PATH"
+            poetry config virtualenvs.in-project true
+            poetry install --no-ansi
+            poetry run pip list
+            poetry run pytest
+            poetry update --no-ansi
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
-                echo "*** ./pipupdate.sh produced changes to the repository; these changes should be checked in ***";
+                echo "*** `poetry update` produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
                 exit 1;
             fi
@@ -48,14 +51,18 @@ tasks:
         command:
           - /bin/bash
           - --login
-          - -cx
+          - -cxe
           - |
             CHECKOUT_DIR="/monopacker_checkout"
             git clone "${event.repository.url}" "$CHECKOUT_DIR"
             cd "$CHECKOUT_DIR"
             git checkout "${event.after}"
-            pip install -r requirements.txt
-            python setup.py test
+            curl -sSL https://install.python-poetry.org | python3 - --version 1.4.2
+            export PATH="/root/.local/bin:$PATH"
+            poetry config virtualenvs.in-project true
+            poetry install --no-ansi
+            poetry run pip list
+            poetry run pytest
       metadata:
         name: monopacker tests
         description: runs tests, validates default packer builders
