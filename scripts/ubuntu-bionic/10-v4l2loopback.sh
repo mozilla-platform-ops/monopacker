@@ -13,33 +13,15 @@ if ! $SETUP_V4L2LOOPBACK; then
     exit
 fi
 
-apt-get install v4l2loopback-dkms -y
+#apt-get install v4l2loopback-dkms -y
 
-if [[ "$BUILD_V4L2LOOPBACK" ]]; then
-    # This is for Ubuntu 18.04 in GCP. We have to build the module, otherwise it will not work.
-    V4L2LOOPBACK_VERSION=${V4L2LOOPBACK_VERSION:-0.12.5}
-    git clone -b v$V4L2LOOPBACK_VERSION https://github.com/umlaeute/v4l2loopback /usr/src/v4l2loopback-$V4L2LOOPBACK_VERSION
-    # Edit the file `v4l2looback.c` and change the `MAX_DEVICES` definition to `100`
-    # (NOTE: ignore the comments about overriding it in a `make` invocation; this isn't possible via dkms)
-    sed -i -e "s/# *define MAX_DEVICES *[0-9]*/# define MAX_DEVICES $NUM_LOOPBACK_VIDEO_DEVICES/g" /usr/src/v4l2loopback-$V4L2LOOPBACK_VERSION/v4l2loopback.c
-    dkms install -m v4l2loopback -v $V4L2LOOPBACK_VERSION
+if [[ "$FIX_KERNEL_VERSION_MISMATCH" ]]; then
+    # Update & upgrade makes us install the kernel we need, then reboot for it to move over to this new version.
+    apt update
+    apt upgrade -y
+
+    # Shutdown and wait forever; packer will consider this script to have finished and
+    # start on the next script when it reconnects
+    shutdown -r now
+    while true; do sleep 1; done
 fi
-
-if [[ "$CLOUD" == "google" ]]; then
-    # Required in GCP.
-    apt-get install linux-modules-extra-gcp -y
-fi
-
-# Configure video loopback devices
-echo "options v4l2loopback devices=$NUM_LOOPBACK_VIDEO_DEVICES" > /etc/modprobe.d/v4l2loopback.conf
-echo "videodev" | tee --append /etc/modules
-echo "v4l2loopback" | tee --append /etc/modules
-
-# test the results
-
-modprobe videodev
-lsmod | grep videodev
-
-modprobe v4l2loopback
-lsmod | grep v4l2loopback
-test -e /dev/video$((NUM_LOOPBACK_VIDEO_DEVICES - 1))
