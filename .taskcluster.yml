@@ -29,7 +29,7 @@ tasks:
             poetry run pytest
             poetry update --no-ansi
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
-                echo "*** `poetry update` produced changes to the repository; these changes should be checked in ***";
+                echo "*** 'poetry update' produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
                 exit 1;
             fi
