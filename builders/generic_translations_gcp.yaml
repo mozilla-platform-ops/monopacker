@@ -15,4 +15,4 @@ script_directories:
   - generic-worker-linux
   - worker-runner-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
- 
+  - translations-worker-requirements
