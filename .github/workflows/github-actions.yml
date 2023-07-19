@@ -4,6 +4,7 @@ name: Monopacker Tests
 on: [push, pull_request]
 
 env:
+  PACKER_VERSION: "1.8.6" # or: "latest"
   PYTHON_VERSION: "3.11"
   POETRY_VERSION: "1.5.1"
   POETRY_URL: https://install.python-poetry.org
@@ -96,6 +97,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PACKER_VERSION }}        
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
