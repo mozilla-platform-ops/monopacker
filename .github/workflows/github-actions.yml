@@ -1,58 +1,60 @@
-name: GitHub Actions Demo
+name: Monopacker Tests
 # run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+
 on: [push, pull_request]
+
+env:
+  PYTHON_VERSION: "3.11"
+  POETRY_VERSION: "1.5.1"
+  POETRY_URL: https://install.python-poetry.org
+
 jobs:
   pytest:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup Python
-        uses: actions/setup-python@v2
+    steps:    
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.10
-      - name: Install poetry
-        run: |
-          python -m pip install poetry==1.4.2
-      - name: Configure poetry
-        run: |
-          python -m poetry config virtualenvs.in-project true
-      - name: Cache the virtualenv
-        uses: actions/cache@v2
+          python-version: ${{ env.PYTHON_VERSION }}
+        id: setup_python
+      # Poetry cache depends on OS, Python version and Poetry version.
+      - name: Cache Poetry cache
+        uses: actions/cache@v3
         with:
-          path: ./.venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
+          path: ~/.cache/pypoetry
+          key: poetry-cache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+      # virtualenv cache should depends on OS, Python version and `poetry.lock` (and optionally workflow files).
+      - name: Cache Packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.local
+          key: poetry-local-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/*.yml') }}
+      - name: Install Poetry ${{ env.POETRY_VERSION }}
         run: |
-          python -m poetry install
+          curl -sSL ${{ env.POETRY_URL }} | python - --version ${{ env.POETRY_VERSION }}
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Install Dependencies
+        run: poetry install
       - name: pip list
         run: |
-          python -m poetry run pip list          
+          poetry run pip list          
       - name: Run tests
         # options removed: -sxv
         run: |
-          python -m poetry run python -m pytest -sxv
+          poetry run python -m pytest -sxv
   poetry-update-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.10
+          cache: 'poetry'
       - name: Install poetry
-        run: |
-          python -m pip install poetry==1.4.2
-      - name: Configure poetry
-        run: |
-          python -m poetry config virtualenvs.in-project true
-      - name: Cache the virtualenv
-        uses: actions/cache@v2
-        with:
-          path: ./.venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
-        run: |
-          python -m poetry install
+        run: pipx install poetry
       - name: pip list
         run: |
           python -m poetry run pip list                    
