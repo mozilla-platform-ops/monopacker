@@ -1,5 +1,5 @@
 ---
-project_id: translations-sandbox  # TODO: get final project_id
+project_id: taskcluster-imaging
 zone: us-west1-a
 volume_size: 60
 
