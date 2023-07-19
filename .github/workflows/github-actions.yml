@@ -85,6 +85,7 @@ jobs:
           poetry update
       - name: check if changes
         run: |
+            git status --porcelain
             if ! output=$(git status --porcelain) || [ -n "$output" ]; then
                 echo "*** 'poetry update' produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
