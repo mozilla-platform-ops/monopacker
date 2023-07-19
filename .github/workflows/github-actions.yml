@@ -119,13 +119,13 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Install Dependencies
         run: poetry install
-      - name: Run tests
+      - name: monopacker validate
         run: |
           #set -x
           set -e
                 for file in builders/*; do
                     builder_instance=$(echo "$file" | sed 's/.yaml//g' | sed 's/builders\///g')
-              echo -n "$builder_instance: "
+                    echo -n "$builder_instance: "
                     poetry run monopacker validate "$builder_instance"
                 done
           echo ""
