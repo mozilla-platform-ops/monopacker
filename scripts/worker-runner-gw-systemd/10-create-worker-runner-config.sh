@@ -17,6 +17,6 @@ provider:
     providerType: ${CLOUD}
 worker:
     implementation: generic-worker
-    path: /home/ubuntu/generic-worker/generic-worker
-    configPath: /home/ubuntu/generic-worker/generic-worker.config
+    path: /home/ubuntu/generic_worker/generic-worker
+    configPath: /home/ubuntu/generic_worker/generic-worker.config
 EOF
