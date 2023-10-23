@@ -10,6 +10,12 @@ done
 
 # from https://docs.taskcluster.net/docs/reference/workers/worker-runner/deployment
 
+TC_USER="ubuntu"
+TC_HOME_DIR="/home/${TC_USER}"
+
+# sanity check the task user's homedir exists
+ls -la "$TC_HOME_DIR"
+
 # place systemd unit file
 cat << EOF > /etc/systemd/system/generic-worker.service
 [Unit]
@@ -22,8 +28,8 @@ ExecStart=/usr/local/bin/start-worker /etc/start-worker.yml
 # redirecting to external logging services
 StandardOutput=syslog+console
 StandardError=syslog+console
-User=ubuntu
-WorkingDir=/home/ubuntu
+User=$TC_USER
+WorkingDir=$TC_HOME_DIR
 
 [Install]
 WantedBy=multi-user.target
