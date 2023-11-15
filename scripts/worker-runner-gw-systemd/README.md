@@ -2,7 +2,7 @@
 
 This scripts directory configures worker-runner and generic-worker.
 
-TODO: 
+TODO:
 - move this to generic-worker-linux?
 
 ## Inputs

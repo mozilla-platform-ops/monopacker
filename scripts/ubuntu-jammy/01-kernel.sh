@@ -18,7 +18,7 @@ export DEBIAN_FRONTEND=noninteractive
 retry apt-get update
 
 # TODO: figure out issue on jammy
-# error: 
+# error:
 #   The following packages have unmet dependencies:
 #   linux-crashdump : Depends: kdump-tools but it is not installable
 #

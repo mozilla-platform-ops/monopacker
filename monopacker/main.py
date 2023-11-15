@@ -11,13 +11,15 @@ from monopacker.template_packer import (
     generate_packer_template_params,
 )
 
+
 @click.group()
 def main():
     """
     Manages building worker images for Taskcluster.
     """
 
-@main.command(name='packer-template')
+
+@main.command(name="packer-template")
 @generate_packer_template_params
 def packer_template(**kwargs):
     """This tool expects a jinja2 templated packer.yaml and the name of one or more builders.
@@ -27,18 +29,20 @@ def packer_template(**kwargs):
     packer_template = generate_packer_template(**kwargs)
     print(json.dumps(packer_template, sort_keys=True, indent=4))
 
-@main.command(name='validate')
-@generate_packer_template_params
-@run_packer_params
-def validate(**kwargs):
-    """Validate the generated template with 'packer validate'"""
-    packer_template = generate_packer_template(**kwargs)
-    run_packer('validate', packer_template, **kwargs)
 
-@main.command(name='build')
+@main.command(name="validate")
 @generate_packer_template_params
 @run_packer_params
 def validate(**kwargs):
     """Validate the generated template with 'packer validate'"""
     packer_template = generate_packer_template(**kwargs)
-    run_packer('build', packer_template, **kwargs)
+    run_packer("validate", packer_template, **kwargs)
+
+
+@main.command(name="build")
+@generate_packer_template_params
+@run_packer_params
+def validate(**kwargs):
+    """Validate the generated template with 'packer validate'"""
+    packer_template = generate_packer_template(**kwargs)
+    run_packer("build", packer_template, **kwargs)
