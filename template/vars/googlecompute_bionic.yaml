@@ -1,3 +1,8 @@
 ---
 ssh_username: ubuntu
-source_image_family: ubuntu-1804-lts
+# 1804 is EOL, so the family doesn't work any longer.
+# source_image_family: ubuntu-1804-lts
+#
+# found via:
+#   gcloud compute images list --show-deprecated | grep ubuntu-1804-lts
+source_image: ubuntu-1804-bionic-v20230605
