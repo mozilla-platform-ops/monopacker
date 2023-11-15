@@ -18,6 +18,6 @@ repos:
     -   id: poetry-lock
     -   id: poetry-install
 -   repo: https://github.com/aerickson/poetry
-    rev: '96f3dab'  # add version here
+    rev: '539d1b0'  # add version here
     hooks:
     -   id: poetry-update
