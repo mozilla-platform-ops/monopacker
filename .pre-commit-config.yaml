@@ -15,9 +15,7 @@ repos:
     -   id: poetry-check
         args: ["--lock"]
     -   id: poetry-lock
-    -   id: poetry-install
 -   repo: https://github.com/aerickson/poetry
-    rev: '17e7f54'
+    rev: '0113a0c'
     hooks:
-    -   id: poetry-install
     -   id: poetry-update
