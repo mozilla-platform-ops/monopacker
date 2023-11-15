@@ -9,15 +9,16 @@ repos:
     rev: 23.11.0
     hooks:
     -   id: black
--   repo: https://github.com/python-poetry/poetry
-    rev: '1.7.0'
+-   repo: https://github.com/aerickson/poetry
+    rev: '539d1b0'
     hooks:
     -   id: poetry-check
         args: ["--lock"]
-    # TODO: still need a `poetry update` check, `poetry lock` and `poetry check` don't check it.
     -   id: poetry-lock
     -   id: poetry-install
--   repo: https://github.com/aerickson/poetry
-    rev: '539d1b0'  # add version here
-    hooks:
     -   id: poetry-update
+    # TODO: still need a `poetry update` check, `poetry lock` and `poetry check` don't check it.
+# -   repo: https://github.com/aerickson/poetry
+#     rev: '539d1b0'  # add version here
+#     hooks:
+#     -   id: poetry-update
