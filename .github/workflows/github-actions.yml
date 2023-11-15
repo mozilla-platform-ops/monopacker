@@ -14,7 +14,7 @@ env:
 jobs:
   pytest:
     runs-on: ubuntu-latest
-    steps:    
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up Python ${{ env.PYTHON_VERSION }}
@@ -42,7 +42,7 @@ jobs:
         run: poetry install
       - name: pip list
         run: |
-          poetry run pip list          
+          poetry run pip list
       - name: Run tests
         run: |
           poetry run python -m pytest -sxv
@@ -103,7 +103,7 @@ jobs:
         run: poetry install
       - name: pip list
         run: |
-          poetry run pip list                    
+          poetry run pip list
       - name: Run tests
         run: |
           poetry run python -m pytest -sxv
@@ -117,7 +117,7 @@ jobs:
                 echo "*** 'poetry update' produced changes to the repository; these changes should be checked in ***";
                 git --no-pager diff;
                 exit 1;
-            fi                       
+            fi
   monopacker-validate:
     runs-on: ubuntu-latest
     steps:
@@ -127,7 +127,7 @@ jobs:
         uses: hashicorp/setup-packer@main
         id: setup
         with:
-          version: ${{ env.PACKER_VERSION }}        
+          version: ${{ env.PACKER_VERSION }}
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:

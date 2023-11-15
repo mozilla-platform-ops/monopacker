@@ -19,7 +19,7 @@ DISTRO=ubuntu${UBUNTU_RELEASE//\./} # ubuntu1804
 cuda_version="cuda12.0"
 cudnn_version="8.8.1.*"
 
-wget https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/x86_64/cuda-${DISTRO}.pin 
+wget https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/x86_64/cuda-${DISTRO}.pin
 
 sudo mv cuda-${DISTRO}.pin /etc/apt/preferences.d/cuda-repository-pin-600
 sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/x86_64/3bf863cc.pub
