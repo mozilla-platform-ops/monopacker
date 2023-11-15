@@ -19,4 +19,5 @@ repos:
 -   repo: https://github.com/aerickson/poetry
     rev: '17e7f54'
     hooks:
+    -   id: poetry-install
     -   id: poetry-update
