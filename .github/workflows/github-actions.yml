@@ -72,7 +72,9 @@ jobs:
       - name: Install pre-commit
         run: pip3 install pre-commit
       - name: Run pre-commit
-        run: pre-commit run -av
+        # skip poetry-lock because it breaks (aka changes) when run on different platforms
+        #   - the pre-commit on developer's hosts should catch if it's out of date (the goal)
+        run: SKIP=poetry-lock pre-commit run -av
   poetry-update-check:
     runs-on: ubuntu-latest
     steps:
