@@ -3,7 +3,7 @@ env_vars:
   # We still run Ubuntu 18.04 on Firefox CI as we are going to move to generic-worker soon-ish, so we don't want to make double efforts.
   # The latest version of docker-worker does not work with Ubuntu 18.04. The bundled nodejs version with the latest docker-worker versions is too new:
   # The fs-ext package that comes with the node version bundled required a GLIBC version higher than what ships with Ubuntu 18.04 and there is no proper way around this.
-  TASKCLUSTER_VERSION: 38.0.5
+  TASKCLUSTER_VERSION: 58.0.2
 
   # With Ubuntu 18.04 on GCP (for Firefox CI), for some reason (tracking in Bug 1809906 / RELOPS-356) when installing the loopback package we fail to load this later down the line when creating workers.
   # However, building the loopback module from source does make it function correctly as it always used to.
