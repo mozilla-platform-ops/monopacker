@@ -13,7 +13,7 @@ done
 sudo wget -O /etc/papertrail-bundle.pem \
   https://papertrailapp.com/tools/papertrail-bundle.pem
 
-
+# TODO: use helper functions
 sudo apt update
 sudo apt install rsyslog-gnutls -y
 

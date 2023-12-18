@@ -11,7 +11,7 @@ builder_var_files:
 script_directories:
   - ubuntu-jammy
   - ubuntu-worker-requirements
-  - relops-papertrail
+  - relops-papertrail-tclogs
   - ubuntu-cuda
   - generic-worker-linux
   - worker-runner-linux
