@@ -23,7 +23,8 @@ apt update
 apt install -y ncat
 
 export SERVICE_FILE=/etc/systemd/system/papertrail.service
-export UNITS_TO_MONITOR="generic-worker"
+# TODO: support multipe units?
+export UNIT_TO_MONITOR="generic-worker"
 
 # source secrets file
 . /etc/relops/relops_papertrail_secrets
@@ -34,7 +35,7 @@ Description=Papertrail
 After=systemd-journald.service
 Requires=systemd-journald.service
 [Service]
-ExecStart=/bin/sh -c "journalctl $UNITS_TO_MONITOR -f | ncat --ssl $PAPERTRAIL_HOST $PAPERTRAIL_PORT"
+ExecStart=/bin/sh -c "journalctl -u $UNIT_TO_MONITOR -f | ncat --ssl $PAPERTRAIL_HOST $PAPERTRAIL_PORT"
 TimeoutStartSec=0
 Restart=on-failure
 RestartSec=5s
