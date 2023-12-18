@@ -27,3 +27,14 @@ def pack_secrets(secrets_file, secrets_tar):
                 ti = tarfile.TarInfo(path)
                 ti.size = len(value)
                 tar.addfile(ti, io.BytesIO(value))
+
+def generate_packer_secret_chmod_shell(secrets_file):
+    command_arr = []
+    with open(secrets_file, "r") as f:
+        secrets = yaml.load(f)
+        for secret in secrets:
+            # TODO: also chmod 500 the parent dir (use dirname to find)?
+            command_arr.append(f"chmod -R 0400 `dirname {secret['path']}`")
+            command_arr.append(f"chown -R root:root `dirname {secret['path']}`")
+
+    return command_arr

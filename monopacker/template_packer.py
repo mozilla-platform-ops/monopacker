@@ -15,7 +15,7 @@ from jinja2 import (
 from ruamel.yaml import YAML
 
 from .filters import clean_gcp_image_name
-from .secrets import pack_secrets
+from .secrets import pack_secrets, generate_packer_secret_chmod_shell
 from .files import pack_files
 
 yaml = YAML(typ="safe")
@@ -294,6 +294,13 @@ def generate_packer_template(*,
             ],
             'only': linux_builders,
         })
+        # TODO: chmod secrets files
+        pkr["provisioners"].append({
+            'type': 'shell',
+            'inline': generate_packer_secret_chmod_shell(secrets_file),
+            'only': linux_builders,
+        })
+        #
         pkr["provisioners"].append({
             'type': 'shell',
             'inline': [
