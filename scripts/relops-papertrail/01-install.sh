@@ -17,7 +17,7 @@ sudo wget -O /etc/papertrail-bundle.pem \
 sudo apt update
 sudo apt install rsyslog-gnutls -y
 
-cat << EOF > /etc/rsyslog.conf
+cat << EOF >> /etc/rsyslog.conf
 $DefaultNetstreamDriverCAFile /etc/papertrail-bundle.pem
 $ActionSendStreamDriver gtls
 $ActionSendStreamDriverMode 1
@@ -28,7 +28,7 @@ EOF
 
 # append the secret line to rsyslog.conf
 # - placed by monopacker secrets system
-cat /etc/relops/rsyslog_papertrail_line > /etc/rsyslog.conf
+cat /etc/relops/rsyslog_papertrail_line >> /etc/rsyslog.conf
 
 # restart service (or wait for new instances to boot up?)
 # TOOD: remove/comment when testing is done

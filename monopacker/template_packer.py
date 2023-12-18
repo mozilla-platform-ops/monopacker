@@ -282,6 +282,7 @@ def generate_packer_template(*,
             'destination': '/tmp/',
             # TODO: only
         })
+        # TODO: should `chmod 400` all secrets paths...
         pkr["provisioners"].append({
             'type': 'shell',
             'inline': [
