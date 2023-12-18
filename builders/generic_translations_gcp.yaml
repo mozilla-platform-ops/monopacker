@@ -16,3 +16,4 @@ script_directories:
   - worker-runner-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
   - translations-worker-requirements
+  - relops-papertrail
