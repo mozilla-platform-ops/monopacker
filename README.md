@@ -33,6 +33,8 @@ The intention here is to create a single Packer + cloud-init configuration set t
 
 ### Install locally
 
+#### Install Poetry and Python dependencies
+
 Install Poetry (https://python-poetry.org/) if you don't already have it.
 
 ```shell
@@ -41,6 +43,12 @@ poetry shell
 
 # install package
 poetry install
+```
+
+#### Install the GCP plugin for Packer
+
+```bash
+packer plugins install github.com/hashicorp/googlecompute
 ```
 
 ## Usage
