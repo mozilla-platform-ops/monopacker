@@ -65,7 +65,11 @@ monopacker build builder1 builder2
 
 Note that you can get more logging from packer by setting `PACKER_LOG=1`.
 
-### Developing Templates
+### Template Development and Debugging
+
+See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
+
+#### validate
 
 When developing templates, you can run the validation without running packer with `monopacker validate` (which otherwise has the same arguments as `monopacker build`):
 
@@ -73,12 +77,23 @@ When developing templates, you can run the validation without running packer wit
 monopacker validate mynewbuilder
 ```
 
+#### view raw packer output
+
 To see the generated packer template:
 ```shell
 monopacker packer-template mynewbuilder
 ```
 
-See [TEMPLATING.md](./TEMPLATING.md) for information, another FAQ, and more.
+#### debugging when building
+
+```bash
+monopacker build generic_translations_gcp --packer-args '-on-error=ask'
+gcloud compute ssh --zone ...
+# when done on host, in monopacker choose to 'c' cleanup
+```
+
+`-on-error=abort` can also be handy.
+
 
 # FAQ
 
