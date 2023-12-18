@@ -20,7 +20,7 @@ done
 
 # nmap provides ncat
 apt update
-apt install -y nmap
+apt install -y ncat
 
 export SERVICE_FILE=/etc/systemd/system/papertrail.service
 export UNITS_TO_MONITOR="generic-worker"
