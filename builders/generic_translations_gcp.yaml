@@ -11,9 +11,9 @@ builder_var_files:
 script_directories:
   - ubuntu-jammy
   - ubuntu-worker-requirements
+  - relops-papertrail
   - ubuntu-cuda
   - generic-worker-linux
   - worker-runner-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
   - translations-worker-requirements
-  - relops-papertrail
