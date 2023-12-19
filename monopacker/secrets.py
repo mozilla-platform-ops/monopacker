@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import io
+import os
 import tarfile
 
 from ruamel.yaml import YAML
@@ -33,7 +34,10 @@ def generate_packer_secret_chmod_shell(secrets_file):
     with open(secrets_file, "r") as f:
         secrets = yaml.load(f)
         for secret in secrets:
-            command_arr.append(f"sudo chown -R root:root `dirname {secret['path']}`")
-            command_arr.append(f"sudo chmod -R 0400 `dirname {secret['path']}`")
+            dirname = os.path.dirname(secret['path'])
+            command_arr.append(f"sudo chown -R root:root {dirname}")
+            command_arr.append(f"sudo chmod -R 0400 {dirname}")
 
+    # dedupe the array
+    command_arr = list(dict.fromkeys(command_arr))
     return command_arr
