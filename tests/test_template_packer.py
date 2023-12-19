@@ -172,6 +172,7 @@ def test_generate_packer_template(tmpdir):
           type: openstack
     """))
 
+    # TODO: add a fake secret json... missing test coverage
     secrets_file.write(json.dumps([]))
 
     scripts_dir.mkdir("facebook-worker").join("01-fb.sh").write("echo hello")
@@ -239,6 +240,10 @@ def test_generate_packer_template(tmpdir):
                     'rm /tmp/secrets.tar',
                 ],
                 'only': ['linux'],
+            },
+            {'inline': [],
+             'only': ['linux'],
+             'type': 'shell'
             },
             {
                 'type': 'shell',
