@@ -147,4 +147,4 @@ Mostly, I just haven't tried to make this work.
 
 To run the tests for this library, run `poetry run pytest`.
 
-To update dependencies, run `poetry update`.
+To update dependencies, run `poetry cache clear pypi --all && poetry update`.
