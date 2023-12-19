@@ -282,7 +282,6 @@ def generate_packer_template(*,
             'destination': '/tmp/',
             # TODO: only
         })
-        # TODO: should `chmod 400` all secrets paths...
         pkr["provisioners"].append({
             'type': 'shell',
             'inline': [
@@ -294,13 +293,12 @@ def generate_packer_template(*,
             ],
             'only': linux_builders,
         })
-        # TODO: chmod secrets files
+        # chmod/chown all secret files (above only gets /etc/taskcluster)
         pkr["provisioners"].append({
             'type': 'shell',
             'inline': generate_packer_secret_chmod_shell(secrets_file),
             'only': linux_builders,
         })
-        #
         pkr["provisioners"].append({
             'type': 'shell',
             'inline': [
