@@ -17,6 +17,9 @@ sudo wget -O /etc/papertrail-bundle.pem \
 sudo apt update
 sudo apt install rsyslog-gnutls -y
 
+# source secrets file
+. /etc/relops/relops_papertrail_secrets
+
 export RSYSLOG_FILE=/etc/rsyslog.conf
 
 cat << EOF >> $RSYSLOG_FILE
@@ -28,14 +31,7 @@ cat << EOF >> $RSYSLOG_FILE
 \$ActionSendStreamDriverAuthMode x509/name
 \$ActionSendStreamDriverPermittedPeer *.papertrailapp.com
 
-EOF
-
-# append the secret line to rsyslog.conf
-# - placed by monopacker secrets system
-cat /etc/relops/rsyslog_papertrail_line >> $RSYSLOG_FILE
-
-# add a newline
-cat << EOF >> $RSYSLOG_FILE
+*.*    @@$PAPERTRAIL_HOST:$PAPERTRAIL_PORT
 
 EOF
 
