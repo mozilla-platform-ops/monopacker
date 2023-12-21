@@ -3,6 +3,7 @@ platform: linux
 
 builder_var_files:
   - blah
+  - firefoxci_gcp_l3
 
 script_directories:
-  - blah
+  - ubuntu-jammy-from-community

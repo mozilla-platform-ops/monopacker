@@ -42,6 +42,7 @@ mkdir -p /var/local/generic-worker
 echo 127.0.1.1 taskcluster >> /etc/hosts
 
 # configure generic-worker to run on boot
+# AJE: changed RequiredBy to multi-user
 cat > /lib/systemd/system/worker.service << EOF
 [Unit]
 Description=Start TC worker
@@ -56,7 +57,7 @@ StandardError=syslog+console
 User=root
 
 [Install]
-RequiredBy=graphical.target
+RequiredBy=multi-user.target
 EOF
 
 cat > /etc/start-worker.yml << EOF
@@ -71,22 +72,13 @@ EOF
 
 systemctl enable worker
 
-retry apt-get install -y ubuntu-desktop ubuntu-gnome-desktop podman
-
 # set podman registries conf
 (
   echo '[registries.search]'
   echo 'registries=["docker.io"]'
 ) >> /etc/containers/registries.conf
 
-# Installs the v4l2loopback kernel module
-# used for the video device, and vkms
-# required by Wayland
-retry apt-get install -y linux-modules-extra-$(uname -r)
-# needed for mutter to work with DRM rather than falling back to X11
-grep -Fx vkms /etc/modules || echo vkms >> /etc/modules
-# disable udev rule that tags platform-vkms with "mutter-device-ignore"
-# ENV{ID_PATH}=="platform-vkms", TAG+="mutter-device-ignore"
-sed '/platform-vkms/d' /lib/udev/rules.d/61-mutter.rules > /etc/udev/rules.d/61-mutter.rules
+# removed desktop packages, now in '...-gui' script dir
+retry apt-get install -y podman
 
 # omitting /etc/cloud/cloud.cfg.d/01_network_renderer_policy.cfg tweaks

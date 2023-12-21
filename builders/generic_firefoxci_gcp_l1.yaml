@@ -5,4 +5,4 @@ builder_var_files:
   - blah
 
 script_directories:
-  - blah
+  - ubuntu-jammy-from-community
