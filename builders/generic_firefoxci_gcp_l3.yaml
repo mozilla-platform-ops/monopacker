@@ -1,0 +1,8 @@
+template: googlecompute
+platform: linux
+
+builder_var_files:
+  - blah
+
+script_directories:
+  - blah
