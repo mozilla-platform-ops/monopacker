@@ -7,11 +7,6 @@ builder_var_files:
   - default_gcp
   - googlecompute_jammy
   - ubuntu_amd64
-  # copied from translations: do not necessarily use
-  # - taskcluster_version_translations  # new file as non-latest still needed for d-w
-  # - default_linux
-  # - translations_gcp  # TODO: merge this and following?
-  # - googlecompute_translations
 
 script_directories:
   - ubuntu-jammy-from-community

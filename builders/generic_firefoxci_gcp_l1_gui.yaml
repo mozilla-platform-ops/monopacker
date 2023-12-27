@@ -2,8 +2,13 @@ template: googlecompute
 platform: linux
 
 builder_var_files:
-  - blah
+  - taskcluster_version_firefoxci
+  - default_linux
+  - default_gcp
+  - googlecompute_jammy
+  - ubuntu_amd64
 
 script_directories:
   - ubuntu-jammy-from-community
   - ubuntu-jammy-from-community-gui
+  - debugging-fail
