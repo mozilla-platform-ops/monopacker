@@ -74,14 +74,14 @@ EOF
 
 systemctl enable worker
 
+# install podman for d2g functionality
+# - removed desktop packages, now in '...-gui' script dir
+retry apt-get install -y podman
+
 # set podman registries conf
 (
   echo '[registries.search]'
   echo 'registries=["docker.io"]'
 ) >> /etc/containers/registries.conf
-
-# install podman for d2g functionality
-# - removed desktop packages, now in '...-gui' script dir
-retry apt-get install -y podman
 
 # omitting /etc/cloud/cloud.cfg.d/01_network_renderer_policy.cfg tweaks
