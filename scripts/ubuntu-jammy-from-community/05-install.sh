@@ -8,7 +8,9 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
+#
 # taken from https://github.com/taskcluster/community-tc-config/blob/main/imagesets/generic-worker-ubuntu-22-04/bootstrap.sh
+#
 
 retry apt-get update
 DEBIAN_FRONTEND=noninteractive retry apt-get upgrade -yq
@@ -78,7 +80,8 @@ systemctl enable worker
   echo 'registries=["docker.io"]'
 ) >> /etc/containers/registries.conf
 
-# removed desktop packages, now in '...-gui' script dir
+# install podman for d2g functionality
+# - removed desktop packages, now in '...-gui' script dir
 retry apt-get install -y podman
 
 # omitting /etc/cloud/cloud.cfg.d/01_network_renderer_policy.cfg tweaks
