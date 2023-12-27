@@ -2,7 +2,15 @@ template: googlecompute
 platform: linux
 
 builder_var_files:
-  - blah
+  - taskcluster_version_firefoxci
+  - default_linux
+  - default_gcp
+  - googlecompute_jammy
+  # copied from translations: do not necessarily use
+  # - taskcluster_version_translations  # new file as non-latest still needed for d-w
+  # - default_linux
+  # - translations_gcp  # TODO: merge this and following?
+  # - googlecompute_translations
 
 script_directories:
   - ubuntu-jammy-from-community
