@@ -6,6 +6,7 @@ builder_var_files:
   - default_linux
   - default_gcp
   - googlecompute_jammy
+  - ubuntu_amd64
   # copied from translations: do not necessarily use
   # - taskcluster_version_translations  # new file as non-latest still needed for d-w
   # - default_linux
