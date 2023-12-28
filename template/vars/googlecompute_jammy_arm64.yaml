@@ -1,0 +1,3 @@
+---
+ssh_username: ubuntu
+source_image_family: ubuntu-2204-lts-arm64
