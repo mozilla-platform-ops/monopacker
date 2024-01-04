@@ -128,7 +128,7 @@ jobs:
         run: |
           #set -x
           set -e
-                for file in builders/*; do
+                for file in builders/*.yaml; do
                     builder_instance=$(echo "$file" | sed 's/.yaml//g' | sed 's/builders\///g')
                     echo -n "$builder_instance: "
                     poetry run monopacker validate "$builder_instance"
