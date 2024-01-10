@@ -172,7 +172,9 @@ def test_generate_packer_template(tmpdir):
           type: openstack
     """))
 
-    secrets_file.write(json.dumps([]))
+    # TODO: add a fake secret json... missing test coverage
+    # secrets_file.write(json.dumps([]))
+    secrets_file.write(json.dumps([{'name': 'blah_key', 'path': '/etc/taskcluster/secrets/test_blah', 'value': 'test123'}]))
 
     scripts_dir.mkdir("facebook-worker").join("01-fb.sh").write("echo hello")
 
@@ -239,6 +241,12 @@ def test_generate_packer_template(tmpdir):
                     'rm /tmp/secrets.tar',
                 ],
                 'only': ['linux'],
+            },
+            {'inline': ['sudo chown -R root:root '
+                '/etc/taskcluster/secrets',
+                'sudo chmod -R 0400 /etc/taskcluster/secrets'],
+                'only': ['linux'],
+                'type': 'shell',
             },
             {
                 'type': 'shell',
