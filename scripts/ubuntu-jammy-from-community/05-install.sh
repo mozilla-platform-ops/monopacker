@@ -70,8 +70,6 @@ worker:
     implementation: generic-worker
     path: /usr/local/bin/generic-worker
     configPath: /etc/generic-worker/config
-workerConfig:
-    ed25519SigningKeyLocation: /etc/taskcluster/secrets/worker_ed25519_cot_key
 cacheOverRestarts: /etc/start-worker-cache.json
 EOF
 
