@@ -46,3 +46,8 @@ sed '/platform-vkms/d' /lib/udev/rules.d/61-mutter.rules > /etc/udev/rules.d/61-
 
 # vnc configuration omitted
 # - see https://github.com/taskcluster/community-tc-config/blob/5431d9f72f52eeb2bb232dcac55ad399f747ac6a/imagesets/generic-worker-ubuntu-22-04-staging/bootstrap.sh
+
+# use fc-cache:i386 to pre-build the font cache for i386 binaries
+# i386 line: apt-get -q -y -f install fontconfig:i386
+# TODO: do we need to specify arch here?
+apt-get -q -y -f install fontconfig
