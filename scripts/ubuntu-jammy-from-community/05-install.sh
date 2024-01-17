@@ -37,6 +37,7 @@ chmod a+x generic-worker start-worker taskcluster-proxy livelog
 
 mkdir -p /etc/generic-worker
 mkdir -p /var/local/generic-worker
+mkdir -p /etc/taskcluster/secrets/
 /usr/local/bin/generic-worker --version
 /usr/local/bin/generic-worker new-ed25519-keypair --file /etc/generic-worker/ed25519_key
 
@@ -69,6 +70,8 @@ worker:
     implementation: generic-worker
     path: /usr/local/bin/generic-worker
     configPath: /etc/generic-worker/config
+workerConfig:
+    ed25519SigningKeyLocation: /etc/taskcluster/secrets/worker_ed25519_cot_key
 cacheOverRestarts: /etc/start-worker-cache.json
 EOF
 
