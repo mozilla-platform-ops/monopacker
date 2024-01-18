@@ -8,7 +8,7 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
-retry apt-get install -y parallel
+retry apt-get install -y parallel tmux htop vim nano zstd screen curl git
 
 # Do one final package cleanup, just in case.
 apt-get autoremove -y --purge
