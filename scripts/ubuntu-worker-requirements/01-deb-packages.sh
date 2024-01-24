@@ -18,6 +18,7 @@ retry apt-get install -y \
   libhunspell-1.7-0 \
   libhunspell-dev \
   mercurial \
+  python3-pip \
   python3-zstd \
   python3-certifi \
   python3-psutil \
