@@ -8,7 +8,5 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
-retry apt-get install -y parallel tmux htop vim nano zstd screen curl git
-
-# Do one final package cleanup, just in case.
-apt-get autoremove -y --purge
+retry curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+bash add-google-cloud-ops-agent-repo.sh --also-install
