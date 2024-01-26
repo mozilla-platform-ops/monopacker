@@ -1,0 +1,14 @@
+template: googlecompute
+platform: linux
+
+builder_var_files:
+  - ub2204-gcp
+  - default_linux
+  - default_gcp
+  - default_firefoxci
+  - googlecompute_jammy
+
+script_directories:
+  - ubuntu-bionic
+  - worker-runner-linux
+  - docker-worker-linux

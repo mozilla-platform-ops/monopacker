@@ -3,6 +3,7 @@ env_vars:
   # We still run Ubuntu 18.04 on Firefox CI as we are going to move to generic-worker soon-ish, so we don't want to make double efforts.
   # The latest version of docker-worker does not work with Ubuntu 18.04. The bundled nodejs version with the latest docker-worker versions is too new:
   # The fs-ext package that comes with the node version bundled required a GLIBC version higher than what ships with Ubuntu 18.04 and there is no proper way around this.
+  #TASKCLUSTER_VERSION: 48.3.0
   TASKCLUSTER_VERSION: 38.0.5
 
   # use newer worker runner (we need fixes in it)

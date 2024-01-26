@@ -33,3 +33,7 @@ real_secrets.yaml
 
 build
 dist
+
+
+# Secrets
+secrets_*.yaml

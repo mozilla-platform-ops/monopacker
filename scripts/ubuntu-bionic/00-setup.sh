@@ -18,6 +18,12 @@ if [[ -v $BUILD_V4L2LOOPBACK ]] ; then
 echo "BUILD_V4L2LOOPBACK=$BUILD_V4L2LOOPBACK"
 fi
 
+# Check if the FIX_KERNEL_VERSION_MISMATCH variable is set.
+# We only set it for Firefox CI Ubuntu 22.04+ machines.
+if [[ -v $FIX_KERNEL_VERSION_MISMATCH ]] ; then
+echo "FIX_KERNEL_VERSION_MISMATCH=$FIX_KERNEL_VERSION_MISMATCH"
+fi
+
 # Look at the given inputs and see if we can even do this.
 fail() {
     echo "${@}"

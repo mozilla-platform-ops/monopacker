@@ -1,0 +1,7 @@
+# This defines the current Taskcluster version we use for docker-worker, and some flags for getting modules to work under 22.04
+env_vars:
+  TASKCLUSTER_VERSION: 48.3.0
+
+  # On Ubuntu 22.04, we can get away with using apt, but we'd have to fix some kernel version mismatches down the line.
+  BUILD_V4L2LOOPBACK: false
+  FIX_KERNEL_VERSION_MISMATCH: true
