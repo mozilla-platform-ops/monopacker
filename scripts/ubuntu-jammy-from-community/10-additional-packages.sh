@@ -23,7 +23,5 @@ MISC_PACKAGES+=(apt-transport-https ca-certificates software-properties-common)
 MISC_PACKAGES+=(liblz4-tool)
 # random bits
 MISC_PACKAGES+=(libhunspell-1.7-0 libhunspell-dev)
-# nodejs
-MISC_PACKAGES+=(nodejs npm)
 
 retry apt-get install -y ${MISC_PACKAGES[@]}
