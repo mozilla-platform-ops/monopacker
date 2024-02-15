@@ -1,0 +1,3 @@
+env_vars:
+  # currently only used for taskcluster component installation
+  ARCH: arm64

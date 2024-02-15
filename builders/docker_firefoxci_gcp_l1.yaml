@@ -1,6 +1,8 @@
 template: googlecompute
 platform: linux
 
+# legacy docker-worker l1
+
 builder_var_files:
   - ub1804-gcp
   - default_linux

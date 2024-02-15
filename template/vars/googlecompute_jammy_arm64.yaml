@@ -1,0 +1,5 @@
+---
+ssh_username: ubuntu
+source_image_family: ubuntu-2204-lts-arm64
+machine_type: t2a-standard-2
+zone: us-central1-a
