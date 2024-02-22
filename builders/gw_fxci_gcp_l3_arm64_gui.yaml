@@ -1,0 +1,14 @@
+template: googlecompute
+platform: linux
+
+builder_var_files:
+  - taskcluster_version_firefoxci
+  - default_linux
+  - default_gcp
+  - googlecompute_jammy_arm64
+  - ubuntu_arm64
+  - firefoxci_gcp_l3
+
+script_directories:
+  - ubuntu-jammy-from-community
+  - ubuntu-jammy-from-community-gui
