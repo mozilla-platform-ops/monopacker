@@ -14,4 +14,4 @@ done
 # Shutdown and wait forever; packer will consider this script to have finished and
 # start on the next script when it reconnects
 shutdown -r now
-sleep 60
+# sleep 60
