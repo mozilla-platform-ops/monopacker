@@ -11,16 +11,6 @@ done
 # needed for fxci talos/raptor tests
 
 #
-# apt packages
-#
-retry apt-get install -y kmod linux-generic linux-headers-generic linux-headers-gcp \
-  v4l2loopback-dkms llvm sox libxcb1 nodejs xvfb
-
-# not working: linux-headers
-# missing: lib32ncurses5 gstreamer
-
-
-#
 # fix up kernel headers
 #
 
@@ -39,6 +29,16 @@ pkg_name="linux-gcp-${short_version}-headers-${version_minus_dash_gcp}"
 
 sudo apt-get update
 sudo apt-get -y reinstall linux-headers-gcp linux-headers-`uname -r` ${pkg_name}
+
+
+#
+# apt packages
+#
+retry apt-get install -y kmod linux-generic linux-headers-generic linux-headers-gcp \
+  v4l2loopback-dkms llvm sox libxcb1 nodejs xvfb
+
+# not working: linux-headers
+# missing: lib32ncurses5 gstreamer
 
 
 #
