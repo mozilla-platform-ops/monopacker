@@ -11,7 +11,6 @@ done
 #
 # reboot to use the new kernel
 #
-# Shutdown and wait forever; packer will consider this script to have finished and
-# start on the next script when it reconnects
 shutdown -r now
-#while true; do sleep 1; done
+# monopacker will detect that a reboot is done in this step (via name of the script)
+# and pause before starting next step
