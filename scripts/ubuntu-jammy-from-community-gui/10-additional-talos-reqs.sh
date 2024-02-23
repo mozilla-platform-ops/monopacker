@@ -13,8 +13,8 @@ done
 #
 # apt packages
 #
-retry apt-get install -y kmod linux-generic v4l2loopback-dkms llvm \
-  sox libxcb1 nodejs xvfb
+retry apt-get install -y kmod linux-generic linux-headers-generic linux-headers-gcp \
+  v4l2loopback-dkms llvm sox libxcb1 nodejs xvfb
 
 # not working: linux-headers
 # missing: lib32ncurses5 gstreamer
@@ -51,6 +51,7 @@ lsmod | grep videodev
 
 modprobe v4l2loopback
 lsmod | grep v4l2loopback
+# currently failing... only 7 devices... /dev/video7
 test -e /dev/video$((NUM_LOOPBACK_VIDEO_DEVICES - 1))
 
 #
