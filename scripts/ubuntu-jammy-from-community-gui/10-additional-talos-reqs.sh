@@ -10,6 +10,11 @@ done
 
 # needed for fxci talos/raptor tests
 
+# wait for reboot step prior to this to complete
+#  - https://developer.hashicorp.com/packer/docs/v1.9.x/provisioners/shell#handling-reboots
+#  - monopacker doesn't support pause_before, so do manually
+# sleep 90
+
 #
 # apt packages
 #
