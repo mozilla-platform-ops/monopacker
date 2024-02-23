@@ -13,8 +13,11 @@ done
 #
 # apt packages
 #
-retry apt-get install -y kmod linux-generic linux-headers v4l2loopback-dkms llvm \
-  sox libxcb1 gstreamer nodejs xvfb lib32ncurses5
+retry apt-get install -y kmod linux-generic v4l2loopback-dkms llvm \
+  sox libxcb1 nodejs xvfb
+
+# not working: linux-headers
+# missing: lib32ncurses5 gstreamer
 
 
 #
@@ -83,8 +86,9 @@ dirs="/builds /builds/slave /builds/slave/talos-data /builds/slave/talos-data/ta
   /builds/git-shared /builds/hg-shared /builds/tooltool_cache"
 
 mkdir -p $dirs
-chown -R cltbld:staff $dirs
-chmod -R 0755 $dirs
+# task user changes... set to root for now
+chown -R root:root $dirs
+chmod -R 0777 $dirs
 
 # test
 ls -lad $dirs
