@@ -7,7 +7,7 @@ builder_var_files:
   - default_gcp
   - googlecompute_jammy
   - ubuntu_amd64
-  - default_firefoxci
+  - firefoxci_loopback
 
 script_directories:
   - ubuntu-jammy-from-community
