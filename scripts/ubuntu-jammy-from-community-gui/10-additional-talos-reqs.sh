@@ -21,6 +21,19 @@ retry apt-get install -y kmod linux-generic linux-headers-generic linux-headers-
 
 
 #
+# fix up kernel headers
+#
+
+version=`uname -r`
+version_minus_dash_gcp=`uname -r | sed -r  s/-gcp//`
+short_version=`uname -r | cut -d "." -f1,2`
+pkg_name="linux-gcp-${short_version}-headers-${version_minus_dash_gcp}"
+
+sudo apt-get update
+sudo apt-get -y reinstall linux-headers-gcp linux-headers-`uname -r` ${pkg_name}
+
+
+#
 # enable v4loopback
 #
 
