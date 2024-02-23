@@ -24,6 +24,14 @@ retry apt-get install -y kmod linux-generic linux-headers-generic linux-headers-
 # fix up kernel headers
 #
 
+# problem: broken symlinks in directory below
+#   ls -la ls /usr/src/linux-headers-5.15.0-1030-gcp
+# fix:
+#   sudo apt reinstall linux-gcp-headers-5.15.0-1030
+#
+# ensure kernel headers are present so dkms works
+# - had issue where there were broken symlinks
+
 version=`uname -r`
 version_minus_dash_gcp=`uname -r | sed -r  s/-gcp//`
 short_version=`uname -r | cut -d "." -f1,2`
