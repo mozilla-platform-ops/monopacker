@@ -357,6 +357,7 @@ def generate_packer_template(*,
             for script in builder["scripts"]:
                 pause_before = "0s"
                 if 'reboot' in previous_script:
+                    # TODO: reduce this to 10s like example?
                     pause_before = "90s"
                 pkr["provisioners"].append({
                     'type': 'shell',

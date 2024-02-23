@@ -12,4 +12,3 @@ builder_var_files:
 script_directories:
   - ubuntu-jammy-from-community
   - ubuntu-jammy-from-community-gui
-  - debugging-fail
