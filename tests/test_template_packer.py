@@ -257,12 +257,13 @@ def test_generate_packer_template(tmpdir):
             },
             {
                 'type': 'shell',
-                'scripts': [str(scripts_dir.join("facebook-worker", "01-fb.sh"))],
+                'scripts': str(scripts_dir.join("facebook-worker", "01-fb.sh")),
                 'environment_vars': ["AN_ENV_VAR=env!"],
                 'execute_command': "do-it",
                 'expect_disconnect': True,
                 'start_retry_timeout': '30m',
                 'only': ['linux'],
+                'pause_before': '0s',
             },
             {
                 'type': 'powershell',
@@ -271,12 +272,13 @@ def test_generate_packer_template(tmpdir):
             },
             {
                 'type': 'shell',
-                'scripts': [str(scripts_dir.join("win-worker", "01-win.ps1"))],
+                'scripts': str(scripts_dir.join("win-worker", "01-win.ps1")),
                 'environment_vars': None,
                 'execute_command': "do-it",
                 'expect_disconnect': True,
                 'start_retry_timeout': '30m',
                 'only': [],
+                'pause_before': '0s',
             },
             {
                 'type': 'powershell',
