@@ -10,8 +10,11 @@ done
 
 # needed for fxci talos/raptor tests
 
+# no apt/deb prompts
+export DEBIAN_FRONTEND=noninteractive
+
 #
-# fix up kernel headers
+# install kernel headers
 #
 
 # problem: broken symlinks in directory below
@@ -34,8 +37,16 @@ sudo apt-get -y reinstall linux-headers-gcp linux-headers-`uname -r` ${pkg_name}
 #
 # apt packages
 #
-retry apt-get install -y kmod linux-generic linux-headers-generic linux-headers-gcp \
-  v4l2loopback-dkms llvm sox libxcb1 nodejs xvfb
+
+# pre-reqs
+apt-get install -y dkms kmod llvm sox libxcb1 nodejs xvfb
+# v4l2loopback
+# - fails for some reason... not sure why (works when run interactively... env vars?)
+#   - ignore result code
+apt-get install -y v4l2loopback-dkms || true
+# see if autoinstall works
+dkms autoinstall
+dkms status
 
 # not working: linux-headers
 # missing: lib32ncurses5 gstreamer
@@ -58,7 +69,7 @@ retry apt-get install -y kmod linux-generic linux-headers-generic linux-headers-
 # fi
 
 # Required in GCP.
-retry apt-get install linux-modules-extra-gcp -y
+apt-get install linux-modules-extra-gcp -y
 
 # Configure video loopback devices
 echo "options v4l2loopback devices=$NUM_LOOPBACK_VIDEO_DEVICES" > /etc/modprobe.d/v4l2loopback.conf
