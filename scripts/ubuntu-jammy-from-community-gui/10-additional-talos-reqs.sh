@@ -40,17 +40,16 @@ sudo apt-get -y reinstall linux-headers-gcp linux-headers-`uname -r` ${pkg_name}
 
 # pre-reqs
 apt-get install -y dkms kmod llvm sox libxcb1 nodejs xvfb apt-utils
-# v4l2loopback
-# didn't help:
-#   - HOSTTYPE=x86_64 SRCARCH=`uname -m`
-printenv
-apt-get install -y v4l2loopback-dkms v4l2loopback-utils
-# see if autoinstall works
-# dkms autoinstall
-dkms status
-
 # not working: linux-headers
 # missing: lib32ncurses5 gstreamer
+
+
+#
+# install v4l2loopback
+#
+apt-get install -y v4l2loopback-dkms v4l2loopback-utils
+# verify
+dkms status
 
 
 #
@@ -86,6 +85,7 @@ modprobe v4l2loopback
 lsmod | grep v4l2loopback
 # currently failing... only 7 devices... /dev/video7
 test -e /dev/video$((NUM_LOOPBACK_VIDEO_DEVICES - 1))
+
 
 #
 # configure audio loopback devices
