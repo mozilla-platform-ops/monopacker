@@ -1,3 +1,3 @@
 env_vars:
   # currently only used for taskcluster component installation
-  ARCH: amd64
+  TC_ARCH: amd64

@@ -39,13 +39,14 @@ sudo apt-get -y reinstall linux-headers-gcp linux-headers-`uname -r` ${pkg_name}
 #
 
 # pre-reqs
-apt-get install -y dkms kmod llvm sox libxcb1 nodejs xvfb
+apt-get install -y dkms kmod llvm sox libxcb1 nodejs xvfb apt-utils
 # v4l2loopback
-# - fails for some reason... not sure why (works when run interactively... env vars?)
-#   - ignore result code
-apt-get install -y v4l2loopback-dkms || true
+# didn't help:
+#   - HOSTTYPE=x86_64 SRCARCH=`uname -m`
+printenv
+apt-get install -y v4l2loopback-dkms v4l2loopback-utils
 # see if autoinstall works
-dkms autoinstall
+# dkms autoinstall
 dkms status
 
 # not working: linux-headers
