@@ -353,15 +353,24 @@ def generate_packer_template(*,
         # make a provisioner for each builder, specialized to run only on that builder,
         # with that builder's scripts and variables
         if linux_builders:
-            pkr["provisioners"].append({
-                'type': 'shell',
-                'scripts': builder["scripts"],
-                'environment_vars': builder["vars"]["env_vars"] if "env_vars" in builder["vars"] else None,
-                'execute_command': builder["vars"]["execute_command"] if "execute_command" in builder["vars"] else None,
-                'expect_disconnect': True,
-                'start_retry_timeout': builder["vars"]["ssh_timeout"] if "ssh_timeout" in builder["vars"] else None,
-                'only': [builder["vars"]["name"]] if builder["platform"] == "linux" else [],
-            })
+            previous_script = ""
+            for script in builder["scripts"]:
+                # detect if previous script was a reboot (via name)
+                # - if it was, add a pause before running the next step
+                pause_before = "0s"
+                if 'reboot' in previous_script:
+                    pause_before = "10s"
+                pkr["provisioners"].append({
+                    'type': 'shell',
+                    'scripts': script,
+                    'pause_before': pause_before,
+                    'environment_vars': builder["vars"]["env_vars"] if "env_vars" in builder["vars"] else None,
+                    'execute_command': builder["vars"]["execute_command"] if "execute_command" in builder["vars"] else None,
+                    'expect_disconnect': True,
+                    'start_retry_timeout': builder["vars"]["ssh_timeout"] if "ssh_timeout" in builder["vars"] else None,
+                    'only': [builder["vars"]["name"]] if builder["platform"] == "linux" else [],
+                })
+                previous_script = script
 
         if windows_builders:
             pkr["provisioners"].append({
