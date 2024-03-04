@@ -32,3 +32,4 @@ EOF
 # test
 hg --version
 hg showconfig | grep robustcheckout
+hg robustcheckout --help
