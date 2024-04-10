@@ -11,3 +11,4 @@ builder_var_files:
 script_directories:
   - ubuntu-jammy-from-community
   - debugging-fail  # check image before removing
+  - gcp-ops-agent
