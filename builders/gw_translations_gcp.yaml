@@ -17,3 +17,4 @@ script_directories:
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
   - relops-papertrail-tclogs  # needs to run after worker-runner-gw-systemd
   - translations-worker-requirements
+  - gcp-ops-agent
