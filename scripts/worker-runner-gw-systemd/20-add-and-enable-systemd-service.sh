@@ -29,7 +29,7 @@ ExecStart=/usr/local/bin/start-worker /etc/start-worker.yml
 StandardOutput=syslog+console
 StandardError=syslog+console
 User=$TC_USER
-WorkingDir=$TC_HOME_DIR
+WorkingDirectory=$TC_HOME_DIR
 
 [Install]
 WantedBy=multi-user.target
