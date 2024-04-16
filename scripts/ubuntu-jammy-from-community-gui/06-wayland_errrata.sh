@@ -69,5 +69,23 @@ grep 'XorgEnable' /etc/gdm3/custom.conf
 
 
 #
-# 
+# gdm3 service file
+#
+
+# copy /lib/systemd/system/gdm3.service to /etc/systemd/system and change its 
+# ExecStartPre to `/bin/sleep 30`
+
+cp /lib/systemd/system/gdm3.service /etc/systemd/system/gdm3.service
+crudini --set /etc/systemd/system/gdm3.service Service ExecStartPre '/bin/sleep 30'
+
+
+#
+# extra packages
+#
+
+apt install -y ubuntu-restricted-extras wl-clipboard
+
+
+#
+# TODO: generate mutter's monitors.xml (only if needed)
 #
