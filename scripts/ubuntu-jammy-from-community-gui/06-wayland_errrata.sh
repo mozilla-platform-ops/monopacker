@@ -33,6 +33,7 @@ EOF
 # # /org/gnome/desktop/lockdown/disable-lock-screen
 # [org/gnome/desktop/lockdown]
 # disable-lock-screen=true
+mkdir /etc/dconf/db/local.d/
 cat > /etc/dconf/db/local.d/00-tc-gnome-settings << EOF
 # /org/gnome/desktop/session/idle-delay
 [org/gnome/desktop/session]
