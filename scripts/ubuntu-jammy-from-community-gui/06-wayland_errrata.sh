@@ -77,7 +77,7 @@ grep 'XorgEnable' /etc/gdm3/custom.conf
 # ExecStartPre to `/bin/sleep 30`
 
 cp /lib/systemd/system/gdm3.service /etc/systemd/system/gdm3.service
-crudini --set /etc/systemd/system/gdm3.service Service ExecStartPre '/bin/sleep 30'
+crudini --set /etc/systemd/system/gdm3.service Service ExecStartPre '/bin/sleep 15'
 
 cat /etc/systemd/system/gdm3.service
 grep 'ExecStartPre' /etc/systemd/system/gdm3.service
