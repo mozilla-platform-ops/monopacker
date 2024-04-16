@@ -105,5 +105,7 @@ apt install -y ubuntu-restricted-extras wl-clipboard
 
 
 #
-# TODO: generate mutter's monitors.xml (only if needed)
+# TODO: generate mutter's monitors.xml
 #
+
+# config TBD
