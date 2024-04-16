@@ -76,6 +76,8 @@ grep 'XorgEnable' /etc/gdm3/custom.conf
 # copy /lib/systemd/system/gdm3.service to /etc/systemd/system and change its 
 # ExecStartPre to `/bin/sleep 30`
 
+# NOTES: this is a hack. alissy is working on a better solution.
+
 cp /lib/systemd/system/gdm3.service /etc/systemd/system/gdm3.service
 crudini --set /etc/systemd/system/gdm3.service Service ExecStartPre '/bin/sleep 15'
 
