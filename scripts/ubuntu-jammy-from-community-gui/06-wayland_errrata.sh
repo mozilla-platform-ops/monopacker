@@ -87,6 +87,10 @@ grep 'ExecStartPre' /etc/systemd/system/gdm3.service
 # extra packages
 #
 
+# ttf-mscorefonts-installer is part of ubuntu-restricted-extras, accept license
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+
+# install stuff
 apt install -y ubuntu-restricted-extras wl-clipboard
 
 
