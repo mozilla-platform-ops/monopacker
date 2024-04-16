@@ -67,30 +67,31 @@ ls -hal /etc/dconf/db/
 #
 # XorgEnable=false
 
-# TODO: how to do this? augeas or crudini?
-#  - https://superuser.com/questions/155418/is-there-a-program-script-to-modify-conf-files
-
 crudini  --set /etc/gdm3/custom.conf daemon XorgEnable 'false'
 
+# verify/test
 cat /etc/gdm3/custom.conf
+echo "----"
 grep 'XorgEnable' /etc/gdm3/custom.conf
-
+grep 'XorgEnable' /etc/gdm3/custom.conf | grep false
 
 #
 # gdm3 service file
 #
 
 # copy /lib/systemd/system/gdm3.service to /etc/systemd/system and change its 
-# ExecStartPre to `/bin/sleep 30`
+# ExecStartPre to `/bin/sleep 15`
 
 # NOTES: this is a hack. alissy is working on a better solution.
 
 cp /lib/systemd/system/gdm3.service /etc/systemd/system/gdm3.service
 crudini --set /etc/systemd/system/gdm3.service Service ExecStartPre '/bin/sleep 15'
 
+# verify/test
 cat /etc/systemd/system/gdm3.service
+echo "----"
 grep 'ExecStartPre' /etc/systemd/system/gdm3.service
-
+grep 'ExecStartPre' /etc/systemd/system/gdm3.service | grep 'sleep 15'
 
 #
 # extra packages
