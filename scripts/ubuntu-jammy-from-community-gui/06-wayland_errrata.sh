@@ -63,7 +63,7 @@ ls -hal /etc/dconf/db/
 #  - https://superuser.com/questions/155418/is-there-a-program-script-to-modify-conf-files
 
 apt install -y crudini
-crudini  --set ./custom.conf daemon XorgEnable 'false'
+crudini  --set /etc/gdm3/custom.conf daemon XorgEnable 'false'
 
 cat /etc/gdm3/custom.conf
 grep 'XorgEnable' /etc/gdm3/custom.conf
