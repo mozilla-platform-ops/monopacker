@@ -12,6 +12,14 @@ done
 
 
 #
+# install tools
+#
+
+# used to modify specific blocks in .conf files
+apt install -y crudini
+
+
+#
 # dconf settings
 #
 
@@ -62,7 +70,6 @@ ls -hal /etc/dconf/db/
 # TODO: how to do this? augeas or crudini?
 #  - https://superuser.com/questions/155418/is-there-a-program-script-to-modify-conf-files
 
-apt install -y crudini
 crudini  --set /etc/gdm3/custom.conf daemon XorgEnable 'false'
 
 cat /etc/gdm3/custom.conf
