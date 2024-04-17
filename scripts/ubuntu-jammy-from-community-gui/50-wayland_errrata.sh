@@ -68,6 +68,7 @@ grep 'XorgEnable' /etc/gdm3/custom.conf | grep false
 # gdm wait service file
 #
 
+mkdir -p /etc/systemd/system/gdm.service.d/
 cat > /etc/systemd/system/gdm.service.d/gdm-wait.conf << EOF
 [Unit]
 Description=Extra 30s wait
