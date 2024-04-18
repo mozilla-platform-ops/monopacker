@@ -68,6 +68,13 @@ grep 'XorgEnable' /etc/gdm3/custom.conf | grep false
 # gdm wait service file
 #
 
+# This hack is required because without we end up in a situation where the
+# wayland seat is in a weird state and consequences are:
+#    - either x11 session
+#    - either xwayland fallback
+#    - either wayland but with missing keyboard capability that breaks
+#        things including copy/paste
+
 mkdir -p /etc/systemd/system/gdm.service.d/
 cat > /etc/systemd/system/gdm.service.d/gdm-wait.conf << EOF
 [Unit]
