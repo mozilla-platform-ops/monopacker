@@ -60,7 +60,7 @@ See `monopacker --help` for details.
 You will need to know the builder or builders you want to build; `builder1 builder2` are used in the example here.
 
 ```shell
-gcloud auth login --update-adc  # user credentials (every 24 hours)
+gcloud auth login --update-adc  # needed every 24 hours
 monopacker build builder1 builder2
 ```
 
