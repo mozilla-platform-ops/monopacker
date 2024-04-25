@@ -27,7 +27,7 @@ The intention here is to create a single Packer + cloud-init configuration set t
     ```
   - You need a whole set of IAM privileges, see [here](https://www.packer.io/docs/builders/amazon.html#iam-task-or-instance-role)
 - If building Google Cloud Images you should have done one of:
-  - run `gcloud auth application-default login` which creates `$HOME/.config/gcloud/application_default_credentials.json`
+  - run `gcloud auth login --update-adc` which creates `$HOME/.config/gcloud/application_default_credentials.json` (needed every 24 hours).
   - Configured Service Account credentials and have a JSON file whose location is specified by the GOOGLE_APPLICATION_CREDENTIALS environment variable.
   - In either case you need `Compute Instance Admin (v1)` permissions, if using a service account you'll need `Service Account User`. See [here](https://www.packer.io/docs/builders/googlecompute.html#precedence-of-authentication-methods) for more information.
 
@@ -60,6 +60,7 @@ See `monopacker --help` for details.
 You will need to know the builder or builders you want to build; `builder1 builder2` are used in the example here.
 
 ```shell
+gcloud auth login --update-adc  # needed every 24 hours
 monopacker build builder1 builder2
 ```
 
