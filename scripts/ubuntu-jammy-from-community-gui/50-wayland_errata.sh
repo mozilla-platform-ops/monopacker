@@ -125,3 +125,8 @@ cat > /etc/xdg/monitors.xml << EOF
   </configuration>
 </monitors>
 EOF
+
+#
+# verify that the XDG_RUNTIME_DIR fix is in the g-w binary we're using
+#
+strings /usr/local/bin/generic-worker | grep XDG_RUNTIME_DIR
