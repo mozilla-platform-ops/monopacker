@@ -23,6 +23,7 @@ ExecStart=/usr/local/bin/start-worker /etc/start-worker.yml
 StandardOutput=syslog+console
 StandardError=syslog+console
 User=ubuntu
+WorkingDirectory=~
 
 [Install]
 WantedBy=multi-user.target
