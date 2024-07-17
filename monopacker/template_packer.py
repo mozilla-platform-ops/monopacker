@@ -354,12 +354,23 @@ def generate_packer_template(*,
         # with that builder's scripts and variables
         if linux_builders:
             previous_script = ""
+            sbom_step_present = False
             for script in builder["scripts"]:
                 # detect if previous script was a reboot (via name)
                 # - if it was, add a pause before running the next step
                 pause_before = "0s"
                 if 'reboot' in previous_script:
                     pause_before = "10s"
+                # add a step that copies the SBOM to the localhost
+                # using a file provisioner.
+                if 'sbom' in previous_script:
+                    sbom_step_present = True
+                    pkr["provisioners"].append({
+                        'type': 'file',
+                        'direction': 'download',
+                        'source': '/etc/SBOM.md',
+                        # will be copied to SBOMs/image_name.md in post-processor
+                        'destination': 'SBOMs/temp_sbom.md'})
                 pkr["provisioners"].append({
                     'type': 'shell',
                     'scripts': script,
@@ -383,5 +394,13 @@ def generate_packer_template(*,
     pkr["post-processors"] =  [
         {'type': 'manifest', 'output': 'packer-artifacts.json', 'strip_path': True},
     ]
+
+    if sbom_step_present:
+        pkr["post-processors"].append({
+            'type': 'shell-local',
+            'inline': [
+                'mv SBOMs/temp_sbom.md SBOMs/{{user `image_name`}}.md',
+            ],
+        })
 
     return pkr
