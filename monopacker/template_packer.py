@@ -387,16 +387,6 @@ def generate_packer_template(*,
                 pause_before = "0s"
                 if 'reboot' in previous_script:
                     pause_before = "10s"
-                # add a step that copies the SBOM to the localhost
-                # using a file provisioner.
-                if 'sbom' in previous_script:
-                    sbom_step_present = True
-                    pkr["provisioners"].append({
-                        'type': 'file',
-                        'direction': 'download',
-                        'source': '/etc/SBOM.md',
-                        # will be copied to SBOMs/image_name.md in post-processor
-                        'destination': 'SBOMs/temp_sbom.md'})
                 pkr["provisioners"].append({
                     'type': 'shell',
                     'scripts': script,
@@ -407,6 +397,17 @@ def generate_packer_template(*,
                     'start_retry_timeout': builder["vars"]["ssh_timeout"] if "ssh_timeout" in builder["vars"] else None,
                     'only': [builder["vars"]["name"]] if builder["platform"] == "linux" else [],
                 })
+                # add a step that copies the SBOM to the localhost
+                # using a file provisioner.
+                if 'sbom' in script:
+                    print("yabadabbadooooo")
+                    sbom_step_present = True
+                    pkr["provisioners"].append({
+                        'type': 'file',
+                        'direction': 'download',
+                        'source': '/etc/SBOM.md',
+                        # will be copied to SBOMs/image_name.md in post-processor
+                        'destination': 'SBOMs/temp_sbom.md'})
                 previous_script = script
 
         if windows_builders:
