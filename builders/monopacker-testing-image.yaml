@@ -1,0 +1,13 @@
+# a barebones image used for testing monopacker
+template: googlecompute
+platform: linux
+
+builder_var_files:
+  - default_linux
+  - default_gcp
+  - googlecompute_jammy
+  - ubuntu_amd64
+
+script_directories:
+  - ubuntu-barebones
+  - sbom-ubuntu

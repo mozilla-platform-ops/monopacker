@@ -12,6 +12,7 @@ from jinja2 import (
     TemplateError,
     TemplateSyntaxError,
 )
+import subprocess
 from ruamel.yaml import YAML
 
 from .filters import clean_gcp_image_name
@@ -19,6 +20,22 @@ from .secrets import pack_secrets, generate_packer_secret_chmod_shell
 from .files import pack_files
 
 yaml = YAML(typ="safe")
+
+def get_short_git_commit(report_dirty=True):
+    try:
+        # Get the short SHA1 of the latest commit
+        sha1 = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip().decode('utf-8')
+        
+        if report_dirty:
+            # Check if there are any changes in the working directory
+            changes = subprocess.check_output(['git', 'status', '--porcelain']).strip().decode('utf-8')
+            if changes:
+                sha1 += '-dirty'
+        
+        return sha1
+    
+    except subprocess.CalledProcessError as e:
+        return str(e)
 
 def get_files_from_subdirs(*args, root_dir=".", globs=["*"]):
     """Get an sorted list of files from a list of subdirectories
@@ -144,6 +161,16 @@ def get_builders_for_templating(
             exit_if_type_mismatch(env_vars, dict)
             env_vars = [f"{k}={v}" for k, v in env_vars.items()]
             builder_vars["env_vars"] = env_vars
+
+        # TODO: inject monopacker builder name and monopacker git sha
+        # MONOPACKER_BUILDER_NAME=builder
+        # MONOPACKER_GIT_SHA=git_sha
+        git_sha = get_short_git_commit()
+        if env_vars:
+            env_vars.append(f"MONOPACKER_BUILDER_NAME={builder}")
+            env_vars.append(f"MONOPACKER_GIT_SHA={git_sha}")
+        else:
+            env_vars = [f"MONOPACKER_BUILDER_NAME={builder}", f"MONOPACKER_GIT_SHA={git_sha}"]
 
         if "template" in builder_config:
             builder_template = builder_config["template"]
@@ -399,7 +426,7 @@ def generate_packer_template(*,
         pkr["post-processors"].append({
             'type': 'shell-local',
             'inline': [
-                'mv SBOMs/temp_sbom.md SBOMs/{{user `image_name`}}.md',
+                'monopacker/post-processors/move_sbom_to_latest_artifact_name.py',
             ],
         })
 
