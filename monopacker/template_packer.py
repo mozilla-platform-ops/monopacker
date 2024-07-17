@@ -21,6 +21,7 @@ from .files import pack_files
 
 yaml = YAML(typ="safe")
 
+# TODO: move to a utils module
 def get_short_git_commit(report_dirty=True):
     try:
         # Get the short SHA1 of the latest commit
@@ -162,9 +163,7 @@ def get_builders_for_templating(
             env_vars = [f"{k}={v}" for k, v in env_vars.items()]
             builder_vars["env_vars"] = env_vars
 
-        # TODO: inject monopacker builder name and monopacker git sha
-        # MONOPACKER_BUILDER_NAME=builder
-        # MONOPACKER_GIT_SHA=git_sha
+        # inject monopacker builder name and monopacker git sha
         git_sha = get_short_git_commit()
         if env_vars:
             env_vars.append(f"MONOPACKER_BUILDER_NAME={builder}")
