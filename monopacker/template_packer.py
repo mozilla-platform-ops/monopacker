@@ -401,7 +401,6 @@ def generate_packer_template(*,
                 # add a step that copies the SBOM to the localhost
                 # using a file provisioner.
                 if 'sbom' in script:
-                    print("yabadabbadooooo")
                     sbom_step_present = True
                     pkr["provisioners"].append({
                         'type': 'file',
@@ -423,6 +422,7 @@ def generate_packer_template(*,
         {'type': 'manifest', 'output': 'packer-artifacts.json', 'strip_path': True},
     ]
 
+    # if a sbom was generated, copy it from the temp path to the final path
     if sbom_step_present:
         pkr["post-processors"].append({
             'type': 'shell-local',
