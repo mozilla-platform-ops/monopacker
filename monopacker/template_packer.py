@@ -426,9 +426,8 @@ def generate_packer_template(*,
     if sbom_step_present:
         pkr["post-processors"].append({
             'type': 'shell-local',
-            'inline': [
-                'monopacker/post-processors/move_sbom_to_latest_artifact_name.py',
-            ],
+            'script': 'monopacker/post-processors/move_sbom_to_latest_artifact_name.py',
+            # TODO: add 'only'?
         })
 
     return pkr

@@ -8,6 +8,8 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
+# TODO: test that TASKCLUSTER_VERSION is defined or exit 1
+
 cd /usr/local/bin
 retry curl -fsSL "https://github.com/taskcluster/taskcluster/releases/download/v${TASKCLUSTER_VERSION}/generic-worker-multiuser-linux-${TC_ARCH}" > generic-worker
 retry curl -fsSL "https://github.com/taskcluster/taskcluster/releases/download/v${TASKCLUSTER_VERSION}/start-worker-linux-${TC_ARCH}" > start-worker
