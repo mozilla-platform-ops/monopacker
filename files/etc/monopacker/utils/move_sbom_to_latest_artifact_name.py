@@ -30,10 +30,14 @@ for build in data['builds']:
 if matching_build:
     artifact_id = matching_build['artifact_id']
     source_path = 'SBOMs/temp_sbom.md'
-    destination_path = f'SBOMs/{artifact_id}.md'
+    destination_dir = 'SBOMs'
+    destination_path = f'{destination_dir}/{artifact_id}.md'
     
     if args.move:
         try:
+            # Create the destination directory if it doesn't exist
+            os.makedirs(destination_dir, exist_ok=True)
+            # Move the file
             shutil.move(source_path, destination_path)
             print(f'Moved {source_path} to {destination_path}')
         except FileNotFoundError:
