@@ -28,9 +28,10 @@ def get_short_git_commit(report_dirty=True):
         sha1 = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip().decode('utf-8')
         
         if report_dirty:
-            # Check if there are any changes in the working directory
+            # Check if there are any tracked changes in the working directory
             changes = subprocess.check_output(['git', 'status', '--porcelain']).strip().decode('utf-8')
-            if changes:
+            tracked_changes = [line for line in changes.split('\n') if line and not line.startswith('??')]
+            if tracked_changes:
                 sha1 += '-dirty'
         
         return sha1
