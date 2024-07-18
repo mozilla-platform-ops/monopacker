@@ -158,15 +158,14 @@ def get_builders_for_templating(
             builder_vars = merge_vars(builder_vars, override_vars)
 
         # packer takes environment_vars as an array of "key=value" strings
+        git_sha = get_short_git_commit()
         if "env_vars" in builder_vars:
             env_vars = builder_vars["env_vars"]
             exit_if_type_mismatch(env_vars, dict)
             env_vars = [f"{k}={v}" for k, v in env_vars.items()]
             builder_vars["env_vars"] = env_vars
-
-        # inject monopacker builder name and monopacker git sha
-        git_sha = get_short_git_commit()
-        if env_vars:
+            # inject monopacker builder name and monopacker git sha
+            git_sha = get_short_git_commit()
             env_vars.append(f"MONOPACKER_BUILDER_NAME={builder}")
             env_vars.append(f"MONOPACKER_GIT_SHA={git_sha}")
         else:
