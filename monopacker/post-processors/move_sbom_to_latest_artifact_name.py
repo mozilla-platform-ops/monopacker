@@ -33,6 +33,10 @@ if matching_build:
     destination_dir = 'SBOMs'
     destination_path = f'{destination_dir}/{artifact_id}.md'
     
+    if not os.path.exists(source_path):
+        print(f'File {source_path} not found.')
+        sys.exit(0)
+
     if args.debug:
         print(f'Would move {source_path} to {destination_path}')
     else:
@@ -42,11 +46,9 @@ if matching_build:
             # Move the file
             shutil.move(source_path, destination_path)
             print(f'Moved {source_path} to {destination_path}')
-        except FileNotFoundError:
-            print(f'File {source_path} not found.')
-            sys.exit(1)
         except Exception as e:
             print(f'An error occurred: {e}')
             sys.exit(1)
 else:
+    print('No matching build found.')
     sys.exit(1)
