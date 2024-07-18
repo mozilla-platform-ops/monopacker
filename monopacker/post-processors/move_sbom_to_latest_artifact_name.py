@@ -8,7 +8,7 @@ import shutil
 
 # Set up argparse
 parser = argparse.ArgumentParser(description="Move temp_sbom.md to the last build's artifact name.md")
-parser.add_argument('-m', '--move', action='store_true', help='Move the SBOM file using the latest build\'s artifact_id')
+parser.add_argument('-d', '--debug', action='store_true', help='Print what would have happened instead of performing the move')
 args = parser.parse_args()
 
 # Load the JSON data from the file in the current working directory
@@ -26,14 +26,16 @@ for build in data['builds']:
         matching_build = build
         break
 
-# Handle the move operation if specified, or describe the action if not specified
+# Handle the move operation or describe the action if in debug mode
 if matching_build:
     artifact_id = matching_build['artifact_id']
     source_path = 'SBOMs/temp_sbom.md'
     destination_dir = 'SBOMs'
     destination_path = f'{destination_dir}/{artifact_id}.md'
     
-    if args.move:
+    if args.debug:
+        print(f'Would move {source_path} to {destination_path}')
+    else:
         try:
             # Create the destination directory if it doesn't exist
             os.makedirs(destination_dir, exist_ok=True)
@@ -46,7 +48,5 @@ if matching_build:
         except Exception as e:
             print(f'An error occurred: {e}')
             sys.exit(1)
-    else:
-        print(f'Would move {source_path} to {destination_path}')
 else:
     sys.exit(1)
