@@ -11,3 +11,4 @@ builder_var_files:
 script_directories:
   - ubuntu-jammy-from-community
   - gcp-ops-agent
+  - sbom-ubuntu

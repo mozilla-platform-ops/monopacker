@@ -18,3 +18,4 @@ script_directories:
   - relops-papertrail-tclogs  # needs to run after worker-runner-gw-systemd
   - translations-worker-requirements
   - gcp-ops-agent
+  - sbom-ubuntu
