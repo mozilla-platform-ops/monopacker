@@ -8,6 +8,11 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
+#
+
+# define this here (vs in a env file)
+export TASKCLUSTER_VERSION=67.1.0
+
 # TODO: test that TASKCLUSTER_VERSION is defined or exit 1
 
 cd /usr/local/bin
