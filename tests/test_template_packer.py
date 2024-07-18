@@ -201,6 +201,12 @@ def test_generate_packer_template(tmpdir):
         secrets_file=str(secrets_file),
     )
 
+    # check that environment_vars['MONOPACKER_GIT_SHA'] is present
+    assert('AN_ENV_VAR=env!' in packer_template['provisioners'][6]['environment_vars'])
+    assert('MONOPACKER_BUILDER_NAME=linux' in packer_template['provisioners'][6]['environment_vars'])
+    # rewrite environment_vars['MONOPACKER_GIT_SHA'] to be deadbeef so we can do assertion below
+    packer_template['provisioners'][6]['environment_vars'] = ['AN_ENV_VAR=env!', 'MONOPACKER_BUILDER_NAME=linux', 'MONOPACKER_GIT_SHA=deadbeef']
+
     assert(packer_template == {
         'builders': [
             {
@@ -258,7 +264,8 @@ def test_generate_packer_template(tmpdir):
             {
                 'type': 'shell',
                 'scripts': str(scripts_dir.join("facebook-worker", "01-fb.sh")),
-                'environment_vars': ["AN_ENV_VAR=env!"],
+                'environment_vars': ["AN_ENV_VAR=env!",'MONOPACKER_BUILDER_NAME=linux',
+'MONOPACKER_GIT_SHA=deadbeef'],
                 'execute_command': "do-it",
                 'expect_disconnect': True,
                 'start_retry_timeout': '30m',

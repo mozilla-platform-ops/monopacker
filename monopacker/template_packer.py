@@ -21,23 +21,37 @@ from .files import pack_files
 
 yaml = YAML(typ="safe")
 
+
 # TODO: move to a utils module
 def get_short_git_commit(report_dirty=True):
     try:
         # Get the short SHA1 of the latest commit
-        sha1 = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip().decode('utf-8')
-        
+        sha1 = (
+            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
+            .strip()
+            .decode("utf-8")
+        )
+
         if report_dirty:
             # Check if there are any tracked changes in the working directory
-            changes = subprocess.check_output(['git', 'status', '--porcelain']).strip().decode('utf-8')
-            tracked_changes = [line for line in changes.split('\n') if line and not line.startswith('??')]
+            changes = (
+                subprocess.check_output(["git", "status", "--porcelain"])
+                .strip()
+                .decode("utf-8")
+            )
+            tracked_changes = [
+                line
+                for line in changes.split("\n")
+                if line and not line.startswith("??")
+            ]
             if tracked_changes:
-                sha1 += '-dirty'
-        
+                sha1 += "-dirty"
+
         return sha1
-    
+
     except subprocess.CalledProcessError as e:
         return str(e)
+
 
 def get_files_from_subdirs(*args, root_dir=".", globs=["*"]):
     """Get an sorted list of files from a list of subdirectories
@@ -78,8 +92,8 @@ def load_yaml_from_file(filename: str):
 def merge_vars(base_vars, override_vars):
     """Takes two dicts, returns a new dict. Values in the second dict take precedence.
 
-       If both dicts have a dictionary value for a key their subdicts are
-       merged, recursively.  All other values (including lists) are overridden.
+    If both dicts have a dictionary value for a key their subdicts are
+    merged, recursively.  All other values (including lists) are overridden.
     """
     d = {**base_vars}
     for k, v in override_vars.items():
@@ -93,7 +107,7 @@ def merge_vars(base_vars, override_vars):
 
 def get_vars_from_files(files: Sequence[str]):
     """Takes a list of variable files
-       in `root_dir` of increasing precedence, returns a merged dict
+    in `root_dir` of increasing precedence, returns a merged dict
     """
     d = {}
     for file in files:
@@ -169,7 +183,10 @@ def get_builders_for_templating(
             env_vars.append(f"MONOPACKER_BUILDER_NAME={builder}")
             env_vars.append(f"MONOPACKER_GIT_SHA={git_sha}")
         else:
-            env_vars = [f"MONOPACKER_BUILDER_NAME={builder}", f"MONOPACKER_GIT_SHA={git_sha}"]
+            env_vars = [
+                f"MONOPACKER_BUILDER_NAME={builder}",
+                f"MONOPACKER_GIT_SHA={git_sha}",
+            ]
 
         if "template" in builder_config:
             builder_template = builder_config["template"]
@@ -200,51 +217,56 @@ def get_builders_for_templating(
         )
     return builders
 
+
 def generate_packer_template_params(fn):
     "Decorate a click function with options for generate_packer_template"
     params = [
-        click.argument(
-            'builders',
-            nargs=-1,
-            type=str,
-            required=True),
+        click.argument("builders", nargs=-1, type=str, required=True),
         click.option(
             "--builders_dir",
             type=str,
             help="directory for builder configuration",
-            default=os.environ.get("MONOPACKER_BUILDERS_DIR", "./builders")),
+            default=os.environ.get("MONOPACKER_BUILDERS_DIR", "./builders"),
+        ),
         click.option(
             "--var_files_dir",
             type=str,
             help="directory for builder var_files",
-            default=os.environ.get("MONOPACKER_VARS_DIR", "./template/vars")),
+            default=os.environ.get("MONOPACKER_VARS_DIR", "./template/vars"),
+        ),
         click.option(
             "--templates_dir",
             type=str,
             help="directory for builder templates",
-            default=os.environ.get("MONOPACKER_TEMPLATES_DIR", "./template/builders")),
+            default=os.environ.get("MONOPACKER_TEMPLATES_DIR", "./template/builders"),
+        ),
         click.option(
             "--scripts_dir",
             type=str,
             help="directory for builder templates",
-            default=os.environ.get("MONOPACKER_SCRIPTS_DIR", "./scripts")),
+            default=os.environ.get("MONOPACKER_SCRIPTS_DIR", "./scripts"),
+        ),
         click.option(
             "--files_dir",
             type=str,
             help="directory for binary files used in packer provisioners",
-            default=os.environ.get("MONOPACKER_FILES_DIR", "./files")),
+            default=os.environ.get("MONOPACKER_FILES_DIR", "./files"),
+        ),
         click.option(
             "--secrets_file",
             type=str,
             help="file containing secrets",
-            default='./fake_secrets.yaml'),
-        ]
+            default="./fake_secrets.yaml",
+        ),
+    ]
     params.reverse()
     for param in params:
         fn = param(fn)
     return fn
 
-def generate_packer_template(*,
+
+def generate_packer_template(
+    *,
     builders,
     builders_dir,
     var_files_dir,
@@ -252,9 +274,10 @@ def generate_packer_template(*,
     scripts_dir,
     files_dir,
     secrets_file,
-    **_):
-    pack_secrets(secrets_file, 'secrets.tar')
-    pack_files(files_dir, 'files.tar')
+    **_,
+):
+    pack_secrets(secrets_file, "secrets.tar")
+    pack_files(files_dir, "files.tar")
 
     # variables namespaced per builder
     variables: Dict[str, Dict[str, Any]] = {}
@@ -287,51 +310,63 @@ def generate_packer_template(*,
 
     # include some setup for linux and windows builders
     if linux_builders:
-        pkr["provisioners"].append({
-            "type": "file",
-            "source": "./files.tar",
-            "destination": "/tmp/",
-            # TODO: only
-        })
-        pkr["provisioners"].append({
-            "type": "shell",
-            "inline": [
-                # files.tar is two levels deep (/tmp/files)
-                "sudo tar xvf /tmp/files.tar -C / --strip-components=1",
-                "rm /tmp/files.tar",
-            ],
-            # TODO: only
-        })
-        pkr["provisioners"].append({
-            'type': 'file',
-            'source': './secrets.tar',
-            'destination': '/tmp/',
-            # TODO: only
-        })
-        pkr["provisioners"].append({
-            'type': 'shell',
-            'inline': [
-                'sudo mkdir -p /etc/taskcluster/secrets',
-                'sudo tar xvf /tmp/secrets.tar -C /',
-                'sudo chown root:root -R /etc/taskcluster',
-                'sudo chmod 0400 -R /etc/taskcluster/secrets',
-                'rm /tmp/secrets.tar',
-            ],
-            'only': linux_builders,
-        })
+        pkr["provisioners"].append(
+            {
+                "type": "file",
+                "source": "./files.tar",
+                "destination": "/tmp/",
+                # TODO: only
+            }
+        )
+        pkr["provisioners"].append(
+            {
+                "type": "shell",
+                "inline": [
+                    # files.tar is two levels deep (/tmp/files)
+                    "sudo tar xvf /tmp/files.tar -C / --strip-components=1",
+                    "rm /tmp/files.tar",
+                ],
+                # TODO: only
+            }
+        )
+        pkr["provisioners"].append(
+            {
+                "type": "file",
+                "source": "./secrets.tar",
+                "destination": "/tmp/",
+                # TODO: only
+            }
+        )
+        pkr["provisioners"].append(
+            {
+                "type": "shell",
+                "inline": [
+                    "sudo mkdir -p /etc/taskcluster/secrets",
+                    "sudo tar xvf /tmp/secrets.tar -C /",
+                    "sudo chown root:root -R /etc/taskcluster",
+                    "sudo chmod 0400 -R /etc/taskcluster/secrets",
+                    "rm /tmp/secrets.tar",
+                ],
+                "only": linux_builders,
+            }
+        )
         # chmod/chown all secret files (above only gets /etc/taskcluster)
-        pkr["provisioners"].append({
-            'type': 'shell',
-            'inline': generate_packer_secret_chmod_shell(secrets_file),
-            'only': linux_builders,
-        })
-        pkr["provisioners"].append({
-            'type': 'shell',
-            'inline': [
-                '/usr/bin/cloud-init status --wait',
-            ],
-            'only': linux_builders,
-        })
+        pkr["provisioners"].append(
+            {
+                "type": "shell",
+                "inline": generate_packer_secret_chmod_shell(secrets_file),
+                "only": linux_builders,
+            }
+        )
+        pkr["provisioners"].append(
+            {
+                "type": "shell",
+                "inline": [
+                    "/usr/bin/cloud-init status --wait",
+                ],
+                "only": linux_builders,
+            }
+        )
 
     e = Environment(loader=FileSystemLoader([templates_dir]))
     e.filters["clean_gcp_image_name"] = clean_gcp_image_name
@@ -370,7 +405,9 @@ def generate_packer_template(*,
             sys.exit(1)
 
         if type(template_builders) != list:
-            print(f"Template {template_file} generated YAML that is not an array:\n{output}\n")
+            print(
+                f"Template {template_file} generated YAML that is not an array:\n{output}\n"
+            )
             print(f"Packer template variables:\n{variables}\n")
             sys.exit(1)
 
@@ -385,48 +422,77 @@ def generate_packer_template(*,
                 # detect if previous script was a reboot (via name)
                 # - if it was, add a pause before running the next step
                 pause_before = "0s"
-                if 'reboot' in previous_script:
+                if "reboot" in previous_script:
                     pause_before = "10s"
-                pkr["provisioners"].append({
-                    'type': 'shell',
-                    'scripts': script,
-                    'pause_before': pause_before,
-                    'environment_vars': builder["vars"]["env_vars"] if "env_vars" in builder["vars"] else None,
-                    'execute_command': builder["vars"]["execute_command"] if "execute_command" in builder["vars"] else None,
-                    'expect_disconnect': True,
-                    'start_retry_timeout': builder["vars"]["ssh_timeout"] if "ssh_timeout" in builder["vars"] else None,
-                    'only': [builder["vars"]["name"]] if builder["platform"] == "linux" else [],
-                })
+                pkr["provisioners"].append(
+                    {
+                        "type": "shell",
+                        "scripts": script,
+                        "pause_before": pause_before,
+                        "environment_vars": (
+                            builder["vars"]["env_vars"]
+                            if "env_vars" in builder["vars"]
+                            else None
+                        ),
+                        "execute_command": (
+                            builder["vars"]["execute_command"]
+                            if "execute_command" in builder["vars"]
+                            else None
+                        ),
+                        "expect_disconnect": True,
+                        "start_retry_timeout": (
+                            builder["vars"]["ssh_timeout"]
+                            if "ssh_timeout" in builder["vars"]
+                            else None
+                        ),
+                        "only": (
+                            [builder["vars"]["name"]]
+                            if builder["platform"] == "linux"
+                            else []
+                        ),
+                    }
+                )
                 # add a step that copies the SBOM to the localhost
                 # using a file provisioner.
-                if 'sbom' in script:
+                if "sbom" in script:
                     sbom_step_present = True
-                    pkr["provisioners"].append({
-                        'type': 'file',
-                        'direction': 'download',
-                        'source': '/etc/SBOM.md',
-                        # will be copied to SBOMs/image_name.md in post-processor
-                        'destination': 'SBOMs/temp_sbom.md'})
+                    pkr["provisioners"].append(
+                        {
+                            "type": "file",
+                            "direction": "download",
+                            "source": "/etc/SBOM.md",
+                            # will be copied to SBOMs/image_name.md in post-processor
+                            "destination": "SBOMs/temp_sbom.md",
+                        }
+                    )
                 previous_script = script
 
         if windows_builders:
-            pkr["provisioners"].append({
-                'type': 'powershell',
-                'scripts': builder["scripts"],
-                'only': [builder["vars"]["name"]] if builder["platform"] == "windows" else [],
-            })
+            pkr["provisioners"].append(
+                {
+                    "type": "powershell",
+                    "scripts": builder["scripts"],
+                    "only": (
+                        [builder["vars"]["name"]]
+                        if builder["platform"] == "windows"
+                        else []
+                    ),
+                }
+            )
 
     # ensure we output the expected artifacts..
-    pkr["post-processors"] =  [
-        {'type': 'manifest', 'output': 'packer-artifacts.json', 'strip_path': True},
+    pkr["post-processors"] = [
+        {"type": "manifest", "output": "packer-artifacts.json", "strip_path": True},
     ]
 
     # if a sbom was generated, copy it from the temp path to the final path
     if sbom_step_present:
-        pkr["post-processors"].append({
-            'type': 'shell-local',
-            'script': 'monopacker/post-processors/move_sbom_to_latest_artifact_name.py',
-            # TODO: add 'only'?
-        })
+        pkr["post-processors"].append(
+            {
+                "type": "shell-local",
+                "script": "monopacker/post-processors/move_sbom_to_latest_artifact_name.py",
+                # TODO: add 'only'?
+            }
+        )
 
     return pkr
