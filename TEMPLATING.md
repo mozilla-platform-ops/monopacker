@@ -160,6 +160,27 @@ simply create a `.jinja2` file with the name of your choice under `./template/bu
 Ensure that your builder template has a `name` key set to `{{builder.vars.name}}`, as this is how `monopacker` templating
 maps `builders` to `provisioners` in the Packer template.
 
+## Rebooting while building
+
+Monopacker has support for handling restarts during the build process.
+
+If a script's name includes 'reboot', Monopacker will add a pause after the step to ensure that the host is back up before continuing.
+
+## Software Bill of Materials (SBOMs)
+
+Monopacker has support for generating SBOMs.
+
+SBOM generation is enabled by adding a variable file to your builder that sets `monopacker_generate_sbom` to `true`. Here's an example variable file:
+
+```
+---
+monopacker_generate_sbom: true
+# defaults to ""
+monopacker_sbom_command_args: "-b $MONOPACKER_BUILDER_NAME -c $MONOPACKER_GIT_SHA"
+# default vaule is "monopacker_ubuntu_sbom.py"
+# monoopacker_sbom_script: monopacker_ubuntu_sbom.py
+```
+
 # FAQ
 
 ## I'm getting `did not find expected key` in my template
@@ -174,3 +195,9 @@ A number of things could be going wrong here.
 Ensure that the builder template properly
 references all variables as being namespaced under `builder.vars` and that your `builder_var_files`
 and `builder_vars` do _not_ have any namespacing. See above for a more thorough description.
+
+## What's the difference between variables and environment variaboles?
+
+Variables are set only in Packer's context. 
+
+Environment variables are set when scripts run on the target host.
