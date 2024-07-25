@@ -13,6 +13,9 @@ done
 # define this here (vs in a env file)
 export TASKCLUSTER_VERSION=67.1.0
 
+# TODO: automate fetching the latest version
+#   curl -L -s https://api.github.com/repos/taskcluster/taskcluster/releases/latest | jq -r '.tag_name' | sed 's/^v//'
+
 # TODO: test that TASKCLUSTER_VERSION is defined or exit 1
 
 cd /usr/local/bin

@@ -10,4 +10,4 @@ builder_var_files:
   - monopacker_generate_sbom
 
 script_directories:
-  - ubuntu-barebones
+  - ubuntu-tc-barebones
