@@ -417,7 +417,6 @@ def generate_packer_template(
         # with that builder's scripts and variables
         if linux_builders:
             previous_script = ""
-            # sbom_step_present = False
             for script in builder["scripts"]:
                 # detect if previous script was a reboot (via name)
                 # - if it was, add a pause before running the next step
@@ -452,19 +451,6 @@ def generate_packer_template(
                         ),
                     }
                 )
-                # add a step that copies the SBOM to the localhost
-                # using a file provisioner.
-                # if "sbom" in script:
-                #     sbom_step_present = True
-                #     pkr["provisioners"].append(
-                #         {
-                #             "type": "file",
-                #             "direction": "download",
-                #             "source": "/etc/SBOM.md",
-                #             # will be copied to SBOMs/image_name.md in post-processor
-                #             "destination": "SBOMs/temp_sbom.md",
-                #         }
-                #     )
                 previous_script = script
 
         if windows_builders:
@@ -485,18 +471,6 @@ def generate_packer_template(
         {"type": "manifest", "output": "packer-artifacts.json", "strip_path": True},
     ]
 
-    # v1: detects if sbom step present and adds a post-processor to move the sbom
-    # if a sbom was generated, copy it from the temp path to the final path
-    # if sbom_step_present:
-    #     pkr["post-processors"].append(
-    #         {
-    #             "type": "shell-local",
-    #             "script": "monopacker/post-processors/move_sbom_to_latest_artifact_name.py",
-    #             # TODO: add 'only'?
-    #         }
-    #     )
-
-    # v2: checks env var to see if we should generate SBOMs
     # if env has monopacker_generate_sboms=true, generate SBOMs
     if 'monopacker_generate_sbom' in builder["vars"]:
         if builder["vars"]['monopacker_generate_sbom']:
