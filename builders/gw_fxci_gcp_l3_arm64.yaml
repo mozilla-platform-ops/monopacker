@@ -8,9 +8,9 @@ builder_var_files:
   - googlecompute_jammy_arm64
   - ubuntu_arm64
   - firefoxci_gcp_l3
+  - monopacker_generate_sbom
 
 script_directories:
   - ubuntu-jammy-from-community
   - debugging-fail  # check image before removing
   - gcp-ops-agent
-  - sbom-ubuntu

@@ -11,4 +11,3 @@ builder_var_files:
 
 script_directories:
   - ubuntu-barebones
-  # - sbom-ubuntu

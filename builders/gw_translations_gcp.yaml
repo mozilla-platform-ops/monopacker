@@ -7,6 +7,7 @@ builder_var_files:
   - default_linux
   - translations_gcp  # TODO: merge this and following?
   - googlecompute_translations
+  - monopacker_generate_sbom
 
 script_directories:
   - ubuntu-jammy
@@ -18,4 +19,3 @@ script_directories:
   - relops-papertrail-tclogs  # needs to run after worker-runner-gw-systemd
   - translations-worker-requirements
   - gcp-ops-agent
-  - sbom-ubuntu
