@@ -201,11 +201,13 @@ def test_generate_packer_template(tmpdir):
         secrets_file=str(secrets_file),
     )
 
-    # check that environment_vars['MONOPACKER_GIT_SHA'] is present
-    assert('AN_ENV_VAR=env!' in packer_template['provisioners'][6]['environment_vars'])
-    assert('MONOPACKER_BUILDER_NAME=linux' in packer_template['provisioners'][6]['environment_vars'])
-    # rewrite environment_vars['MONOPACKER_GIT_SHA'] to be deadbeef so we can do assertion below
-    packer_template['provisioners'][6]['environment_vars'] = ['AN_ENV_VAR=env!', 'MONOPACKER_BUILDER_NAME=linux', 'MONOPACKER_GIT_SHA=deadbeef']
+    # scan all 'evnvironment_vars' and checks for MONOPACKER_GIT_SHA and MONOPACKER_BUILDER_NAME
+    #       and rewrite them to be deadbeef and linux respectively
+    for provisioner in packer_template['provisioners']:
+        if 'environment_vars' in provisioner and provisioner['environment_vars']:
+            for index, kv_pair in enumerate(provisioner['environment_vars']):
+                if kv_pair.startswith('MONOPACKER_GIT_SHA'):
+                    provisioner['environment_vars'][index] = 'MONOPACKER_GIT_SHA=deadbeef'
 
     assert(packer_template == {
         'builders': [
@@ -364,7 +366,7 @@ def test_generate_packer_template_with_sboms(tmpdir):
     # scan all 'evnvironment_vars' and checks for MONOPACKER_GIT_SHA and MONOPACKER_BUILDER_NAME
     #       and rewrite them to be deadbeef and linux respectively
     for provisioner in packer_template['provisioners']:
-        if 'environment_vars' in provisioner:
+        if 'environment_vars' in provisioner and provisioner['environment_vars']:
             for index, kv_pair in enumerate(provisioner['environment_vars']):
                 if kv_pair.startswith('MONOPACKER_GIT_SHA'):
                     provisioner['environment_vars'][index] = 'MONOPACKER_GIT_SHA=deadbeef'
