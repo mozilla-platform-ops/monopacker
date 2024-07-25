@@ -371,9 +371,11 @@ def test_generate_packer_template_with_sboms(tmpdir):
                 if kv_pair.startswith('MONOPACKER_GIT_SHA'):
                     provisioner['environment_vars'][index] = 'MONOPACKER_GIT_SHA=deadbeef'
 
-    import pprint
-    pprint.pprint(packer_template)
-    print("-----------------")
+    # scan all provisioners, find any that have type 'file' and destination '/tmp/monopacker_sbom_script'
+    #    and rewrite that item's 'source' to be 'monopacker/utils/monopacker_ubuntu_sbom.py'
+    for index, provisioner in enumerate(packer_template['provisioners']):
+        if provisioner['type'] == 'file' and provisioner['destination'] == '/tmp/monopacker_sbom_script':
+            packer_template['provisioners'][index]['source'] = 'monopacker/utils/monopacker_ubuntu_sbom.py'
 
     assert(packer_template == {
         'builders': [
@@ -438,7 +440,7 @@ def test_generate_packer_template_with_sboms(tmpdir):
             },
             {'destination': '/tmp/monopacker_sbom_script',
                 'direction': 'upload',
-                'source': '/Users/aerickson/git/monopacker/monopacker/utils/monopacker_ubuntu_sbom.py',
+                'source': 'monopacker/utils/monopacker_ubuntu_sbom.py',
                 'type': 'file'},
                 {'environment_vars': ['AN_ENV_VAR=env!',
                                     'MONOPACKER_BUILDER_NAME=linux',
