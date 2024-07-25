@@ -48,7 +48,7 @@ jobs:
           poetry run python -m pytest -sxv
       - name: Generate coverage report
         run: |
-          poetry run pytest -vv --cov=monopacker --cov-report=xml
+          poetry run pytest -vv --cov=monopacker --cov-report=term-missing
   # poetry-update-check:
   #   runs-on: ubuntu-latest
   #   steps:
