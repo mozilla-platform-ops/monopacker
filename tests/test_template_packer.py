@@ -298,3 +298,164 @@ def test_generate_packer_template(tmpdir):
         ],
     })
 
+
+
+
+def test_generate_packer_template_with_sboms(tmpdir):
+    builders_dir = tmpdir.mkdir("builders")
+    var_files_dir = tmpdir.mkdir("var_files")
+    templates_dir = tmpdir.mkdir("templates")
+    scripts_dir = tmpdir.mkdir("scripts")
+    files_dir = tmpdir.mkdir("files")
+    secrets_file = tmpdir.join("secrets.yml")
+
+    builders_dir.join("linux.yaml").write(json.dumps({
+        "template": "alibaba_linux",
+        "platform": "linux",
+        "builder_var_files": ["bv", "env"],
+        "script_directories": ["facebook-worker"],
+        "builder_vars": {
+            "execute_command": "do-it",
+            "ssh_timeout": "30m",
+        },
+    }))
+
+    templates_dir.join("alibaba_linux.jinja2").write(textwrap.dedent("""\
+        - name: a packer builder
+          type: alibaba
+          a-is: {{builder.vars.a}}
+    """))
+
+    templates_dir.join("openstack_windows.jinja2").write(textwrap.dedent("""\
+        - name: a packer builder
+          type: openstack
+    """))
+
+    # TODO: add a fake secret json... missing test coverage
+    # secrets_file.write(json.dumps([]))
+    secrets_file.write(json.dumps([{'name': 'blah_key', 'path': '/etc/taskcluster/secrets/test_blah', 'value': 'test123'}]))
+
+    scripts_dir.mkdir("facebook-worker").join("01-fb.sh").write("echo hello")
+
+    scripts_dir.mkdir("win-worker").join("01-win.ps1").write("ECHO hello")
+
+    var_files_dir.join("bv.yaml").write(json.dumps({
+        "a": 10,
+        "b": 20,
+        "monopacker_generate_sbom": True,
+    }))
+
+    var_files_dir.join("env.yaml").write(json.dumps({
+        "env_vars": {
+            "AN_ENV_VAR": 'env!',
+        },
+    }))
+
+    packer_template = generate_packer_template(
+        builders=["linux"],
+        builders_dir=str(builders_dir),
+        var_files_dir=str(var_files_dir),
+        templates_dir=str(templates_dir),
+        scripts_dir=str(scripts_dir),
+        files_dir=str(files_dir),
+        secrets_file=str(secrets_file),
+    )
+    
+    # scan all 'evnvironment_vars' and checks for MONOPACKER_GIT_SHA and MONOPACKER_BUILDER_NAME
+    #       and rewrite them to be deadbeef and linux respectively
+    for provisioner in packer_template['provisioners']:
+        if 'environment_vars' in provisioner:
+            for index, kv_pair in enumerate(provisioner['environment_vars']):
+                if kv_pair.startswith('MONOPACKER_GIT_SHA'):
+                    provisioner['environment_vars'][index] = 'MONOPACKER_GIT_SHA=deadbeef'
+
+    import pprint
+    pprint.pprint(packer_template)
+    print("-----------------")
+
+    assert(packer_template == {
+        'builders': [
+            {
+                'name': 'a packer builder',
+                'type': 'alibaba',
+                'a-is': 10,
+            },
+        ],
+        'provisioners': [
+            {
+                'type': 'file',
+                'source': './files.tar',
+                'destination': '/tmp/',
+            },
+            {
+                'type': 'shell',
+                'inline': [
+                    'sudo tar xvf /tmp/files.tar -C / --strip-components=1',
+                    'rm /tmp/files.tar',
+                ],
+            },
+            {
+                'type': 'file',
+                'source': './secrets.tar',
+                'destination': '/tmp/',
+            },
+            {
+                'type': 'shell',
+                'inline': [
+                    'sudo mkdir -p /etc/taskcluster/secrets',
+                    'sudo tar xvf /tmp/secrets.tar -C /',
+                    'sudo chown root:root -R /etc/taskcluster',
+                    'sudo chmod 0400 -R /etc/taskcluster/secrets',
+                    'rm /tmp/secrets.tar',
+                ],
+                'only': ['linux'],
+            },
+            {'inline': ['sudo chown -R root:root '
+                '/etc/taskcluster/secrets',
+                'sudo chmod -R 0400 /etc/taskcluster/secrets'],
+                'only': ['linux'],
+                'type': 'shell',
+            },
+            {
+                'type': 'shell',
+                'inline': [
+                    '/usr/bin/cloud-init status --wait',
+                ],
+                'only': ['linux'],
+            },
+            {
+                'type': 'shell',
+                'scripts': str(scripts_dir.join("facebook-worker", "01-fb.sh")),
+                'environment_vars': ["AN_ENV_VAR=env!",'MONOPACKER_BUILDER_NAME=linux',
+'MONOPACKER_GIT_SHA=deadbeef'],
+                'execute_command': "do-it",
+                'expect_disconnect': True,
+                'start_retry_timeout': '30m',
+                'only': ['linux'],
+                'pause_before': '0s',
+            },
+            {'destination': '/tmp/monopacker_sbom_script',
+                'direction': 'upload',
+                'source': '/Users/aerickson/git/monopacker/monopacker/utils/monopacker_ubuntu_sbom.py',
+                'type': 'file'},
+                {'environment_vars': ['AN_ENV_VAR=env!',
+                                    'MONOPACKER_BUILDER_NAME=linux',
+                                    'MONOPACKER_GIT_SHA=deadbeef'],
+                'inline': ['chmod +x /tmp/monopacker_sbom_script',
+                            'cd /etc',
+                            'sudo /tmp/monopacker_sbom_script ',
+                            'rm /tmp/monopacker_sbom_script'],
+                'type': 'shell'},
+                {'destination': 'SBOMs/temp_sbom.md',
+                'direction': 'download',
+                'source': '/etc/SBOM.md',
+                'type': 'file'},
+
+        ],
+        'post-processors': [
+            {'type': 'manifest', 'output': 'packer-artifacts.json', 'strip_path': True},
+            {'script': 'monopacker/post-processors/move_sbom_to_latest_artifact_name.py',
+  'type': 'shell-local'},
+        ],
+    })
+
