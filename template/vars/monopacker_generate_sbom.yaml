@@ -1,0 +1,6 @@
+---
+monopacker_generate_sbom: true
+# defaults to ""
+monopacker_sbom_command_args: "-b $MONOPACKER_BUILDER_NAME -c $MONOPACKER_GIT_SHA"
+# default vaule is "monopacker_ubuntu_sbom.py"
+# monoopacker_sbom_script: monopacker_ubuntu_sbom.py

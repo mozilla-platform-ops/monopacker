@@ -417,7 +417,7 @@ def generate_packer_template(
         # with that builder's scripts and variables
         if linux_builders:
             previous_script = ""
-            sbom_step_present = False
+            # sbom_step_present = False
             for script in builder["scripts"]:
                 # detect if previous script was a reboot (via name)
                 # - if it was, add a pause before running the next step
@@ -454,17 +454,17 @@ def generate_packer_template(
                 )
                 # add a step that copies the SBOM to the localhost
                 # using a file provisioner.
-                if "sbom" in script:
-                    sbom_step_present = True
-                    pkr["provisioners"].append(
-                        {
-                            "type": "file",
-                            "direction": "download",
-                            "source": "/etc/SBOM.md",
-                            # will be copied to SBOMs/image_name.md in post-processor
-                            "destination": "SBOMs/temp_sbom.md",
-                        }
-                    )
+                # if "sbom" in script:
+                #     sbom_step_present = True
+                #     pkr["provisioners"].append(
+                #         {
+                #             "type": "file",
+                #             "direction": "download",
+                #             "source": "/etc/SBOM.md",
+                #             # will be copied to SBOMs/image_name.md in post-processor
+                #             "destination": "SBOMs/temp_sbom.md",
+                #         }
+                #     )
                 previous_script = script
 
         if windows_builders:
@@ -485,14 +485,87 @@ def generate_packer_template(
         {"type": "manifest", "output": "packer-artifacts.json", "strip_path": True},
     ]
 
+    # v1: detects if sbom step present and adds a post-processor to move the sbom
     # if a sbom was generated, copy it from the temp path to the final path
-    if sbom_step_present:
-        pkr["post-processors"].append(
-            {
-                "type": "shell-local",
-                "script": "monopacker/post-processors/move_sbom_to_latest_artifact_name.py",
-                # TODO: add 'only'?
-            }
-        )
+    # if sbom_step_present:
+    #     pkr["post-processors"].append(
+    #         {
+    #             "type": "shell-local",
+    #             "script": "monopacker/post-processors/move_sbom_to_latest_artifact_name.py",
+    #             # TODO: add 'only'?
+    #         }
+    #     )
+
+    # v2: checks env var to see if we should generate SBOMs
+    # if env has monopacker_generate_sboms=true, generate SBOMs
+    if 'monopacker_generate_sbom' in builder["vars"]:
+        if builder["vars"]['monopacker_generate_sbom']:
+            remote_temp_path_for_sbom_tool = "/tmp/monopacker_sbom_script"
+            # TODO: allow configuring where the SBOM is stored on the remote host
+
+            # see if optional params are present
+            sbom_tool_args = ""
+            if 'monopacker_sbom_command_args' in builder["vars"]:
+                sbom_tool_args = builder["vars"]['monopacker_sbom_command_args']
+            sbom_tool = "monopacker_ubuntu_sbom.py"
+            if 'monoopacker_sbom_script' in builder["vars"]:
+                sbom_tool = builder["vars"]['monopacker_sbom_script']
+
+            # build path relative to module's root based on
+            module_root_dir = Path(__file__).parent
+            full_path_to_sbom_tool = module_root_dir / 'utils' / sbom_tool
+            
+            # comments not working, wait for HCL migration
+            # pkr["provisioners"].append(
+            #     {
+            #       "//": "SBOM generation process: start",
+            #     }
+            # )
+            # copy script over to temp path
+            pkr["provisioners"].append(
+                {
+                    "type": "file",
+                    "direction": "upload",
+                    "source": str(full_path_to_sbom_tool),
+                    "destination": remote_temp_path_for_sbom_tool,
+                }
+            )
+            # chmod the script, run the sbom tool, and remove script from temp path
+            pkr["provisioners"].append(
+                {
+                    "type": "shell",
+                    "inline": [
+                        f"chmod +x {remote_temp_path_for_sbom_tool}",
+                        "cd /etc",
+                        f"sudo {remote_temp_path_for_sbom_tool} {sbom_tool_args}",
+                        f"rm {remote_temp_path_for_sbom_tool}",
+                    ],
+                    "environment_vars": builder['vars']['env_vars'],
+                    # TODO: add only?
+                }
+            )
+            # copy SBOM back to localhost
+            pkr["provisioners"].append(
+                {
+                    "type": "file",
+                    "direction": "download",
+                    "source": "/etc/SBOM.md",
+                    # will be copied to SBOMs/image_name.md in post-processor
+                    "destination": "SBOMs/temp_sbom.md",
+                }
+            )
+            # add post-processor that renames the SBOM to the artifact name
+            pkr["post-processors"].append(
+                {
+                    "type": "shell-local",
+                    "script": "monopacker/post-processors/move_sbom_to_latest_artifact_name.py",
+                    # TODO: add 'only'?
+                }
+            )
+            # pkr["provisioners"].append(
+            #     {
+            #       "//": "SBOM generation process: finish",
+            #     }
+            # )
 
     return pkr
