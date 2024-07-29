@@ -9,6 +9,7 @@ builder_var_files:
   - ubuntu_amd64
   - firefoxci_loopback
   - firefoxci_gcp_l3
+  - monopacker_generate_sbom
 
 script_directories:
   - ubuntu-jammy-from-community

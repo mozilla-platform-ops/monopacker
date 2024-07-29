@@ -1,16 +1,13 @@
+# a barebones image used for testing monopacker
 template: googlecompute
 platform: linux
 
 builder_var_files:
-  - taskcluster_version_firefoxci
   - default_linux
   - default_gcp
   - googlecompute_jammy
   - ubuntu_amd64
-  - firefoxci_loopback
   - monopacker_generate_sbom
 
 script_directories:
-  - ubuntu-jammy-from-community
-  - ubuntu-jammy-from-community-gui
-  - gcp-ops-agent
+  - ubuntu-tc-barebones
