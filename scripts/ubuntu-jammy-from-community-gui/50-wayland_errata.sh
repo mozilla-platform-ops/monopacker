@@ -93,8 +93,13 @@ EOF
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 
 # install stuff
-apt install -y ubuntu-restricted-extras
+apt install -y \
+  gnome-screenshot \
+  ubuntu-restricted-extras
 
+# test that gnome-screenshot is present
+ls -la "$(which gnome-screenshot)"
+ls -la /usr/bin/gnome-screenshot
 
 #
 # write mutter's monitors.xml
