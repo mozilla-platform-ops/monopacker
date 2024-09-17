@@ -28,9 +28,10 @@ for build in data['builds']:
 
 # Handle the move operation or describe the action if in debug mode
 if matching_build:
+    name = matching_build['name']
     artifact_id = matching_build['artifact_id']
     source_path = 'SBOMs/temp_sbom.md'
-    destination_dir = 'SBOMs'
+    destination_dir = f'SBOMs/{name}'
     destination_path = f'{destination_dir}/{artifact_id}.md'
     
     if not os.path.exists(source_path):

@@ -1,4 +1,8 @@
 # a barebones image used for testing monopacker
+#
+# ideally clean up these images occasionally on gcp console
+#   https://console.cloud.google.com/compute/images?tab=images&project=taskcluster-imaging&pageState=(%22images%22:(%22f%22:%22%255B%257B_22k_22_3A_22name_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22monopacker-testing_5C_22_22_2C_22i_22_3A_22name_22%257D%255D%22))
+#
 template: googlecompute
 platform: linux
 
