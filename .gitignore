@@ -32,3 +32,6 @@ output-vagrant*
 
 build
 dist
+
+# coverage stuff
+.coverage
