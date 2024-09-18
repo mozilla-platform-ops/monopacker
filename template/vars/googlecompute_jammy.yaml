@@ -1,9 +1,3 @@
 ---
 ssh_username: ubuntu
 source_image_family: ubuntu-2204-lts
-# 22.04.5 has a bug, so use 22.04.4 instead.
-#   see: https://bugs.launchpad.net/ubuntu/+source/v4l2loopback/+bug/2076951
-#        https://bugs.launchpad.net/ubuntu/+source/v4l2loopback/+bug/2078961
-#
-# TODO: go back to source_image_family once bug is fixed
-# source_image: ubuntu-2204-jammy-v20240829
