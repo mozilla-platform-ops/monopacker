@@ -36,7 +36,7 @@ sudo apt-get -y reinstall linux-headers-gcp linux-headers-`uname -r` ${pkg_name}
 # see: https://bugs.launchpad.net/ubuntu/+source/v4l2loopback/+bug/2076951
 #      https://bugs.launchpad.net/ubuntu/+source/v4l2loopback/+bug/2078961
 # remove 6.8.0 kernel packages for now
-sudo apt remove linux-image-6.8.0-1015-gcp linux-gcp-6.8-tools-6.8.0-1015 linux-gcp-6.8-headers-6.8.0-1015
+sudo apt remove -y linux-image-6.8.0-1015-gcp linux-gcp-6.8-tools-6.8.0-1015 linux-gcp-6.8-headers-6.8.0-1015
 
 #
 # apt packages
