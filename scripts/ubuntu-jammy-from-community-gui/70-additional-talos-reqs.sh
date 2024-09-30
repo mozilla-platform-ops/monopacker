@@ -33,6 +33,14 @@ pkg_name="linux-gcp-${short_version}-headers-${version_minus_dash_gcp}"
 sudo apt-get update
 sudo apt-get -y reinstall linux-headers-gcp linux-headers-`uname -r` ${pkg_name}
 
+# TODO: remove this once the bugs below are fixed
+#
+# issue: Kernel 6.8.0 removes strlcpy, but the canonical-shipped v4l2loopback module uses it still.
+#   see: https://bugs.launchpad.net/ubuntu/+source/v4l2loopback/+bug/2076951
+#        https://bugs.launchpad.net/ubuntu/+source/v4l2loopback/+bug/2078961
+#
+# remove 6.8.0 kernel packages for now
+sudo apt-get remove -y linux-image-6.8.0-1015-gcp linux-gcp-6.8-tools-6.8.0-1015 linux-gcp-6.8-headers-6.8.0-1015
 
 #
 # apt packages
