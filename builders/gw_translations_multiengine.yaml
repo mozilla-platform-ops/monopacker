@@ -1,0 +1,18 @@
+template: googlecompute
+platform: linux
+
+builder_var_files:
+  - taskcluster_version_firefoxci
+  - default_linux
+  - translations_gcp  # TODO: merge this and following?
+  - googlecompute_jammy
+  - ubuntu_amd64
+  - firefoxci_loopback
+
+script_directories:
+  - ubuntu-jammy-from-community
+  - ubuntu-jammy-from-community-gui
+  - ubuntu-cuda
+  - relops-papertrail-tclogs  # needs to run after worker-runner-gw-systemd
+  - translations-worker-requirements
+  - gcp-ops-agent
