@@ -13,6 +13,7 @@ script_directories:
   - ubuntu-jammy
   - ubuntu-worker-requirements
   - ubuntu-cuda
+  - ubuntu-dnsmasq
   - generic-worker-linux
   - worker-runner-linux
   - worker-runner-gw-systemd  # TODO: merge with 'generic-worker-linux'?
