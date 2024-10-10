@@ -14,10 +14,20 @@ apt-get install -y dnsmasq
 # disable systemd-resolved
 systemctl stop systemd-resolved
 systemctl disable systemd-resolved
+
+# debugging
+cat /etc/resolv.conf
+
 # remove symlink to systemd-resolved's resolv.conf; replace it with a version
 # that points at the dnsmasq server that's about to start up
 rm /etc/resolv.conf
+# TODO: setting ` 127.0.0.1    localhost.localdomain localhost`
 echo "nameserver 127.0.0.1" > /etc/resolv.conf
 echo "server=8.8.8.8" >> /etc/dnsmasq.conf
+
+# more debugging
+cat /etc/resolv.conf
+cat /etc/dnsmasq.conf
+
 systemctl start dnsmasq
 systemctl enable dnsmasq

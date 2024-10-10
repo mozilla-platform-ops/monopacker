@@ -10,8 +10,9 @@ builder_var_files:
   - monopacker_generate_sbom
 
 script_directories:
-  - ubuntu-jammy
   - ubuntu-dnsmasq
+  - ubuntu-jammy
+  - debugging-fail
   - ubuntu-worker-requirements
   - ubuntu-cuda
   - generic-worker-linux
