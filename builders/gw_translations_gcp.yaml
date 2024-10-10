@@ -11,8 +11,8 @@ builder_var_files:
 
 script_directories:
   - ubuntu-dnsmasq
-  - ubuntu-jammy
   - debugging-fail
+  - ubuntu-jammy
   - ubuntu-worker-requirements
   - ubuntu-cuda
   - generic-worker-linux
