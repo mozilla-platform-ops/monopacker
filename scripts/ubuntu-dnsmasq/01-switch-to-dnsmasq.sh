@@ -8,8 +8,6 @@ for h in ${helpers_dir}/*.sh; do
     . $h;
 done
 
-#!/bin/bash
-
 # Function to test DNS resolution
 test_dns_resolution() {
     echo "Testing DNS resolution for apple.com and nyt.com..."
